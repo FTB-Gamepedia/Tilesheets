@@ -71,13 +71,13 @@ class TileSheet {
 		TileSheetError::log("Outputting item: {$size}px $item ($mod)");
 
 		if (self::$mQueriedItems[$item] == null) {
-			TileSheetError::error("Entry missing for $item! Falling back to normal grid icons...");
-			return $this->fallback($item, $mod, $size);
+			TileSheetError::error("Entry missing for $item!");
+			return $this->errorTile($size);
 		}
 		if ($mod != "undefined") {
 			if (!isset(self::$mQueriedItems[$item][$mod])) {
-				TileSheetError::error("Entry missing for $item ($mod)! Falling back to normal grid icons...");
-				return $this->fallback($item, $mod, $size);
+				TileSheetError::error("Entry missing for $item ($mod)!");
+				return $this->errorTile($size);
 			} else {
 				$x = self::$mQueriedItems[$item][$mod]->x;
 				$y = self::$mQueriedItems[$item][$mod]->y;
@@ -91,34 +91,10 @@ class TileSheet {
 				TileSheetError::warn("Mod parameter is not defined but is able to decide which entry to use! Selecting entry from $mod!");
 				return $this->generateTile($mod, $size, $x, $y);
 			} else {
-				TileSheetError::error("Multiple entries exist for $item and the mod parameter is not defined, cannot decide which entry to use! Falling back to normal grid icons...");
-				return $this->fallback($item, $mod, $size);
+				TileSheetError::error("Multiple entries exist for $item and the mod parameter is not defined, cannot decide which entry to use!");
+				return $this->errorTile($size);
 			}
 		}
-	}
-
-	/**
-	 * Test if any fallback options are available.
-	 *
-	 * @param string $item
-	 * @param string $mod
-	 * @param int $size
-	 * @return array
-	 */
-	private function fallback($item, $mod, $size) {
-		$fallback1 = "Grid $item.png";
-		$fallback2 = "Grid $item ($mod).png";
-		// Test fallback 1
-		$fallback = wfFindFile($fallback1);
-		if ($fallback === false) {
-			$fallback = wfFindFile($fallback2);
-		}
-		if ($fallback === false) {
-			TileSheetError::warn("No fallback exists for $item ($mod)!");
-			return $this->errorTile($size);
-		}
-		$url = $fallback->getUrl();
-		return array("<div class=\"tilesheet\" style=\"background:url('$url'); height:{$size}px; width:{$size}px; display:inline-block;\">&nbsp;</div>", 'noparse' => true, 'isHTML' => true);
 	}
 
 	/**
