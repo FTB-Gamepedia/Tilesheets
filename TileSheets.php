@@ -6,6 +6,7 @@
  * @ingroup Extensions
  * @version 1.1.1
  * @author Jinbobo <paullee05149745@gmail.com>
+ * @author Peter Atashian
  * @license
  */
 
@@ -19,9 +20,9 @@ $wgExtensionCredits['parserhooks'][] = array(
 	'path' => __FILE__,
 	'name' => 'Tile Sheets',
 	'descriptionmsg' => 'tilesheets-desc',
-	'version' => '1.1.1',
-	'author' => '[http://wiki.feed-the-beast.com/User:Jinbobo Jinbobo]',
-	'url' => 'http://wiki.feed-the-beast.com/User:Jinbobo'
+	'version' => '1.1.2',
+	'author' => '[http://wiki.feed-the-beast.com/User:Jinbobo Jinbobo], [http://wiki.feed-the-beast.com/User:Retep998 Peter Atashian], [http://wiki.feed-the-beast.com/User:SatanicSanta Eli Foster]',
+	'url' => 'https://github.com/Telshin/Tilesheets'
 );
 
 // Setup logging
