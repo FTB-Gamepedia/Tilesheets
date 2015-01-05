@@ -30,6 +30,7 @@ class SheetManager extends SpecialPage {
 		}
 
 		$out = $this->getOutput();
+		$out->addModules('ext.tilesheets.special');
 
 		$this->setHeaders();
 		$this->outputHeader();
@@ -234,7 +235,7 @@ class SheetManager extends SpecialPage {
 		}
 
 		global $wgUser, $wgScript;
-		$form = "<table style=\"width:100%;\">";
+		$form = "<table>";
 		$form .= TileSheetForm::createFormRow('sheet-manager', 'mod', $mod, "text", 'readonly="readonly"');
 		$form .= TileSheetForm::createInputHint('sheet-manager', 'mod');
 		$form .= TileSheetForm::createFormRow('sheet-manager', 'sizes', $sizes);
@@ -246,7 +247,7 @@ class SheetManager extends SpecialPage {
 		$form .= TileSheetForm::createSubmitButton('sheet-manager');
 		$form .= "</table>";
 
-		$out = Xml::openElement('form', array('method' => 'get', 'action' => $wgScript, 'id' => 'ext-tilesheet-sheet-manager-form')) .
+		$out = Xml::openElement('form', array('method' => 'get', 'action' => $wgScript, 'id' => 'ext-tilesheet-sheet-manager-form', 'class' => 'prefsection')) .
 			Xml::fieldset($this->msg('tilesheet-sheet-manager-legend')->text()) .
 			Html::hidden('title', $this->getTitle()->getPrefixedText()) .
 			Html::hidden('token', $wgUser->getEditToken()) .

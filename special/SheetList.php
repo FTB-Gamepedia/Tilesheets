@@ -28,6 +28,7 @@ class SheetList extends SpecialPage {
 
 		$this->setHeaders();
 		$this->outputHeader();
+		$out->addModules('ext.tilesheets.special');
 
 		$opts = new FormOptions();
 
@@ -150,7 +151,7 @@ class SheetList extends SpecialPage {
 		$form .= TileSheetForm::createSubmitButton('sheet-list');
 		$form .= "</table>";
 
-		$out = Xml::openElement('form', array('method' => 'get', 'action' => $wgScript, 'id' => 'ext-tilesheet-sheet-list-filter')) .
+		$out = Xml::openElement('form', array('method' => 'get', 'action' => $wgScript, 'id' => 'ext-tilesheet-sheet-list-filter', 'class' => 'prefsection')) .
 			Xml::fieldset($this->msg('tilesheet-sheet-list-legend')->text()) .
 			Html::hidden('title', $this->getTitle()->getPrefixedText()) .
 			$form .

@@ -28,6 +28,7 @@ class TileList extends SpecialPage {
 
 		$this->setHeaders();
 		$this->outputHeader();
+		$out->addModules('ext.tilesheets.special');
 
 		$opts = new FormOptions();
 

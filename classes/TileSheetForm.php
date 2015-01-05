@@ -23,7 +23,7 @@ class TileSheetForm {
 	 */
 	static public function createFormRow($ext, $name, $value = "", $type = "text", $attr = "", $lattr = "") {
 		$msgName = wfMessage("tilesheet-$ext-$name")->text();
-		$html = "<tr><td style=\"text-align:right; width:200px;\"><label for=\"$name\" $lattr>$msgName</td><td><input type=\"$type\" name=\"$name\" id=\"$name\" value=\"$value\" $attr></td></tr>";
+		$html = "<tr><td class=\"mw-label\"><label for=\"$name\" $lattr>$msgName</td><td class=\"mw-input\"><input type=\"$type\" name=\"$name\" id=\"$name\" value=\"$value\" $attr></td></tr>";
 		return $html;
 	}
 

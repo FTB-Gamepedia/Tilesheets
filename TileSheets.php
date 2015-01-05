@@ -61,5 +61,11 @@ $wgHooks['EditPage::showEditForm:initial'][] = 'TileSheetHooks::OutputWarnings';
 $wgHooks['OreDictOutput'][] = 'TileSheetHooks::OreDictOutput';
 $wgHooks['LoadExtensionSchemaUpdates'][] = 'TileSheetHooks::SchemaUpdate';
 
+$wgResourceModules['ext.tilesheets.special'] = [
+	'localBasePath' => __DIR__,
+	'remoteExtPath' => 'TileSheets',
+	'styles'        => ['css/tilesheets.css']
+];
+
 // Default configuration
 $wgTileSheetDebug = false;
