@@ -28,7 +28,7 @@ class SheetList extends SpecialPage {
 
 		$this->setHeaders();
 		$this->outputHeader();
-		$out->addModules('ext.tilesheets.special');
+		$out->addModuleStyles('ext.tilesheets.special');
 
 		$opts = new FormOptions();
 

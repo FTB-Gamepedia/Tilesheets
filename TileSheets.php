@@ -64,7 +64,7 @@ $wgHooks['LoadExtensionSchemaUpdates'][] = 'TileSheetHooks::SchemaUpdate';
 $wgResourceModules['ext.tilesheets.special'] = [
 	'localBasePath' => __DIR__,
 	'remoteExtPath' => 'TileSheets',
-	'styles'        => 'css/tilesheets.css'
+	'styles'        => 'css/tilesheets.special.css',
 ];
 
 // Default configuration
