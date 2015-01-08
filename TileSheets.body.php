@@ -127,7 +127,7 @@ class TileSheet {
 		$url = $file->getUrl();
 		$x *= $size;
 		$y *= $size;
-		return array("<div class=\"tilesheet\" style=\"background:url('$url'); background-position:-{$x}px -{$y}px; height:{$size}px; width:{$size}px; display:inline-block;\">&nbsp;</div>", 'noparse' => true, 'isHTML' => true);
+		return array("<span class=\"tilesheet\" style=\"background:url($url) -{$x}px -{$y}px;width:{$size}px;height:{$size}px\"><br></span>", 'noparse' => true, 'isHTML' => true);
 	}
 
 	/**
@@ -158,7 +158,7 @@ class TileSheet {
 	 * @return array
 	 */
 	private function errorTile($size = 32) {
-		return array("<div class=\"tilesheet\" style=\"background:rgba(255,0,0,0.5); height:{$size}px; width:{$size}px; display:inline-block;\">&nbsp;</div>", 'noparse' => true, 'isHTML' => true);
+		return array("<span class=\"tilesheet\" style=\"width:{$size}px;height:{$size}px\"><br></span>", 'noparse' => true, 'isHTML' => true);
 	}
 
 	public static function buildDiffString($diff) {

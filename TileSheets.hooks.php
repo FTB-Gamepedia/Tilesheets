@@ -41,6 +41,20 @@ class TileSheetHooks {
 
 		return true;
 	}
+	
+	/**
+	 * Handler for BeforePageDisplay hook.
+	 * @see http://www.mediawiki.org/wiki/Manual:Hooks/BeforePageDisplay
+	 * @param $out OutputPage object
+	 * @param $skin Skin being used.
+	 * @return bool
+	 */
+	public static function BeforePageDisplay($out, $skin) {
+		// Load default styling module
+		$out->addModuleStyles('ext.tilesheets');
+		
+		return true;
+	}
 
 	/**
 	 * Generate parser function output
@@ -117,13 +131,11 @@ class TileSheetHooks {
 			self::$mOreDictMainErrorOutputted = true;
 		}
 		foreach ($items as $item) {
-			if (is_object($item)) {
-				if (get_class($item) == "OreDictItem") {
-					$item->joinParams($params, true);
-					$templateParams = $item->getParamString();
-					$out .= "{{Gc|$templateParams}}";
-					$itemNames[] = $item->getItemName();
-				}
+			if (is_object($item) && get_class($item) == 'OreDictItem') {
+				$item->joinParams($params, true);
+				$templateParams = $item->getParamString();
+				$out .= "{{G/Cell|$templateParams}}";
+				$itemNames[] = $item->getItemName();
 			}
 		}
 		if (isset($itemNames)) {

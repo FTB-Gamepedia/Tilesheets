@@ -30,20 +30,20 @@ $wgLogTypes[] = 'tilesheet';
 $wgLogActionsHandlers['tilesheet/*'] = 'LogFormatter';
 
 // Load extension files
-$wgMessagesDirs['TileSheets'] = __DIR__ .'/i18n';
-$wgExtensionMessagesFiles['TileSheet'] = dirname(__FILE__)."/TileSheets.i18n.php";
-$wgExtensionMessagesFiles['TileSheetMagic'] = dirname(__FILE__)."/TileSheets.i18n.magic.php";
+$wgMessagesDirs['TileSheets'] = __DIR__ . '/i18n';
+$wgExtensionMessagesFiles['TileSheet'] = __DIR__ . "/TileSheets.i18n.php";
+$wgExtensionMessagesFiles['TileSheetMagic'] = __DIR__ . "/TileSheets.i18n.magic.php";
 
-$wgAutoloadClasses['TileSheet'] = dirname(__FILE__)."/TileSheets.body.php";
-$wgAutoloadClasses['TileSheetError'] = dirname(__FILE__)."/TileSheets.body.php";
-$wgAutoloadClasses['TileSheetHooks'] = dirname(__FILE__)."/TileSheets.hooks.php";
-$wgAutoloadClasses['TileSheetForm'] = dirname(__FILE__)."/classes/TileSheetForm.php";
+$wgAutoloadClasses['TileSheet'] = __DIR__ . "/TileSheets.body.php";
+$wgAutoloadClasses['TileSheetError'] = __DIR__ . "/TileSheets.body.php";
+$wgAutoloadClasses['TileSheetHooks'] = __DIR__ . "/TileSheets.hooks.php";
+$wgAutoloadClasses['TileSheetForm'] = __DIR__ . "/classes/TileSheetForm.php";
 
-$wgAutoloadClasses['TileList'] = dirname(__FILE__)."/special/TileList.php";
-$wgAutoloadClasses['SheetList'] = dirname(__FILE__)."/special/SheetList.php";
-$wgAutoloadClasses['CreateTileSheet'] = dirname(__FILE__)."/special/CreateTileSheet.php";
-$wgAutoloadClasses['TileManager'] = dirname(__FILE__)."/special/TileManager.php";
-$wgAutoloadClasses['SheetManager'] = dirname(__FILE__)."/special/SheetManager.php";
+$wgAutoloadClasses['TileList'] = __DIR__ . "/special/TileList.php";
+$wgAutoloadClasses['SheetList'] = __DIR__ . "/special/SheetList.php";
+$wgAutoloadClasses['CreateTileSheet'] = __DIR__ . "/special/CreateTileSheet.php";
+$wgAutoloadClasses['TileManager'] = __DIR__ . "/special/TileManager.php";
+$wgAutoloadClasses['SheetManager'] = __DIR__ . "/special/SheetManager.php";
 
 $wgSpecialPages['TileList'] = "TileList";
 $wgSpecialPageGroups['TileList'] = "tilesheet";
@@ -57,14 +57,22 @@ $wgSpecialPages['SheetManager'] = "SheetManager";
 $wgSpecialPageGroups['SheetManager'] = "tilesheet";
 
 $wgHooks['ParserFirstCallInit'][] = 'TileSheetHooks::SetupParser';
+$wgHooks['BeforePageDisplay'][] = 'TileSheetHooks::BeforePageDisplay';
 $wgHooks['EditPage::showEditForm:initial'][] = 'TileSheetHooks::OutputWarnings';
 $wgHooks['OreDictOutput'][] = 'TileSheetHooks::OreDictOutput';
 $wgHooks['LoadExtensionSchemaUpdates'][] = 'TileSheetHooks::SchemaUpdate';
 
-$wgResourceModules['ext.tilesheets.special'] = [
+$paths = [
 	'localBasePath' => __DIR__,
 	'remoteExtPath' => 'TileSheets',
-	'styles'        => ['css/tilesheets.css']
+];
+$wgResourceModules += [
+	'ext.tilesheets' => $paths + [
+		'styles' => 'css/tilesheets.css',
+	],
+	'ext.tilesheets.special' => $paths + [
+		'styles'   => 'css/tilesheets.special.css',
+	],
 ];
 
 // Default configuration

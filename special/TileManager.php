@@ -30,7 +30,7 @@ class TileManager extends SpecialPage {
 		}
 
 		$out = $this->getOutput();
-		$out->addModules('ext.tilesheets.special');
+		$out->addModuleStyles('ext.tilesheets.special');
 
 		$this->setHeaders();
 		$this->outputHeader();
