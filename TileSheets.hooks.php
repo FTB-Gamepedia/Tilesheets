@@ -131,13 +131,11 @@ class TileSheetHooks {
 			self::$mOreDictMainErrorOutputted = true;
 		}
 		foreach ($items as $item) {
-			if (is_object($item)) {
-				if (get_class($item) == "OreDictItem") {
-					$item->joinParams($params, true);
-					$templateParams = $item->getParamString();
-					$out .= "{{Gc|$templateParams}}";
-					$itemNames[] = $item->getItemName();
-				}
+			if (is_object($item) && get_class($item) == 'OreDictItem') {
+				$item->joinParams($params, true);
+				$templateParams = $item->getParamString();
+				$out .= "{{G/Cell|$templateParams}}";
+				$itemNames[] = $item->getItemName();
 			}
 		}
 		if (isset($itemNames)) {
