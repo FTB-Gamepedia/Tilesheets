@@ -57,14 +57,22 @@ $wgSpecialPages['SheetManager'] = "SheetManager";
 $wgSpecialPageGroups['SheetManager'] = "tilesheet";
 
 $wgHooks['ParserFirstCallInit'][] = 'TileSheetHooks::SetupParser';
+$wgHooks['BeforePageDisplay'][] = 'TileSheetHooks::BeforePageDisplay';
 $wgHooks['EditPage::showEditForm:initial'][] = 'TileSheetHooks::OutputWarnings';
 $wgHooks['OreDictOutput'][] = 'TileSheetHooks::OreDictOutput';
 $wgHooks['LoadExtensionSchemaUpdates'][] = 'TileSheetHooks::SchemaUpdate';
 
-$wgResourceModules['ext.tilesheets.special'] = [
+$paths = [
 	'localBasePath' => __DIR__,
 	'remoteExtPath' => 'TileSheets',
-	'styles'        => 'css/tilesheets.special.css',
+];
+$wgResourceModules += [
+	'ext.tilesheets' => $paths + [
+		'styles' => 'css/tilesheets.css',
+	],
+	'ext.tilesheets.special' => $paths + [
+		'styles'   => 'css/tilesheets.special.css',
+	],
 ];
 
 // Default configuration

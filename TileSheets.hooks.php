@@ -41,6 +41,20 @@ class TileSheetHooks {
 
 		return true;
 	}
+	
+	/**
+	 * Handler for BeforePageDisplay hook.
+	 * @see http://www.mediawiki.org/wiki/Manual:Hooks/BeforePageDisplay
+	 * @param $out OutputPage object
+	 * @param $skin Skin being used.
+	 * @return bool
+	 */
+	public static function BeforePageDisplay($out, $skin) {
+		// Load default styling module
+		$out->addModuleStyles('ext.tilesheets');
+		
+		return true;
+	}
 
 	/**
 	 * Generate parser function output
