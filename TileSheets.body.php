@@ -15,7 +15,7 @@ class TileSheet {
 	/**
 	 * Length of time item tile data will remain cached in memcache
 	 */
-	static const CACHE_DURATION = 60 * 15; // 15 min cache
+	const CACHE_DURATION = 900; // 15 min cache
 
 	/**
 	 * Per-request caching for data from the ext_tilesheet_items DB table
