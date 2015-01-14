@@ -116,8 +116,13 @@ class TileManager extends SpecialPage {
 
 		if ($stuff->numRows() == 0) return;
 
+		$memCache = wfGetCache( CACHE_ANYTHING );
+
 		foreach ($stuff as $item) {
 			$target = empty($item->mod_name) || $item->mod_name == "undefined" ? $item->item_name : "$item->item_name ($item->mod_name)";
+
+			// delete cached data
+			$memCache->delete(wfMemcKey('tilesheets', 'items', $item->item_name));
 
 			// Start log
 			$logEntry = new ManualLogEntry('tilesheet', 'deletetile');
@@ -144,6 +149,10 @@ class TileManager extends SpecialPage {
 	 */
 	public static function updateTable($id, $item, $mod, $x, $y, $comment = "") {
 		global $wgUser;
+
+		// delete cached data
+		$memCache = wfGetCache( CACHE_ANYTHING );
+		$memCache->delete(wfMemcKey('tilesheets', 'items', $item));
 
 		$dbw = wfGetDB(DB_MASTER);
 		$stuff = $dbw->select('ext_tilesheet_items', '*', array('entry_id' => $id));

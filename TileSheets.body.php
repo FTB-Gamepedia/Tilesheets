@@ -12,8 +12,23 @@
 if ( !defined( 'MEDIAWIKI' ) ) exit;
 
 class TileSheet {
-	static private $mQueriedItems;
-	static private $mQueriedSizes;
+	/**
+	 * Length of time item tile data will remain cached in memcache
+	 */
+	const CACHE_DURATION = 900; // 15 min cache
+
+	/**
+	 * Per-request caching for data from the ext_tilesheet_items DB table
+	 * @var	array
+	 */
+	static private $itemCache = [];
+
+	/**
+	 * Per-request caching for size data from the ext_tilesheet_images DB table
+	 * @var	array
+	 */
+	static private $tileSizeCache = [];
+
 	private $mOptions;
 
 	/**
@@ -36,18 +51,30 @@ class TileSheet {
 
 		TileSheetError::log("Preparing item: {$size}px $item ($mod)");
 
-		$dbr = wfGetDB(DB_SLAVE);
+		// use local cache first
+		if (isset(self::$itemCache[$item])) {
+			return;
+		}
 
-		if (!isset(self::$mQueriedItems[$item])) {
+		// fall back to memcache
+		$memCache = wfGetCache( CACHE_ANYTHING );
+		$cacheKey = wfMemcKey('tilesheets', 'items', $item);
+		self::$itemCache[$item] = $memCache->get($cacheKey);
+
+		if (self::$itemCache[$item] === false) {
+			// fall back to DB query
+			$dbr = wfGetDB(DB_SLAVE);
 			$results = $dbr->select('ext_tilesheet_items','*',array('item_name' => $item));
 			TileSheetError::query($dbr->lastQuery());
-			if ($results === false || $results->numRows() == 0) {
-				self::$mQueriedItems[$item] = null;
-			} else {
+			if ($results !== false && $results->numRows() > 0) {
 				// Build table
+				self::$itemCache[$item] = [];
 				foreach ($results as $result) {
-					self::$mQueriedItems[$item][$result->mod_name] = $result;
+					self::$itemCache[$item][$result->mod_name] = $result;
 				}
+				$memCache->set($cacheKey, self::$itemCache[$item], self::CACHE_DURATION);
+			} else {
+				self::$itemCache[$item] = false;
 			}
 		}
 	}
@@ -70,24 +97,25 @@ class TileSheet {
 
 		TileSheetError::log("Outputting item: {$size}px $item ($mod)");
 
-		if (self::$mQueriedItems[$item] == null) {
+		if (self::$itemCache[$item] === false) {
 			TileSheetError::error("Entry missing for $item!");
 			return $this->errorTile($size);
 		}
+
 		if ($mod != "undefined") {
-			if (!isset(self::$mQueriedItems[$item][$mod])) {
+			if (!isset(self::$itemCache[$item][$mod])) {
 				TileSheetError::error("Entry missing for $item ($mod)!");
 				return $this->errorTile($size);
 			} else {
-				$x = self::$mQueriedItems[$item][$mod]->x;
-				$y = self::$mQueriedItems[$item][$mod]->y;
+				$x = self::$itemCache[$item][$mod]->x;
+				$y = self::$itemCache[$item][$mod]->y;
 				return $this->generateTile($mod, $size, $x, $y);
 			}
 		} else {
-			if (count(self::$mQueriedItems[$item]) == 1) {
-				$x = current(self::$mQueriedItems[$item])->x;
-				$y = current(self::$mQueriedItems[$item])->y;
-				$mod = current(self::$mQueriedItems[$item])->mod_name;
+			if (count(self::$itemCache[$item]) == 1) {
+				$x = current(self::$itemCache[$item])->x;
+				$y = current(self::$itemCache[$item])->y;
+				$mod = current(self::$itemCache[$item])->mod_name;
 				TileSheetError::warn("Mod parameter is not defined but is able to decide which entry to use! Selecting entry from $mod!");
 				return $this->generateTile($mod, $size, $x, $y);
 			} else {
@@ -108,14 +136,14 @@ class TileSheet {
 	 */
 	private function generateTile($mod, $size, $x, $y) {
 		// Validate tilesheet size
-		TileSheet::getModTileSizes($mod);
-		if (self::$mQueriedSizes[$mod] == null) {
+		$sizes = TileSheet::getModTileSizes($mod);
+		if ($sizes === false) {
 			TileSheetError::error("Tilesheet for $mod is not defined!");
 			return $this->errorTile($size);
 		} else {
-			if (!in_array($size, self::$mQueriedSizes[$mod])) {
+			if (!in_array($size, $sizes)) {
 				TileSheetError::warn("No {$size}px tilesheet for $mod is defined! Selecting smallest size!");
-				$size = min(self::$mQueriedSizes[$mod]);
+				$size = min($sizes);
 			}
 		}
 
@@ -137,18 +165,31 @@ class TileSheet {
 	 * @return mixed
 	 */
 	public static function getModTileSizes($mod) {
-		$dbr = wfGetDB(DB_SLAVE);
-		if (!isset(self::$mQueriedSizes[$mod])) {
+		// use local cache first
+		if (isset(self::$tileSizeCache[$mod])) {
+			return self::$tileSizeCache[$mod];
+		}
+
+		// fall back to memcache
+		$memCache = wfGetCache( CACHE_ANYTHING );
+		$cacheKey = wfMemcKey('tilesheets', 'itemsizes', $mod);
+		$sizes = $memCache->get($cacheKey);
+
+		if ($sizes === false) {
+			// fall back to DB query
+			$dbr = wfGetDB(DB_SLAVE);
 			$result = $dbr->select('ext_tilesheet_images','sizes',array("`mod`" => $mod));
 			TileSheetError::query($dbr->lastQuery());
-			if ($result == false) {
-				self::$mQueriedSizes[$mod] = null;
+			if ($result) {
+				$sizes = explode(",", $result->current()->sizes);
+				$memCache->set($cacheKey, $size, self::CACHE_DURATION);
+				self::$tileSizeCache[$mod] = $sizes;
 			} else {
-				self::$mQueriedSizes[$mod] = explode(",", $result->current()->sizes);
+				self::$tileSizeCache[$mod] = null;
 			}
 		}
 
-		return self::$mQueriedSizes[$mod];
+		return $sizes;
 	}
 
 	/**

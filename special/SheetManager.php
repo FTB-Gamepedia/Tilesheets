@@ -77,6 +77,10 @@ class SheetManager extends SpecialPage {
 	public static function deleteEntry($mod, $comment = "") {
 		global $wgUser;
 
+		// delete cached data
+		$memCache = wfGetCache( CACHE_ANYTHING );
+		$memCache->delete(wfMemcKey('tilesheets', 'itemsizes', $mod));
+
 		$dbw = wfGetDB(DB_MASTER);
 		$stuff = $dbw->select('ext_tilesheet_images', '*', array('`mod`' => $mod));
 		$result = $dbw->delete('ext_tilesheet_images', array('`mod`' => $mod));
@@ -106,6 +110,10 @@ class SheetManager extends SpecialPage {
 	 */
 	public static function truncateTable($mod, $comment = "") {
 		global $wgUser;
+
+		// delete cached data
+		$memCache = wfGetCache( CACHE_ANYTHING );
+		$memCache->delete(wfMemcKey('tilesheets', 'itemsizes', $mod));
 
 		$dbw = wfGetDB(DB_MASTER);
 		$stuff = $dbw->select('ext_tilesheet_items', '*', array('mod_name' => $mod));
@@ -141,6 +149,10 @@ class SheetManager extends SpecialPage {
 	 */
 	public static function updateTable($mod, $sizes, $comment = "") {
 		global $wgUser;
+
+		// delete cached data
+		$memCache = wfGetCache( CACHE_ANYTHING );
+		$memCache->delete(wfMemcKey('tilesheets', 'itemsizes', $mod));
 
 		$dbw = wfGetDB(DB_MASTER);
 		$stuff = $dbw->select('ext_tilesheet_images', '*', array('`mod`' => $mod));
