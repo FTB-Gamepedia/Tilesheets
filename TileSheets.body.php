@@ -97,7 +97,7 @@ class TileSheet {
 
 		TileSheetError::log("Outputting item: {$size}px $item ($mod)");
 
-		if (self::$itemCache === false) {
+		if (self::$itemCache[$item] === false) {
 			TileSheetError::error("Entry missing for $item!");
 			return $this->errorTile($size);
 		}
@@ -112,7 +112,7 @@ class TileSheet {
 				return $this->generateTile($mod, $size, $x, $y);
 			}
 		} else {
-			if (count($this->mItems) == 1) {
+			if (count(self::$itemCache[$item]) == 1) {
 				$x = current(self::$itemCache[$item])->x;
 				$y = current(self::$itemCache[$item])->y;
 				$mod = current(self::$itemCache[$item])->mod_name;
