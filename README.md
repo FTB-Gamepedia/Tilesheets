@@ -1,2 +1,2 @@
-Tile Sheets MediaWiki Extension
+Tilesheets MediaWiki Extension
 ===============================

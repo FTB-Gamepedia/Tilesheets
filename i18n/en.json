@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Jinbobo <paullee05149745@gmail.com>",
-			"Peter Atashian"
+			"Peter Atashian",
+			"Telshin <timmrysk@gmail.com>"
 		]
 	},
 	"tilelist": "Item List",
@@ -11,7 +12,7 @@
 	"sheetmanager": "Sheet Manager",
 	"createtilesheet": "Sheet Importer",
 	"tilesheets-desc": "Adds a parser function that looks up a table for an item and returns the requested image.",
-	"specialpages-group-tilesheet": "Tilesheet Configuration & Tools",
+	"specialpages-group-tilesheet": "Tilesheets Configuration & Tools",
 	"tilesheet-sheet-list-legend": "Filter",
 	"tilesheet-sheet-list-start": "Filter by prefix",
 	"tilesheet-sheet-list-submit": "Go",
@@ -59,7 +60,7 @@
 	"tilesheet-tile-manager-y": "Y Position",
 	"tilesheet-tile-manager-delete": "<span style=\"color:red; font-weight:bold;\">Delete Entry</span>",
 	"tilesheet-tile-manager-submit": "Update",
-	"log-name-tilesheet": "Tilesheet log",
+	"log-name-tilesheet": "Tilesheets log",
 	"log-description-tilesheet": "Here you can find a list of changes made to tilesheets.",
 	"logentry-tilesheet-createtile": "$1 created a new tile ($5) positioned at ($6, $7) on the $4 tilesheet.",
 	"logentry-tilesheet-deletetile": "$1 deleted tile #$4 ($5) positioned at ($7, $8) on the $6 tilesheet.",

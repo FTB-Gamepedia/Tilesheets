@@ -1,15 +1,15 @@
 <?php
 /**
- * TileSheetForm class file
+ * TilesheetsForm class file
  *
  * @file
  * @ingroup Extensions
- * @version 1.1.1
- * @author Jinbobo <paullee05149745@gmail.com>
+ * @version 1.1.2
+ * @author Jinbobo <paullee05149745@gmail.com>, Telshin <timmrysk@gmail.com>
  * @license
  */
 
-class TileSheetForm {
+class TilesheetsForm {
 	/**
 	 * Helper function for creating form rows
 	 *

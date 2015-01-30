@@ -11,7 +11,7 @@
  */
 if ( !defined( 'MEDIAWIKI' ) ) exit;
 
-class TileSheetHooks {
+class TilesheetsHooks {
 	/**
 	 * Setups and Modifies Database Information
 	 *
@@ -37,7 +37,7 @@ class TileSheetHooks {
 	 * @return bool
 	 */
 	public static function SetupParser(Parser &$parser) {
-		$parser->setFunctionHook('icon', 'TileSheetHooks::RenderParser');
+		$parser->setFunctionHook('icon', 'TilesheetsHooks::RenderParser');
 
 		return true;
 	}
@@ -71,7 +71,7 @@ class TileSheetHooks {
 		$options = self::ExtractOptions($opts);
 
 		// Run main class and output
-		$tile = new TileSheet($options);
+		$tile = new Tilesheets($options);
 		return $tile->output();
 	}
 
@@ -111,7 +111,7 @@ class TileSheetHooks {
 		global $wgTileSheetDebug;
 
 		// Output errors
-		$errors = new TileSheetError($wgTileSheetDebug);
+		$errors = new TilesheetsError($wgTileSheetDebug);
 		$editPage->editFormTextAfterWarn .= $errors->output();
 
 		return true;
@@ -127,7 +127,7 @@ class TileSheetHooks {
 	 */
 	public static function OreDictOutput(&$out, $items, $params) {
 		if (!self::$mOreDictMainErrorOutputted) {
-			TileSheetError::notice("Outputting ore dictionary items, errors returned from this point <i>may</i> be caused by parameters passed from the ore dictionary template, or by the configuration of the ore dictionary entry or tilesheet entry. If you are sure that errors returned here is caused by a incorrect configuration entry, please contact the wiki staff.");
+			TilesheetsError::notice("Outputting ore dictionary items, errors returned from this point <i>may</i> be caused by parameters passed from the ore dictionary template, or by the configuration of the ore dictionary entry or tilesheet entry. If you are sure that errors returned here is caused by a incorrect configuration entry, please contact the wiki staff.");
 			self::$mOreDictMainErrorOutputted = true;
 		}
 		foreach ($items as $item) {
@@ -140,7 +140,7 @@ class TileSheetHooks {
 		}
 		if (isset($itemNames)) {
 			$itemNames = implode(",", $itemNames);
-			TileSheetError::notice("OreDict returned the following items: $itemNames.");
+			TilesheetsError::notice("OreDict returned the following items: $itemNames.");
 		}
 
 		return true;

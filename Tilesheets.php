@@ -1,12 +1,14 @@
 <?php
 /**
- * Tile Sheets
+ * Tilesheets
  *
  * @file
  * @ingroup Extensions
- * @version 1.1.2
+ * @version 1.1.3
  * @author Jinbobo <paullee05149745@gmail.com>
  * @author Peter Atashian
+ * @author Telshin <timmrysk@gmail.com>
+ * @author Noahm <noah@manneschmidt.net>
  * @license
  */
 
@@ -18,11 +20,11 @@ $wgShowExceptionDetails = true;
 
 $wgExtensionCredits['parserhooks'][] = array(
 	'path' => __FILE__,
-	'name' => 'Tile Sheets',
+	'name' => 'Tilesheets',
 	'descriptionmsg' => 'tilesheets-desc',
-	'version' => '1.1.2',
-	'author' => '[http://wiki.feed-the-beast.com/User:Jinbobo Jinbobo], [http://wiki.feed-the-beast.com/User:Retep998 Peter Atashian], [http://wiki.feed-the-beast.com/User:SatanicSanta Eli Foster], Curse Wiki Team',
-	'url' => 'https://github.com/CurseStaff/Tilesheets'
+	'version' => '1.1.3',
+	'author' => '[http://ftb.gamepedia.com/User:Jinbobo Jinbobo], [http://ftb.gamepedia.com/User:Retep998 Peter Atashian], [http://ftb.gamepedia.com/User:SatanicSanta Eli Foster], Telshin, Noahm',
+	'url' => 'http://help.gamepedia.com/Extension:Tilesheets'
 );
 
 // Setup logging
@@ -30,14 +32,14 @@ $wgLogTypes[] = 'tilesheet';
 $wgLogActionsHandlers['tilesheet/*'] = 'LogFormatter';
 
 // Load extension files
-$wgMessagesDirs['TileSheets'] = __DIR__ . '/i18n';
-$wgExtensionMessagesFiles['TileSheet'] = __DIR__ . "/TileSheets.i18n.php";
-$wgExtensionMessagesFiles['TileSheetMagic'] = __DIR__ . "/TileSheets.i18n.magic.php";
+$wgMessagesDirs['Tilesheets'] = __DIR__ . '/i18n';
+$wgExtensionMessagesFiles['Tilesheets'] = __DIR__ . "/Tilesheets.i18n.php";
+$wgExtensionMessagesFiles['TilesheetsMagic'] = __DIR__ . "/Tilesheets.i18n.magic.php";
 
-$wgAutoloadClasses['TileSheet'] = __DIR__ . "/TileSheets.body.php";
-$wgAutoloadClasses['TileSheetError'] = __DIR__ . "/TileSheets.body.php";
-$wgAutoloadClasses['TileSheetHooks'] = __DIR__ . "/TileSheets.hooks.php";
-$wgAutoloadClasses['TileSheetForm'] = __DIR__ . "/classes/TileSheetForm.php";
+$wgAutoloadClasses['Tilesheets'] = __DIR__ . "/Tilesheets.body.php";
+$wgAutoloadClasses['TilesheetsError'] = __DIR__ . "/Tilesheets.body.php";
+$wgAutoloadClasses['TilesheetsHooks'] = __DIR__ . "/Tilesheets.hooks.php";
+$wgAutoloadClasses['TilesheetsForm'] = __DIR__ . "/classes/TilesheetsForm.php";
 
 $wgAutoloadClasses['TileList'] = __DIR__ . "/special/TileList.php";
 $wgAutoloadClasses['SheetList'] = __DIR__ . "/special/SheetList.php";
@@ -56,15 +58,15 @@ $wgSpecialPageGroups['TileManager'] = "tilesheet";
 $wgSpecialPages['SheetManager'] = "SheetManager";
 $wgSpecialPageGroups['SheetManager'] = "tilesheet";
 
-$wgHooks['ParserFirstCallInit'][] = 'TileSheetHooks::SetupParser';
-$wgHooks['BeforePageDisplay'][] = 'TileSheetHooks::BeforePageDisplay';
-$wgHooks['EditPage::showEditForm:initial'][] = 'TileSheetHooks::OutputWarnings';
-$wgHooks['OreDictOutput'][] = 'TileSheetHooks::OreDictOutput';
-$wgHooks['LoadExtensionSchemaUpdates'][] = 'TileSheetHooks::SchemaUpdate';
+$wgHooks['ParserFirstCallInit'][] = 'TilesheetsHooks::SetupParser';
+$wgHooks['BeforePageDisplay'][] = 'TilesheetsHooks::BeforePageDisplay';
+$wgHooks['EditPage::showEditForm:initial'][] = 'TilesheetsHooks::OutputWarnings';
+$wgHooks['OreDictOutput'][] = 'TilesheetsHooks::OreDictOutput';
+$wgHooks['LoadExtensionSchemaUpdates'][] = 'TilesheetsHooks::SchemaUpdate';
 
 $paths = [
 	'localBasePath' => __DIR__,
-	'remoteExtPath' => 'TileSheets',
+	'remoteExtPath' => 'Tilesheets',
 ];
 $wgResourceModules += [
 	'ext.tilesheets' => $paths + [
@@ -76,4 +78,4 @@ $wgResourceModules += [
 ];
 
 // Default configuration
-$wgTileSheetDebug = false;
+$wgTilesheetsDebug = false;

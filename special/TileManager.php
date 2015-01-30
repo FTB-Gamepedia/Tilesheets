@@ -198,8 +198,8 @@ class TileManager extends SpecialPage {
 	private function buildSearchForm() {
 		global $wgScript;
 		$form = "<table>";
-		$form .= TileSheetForm::createFormRow('tile-manager-filter', 'id', '', 'number', 'min="1" id="form-entry-id"');
-		$form .= TileSheetForm::createSubmitButton('tile-manager-filter');
+		$form .= TilesheetsForm::createFormRow('tile-manager-filter', 'id', '', 'number', 'min="1" id="form-entry-id"');
+		$form .= TilesheetsForm::createSubmitButton('tile-manager-filter');
 		$form .= "</table>";
 
 		$out = Xml::openElement('form', array('method' => 'get', 'action' => $wgScript, 'id' => 'ext-tilesheet-tile-manager-filter')) .
@@ -231,14 +231,14 @@ class TileManager extends SpecialPage {
 
 		global $wgUser, $wgScript;
 		$form = "<table>";
-		$form .= TileSheetForm::createFormRow('tile-manager', 'id', $id, "text", 'readonly="readonly"');
-		$form .= TileSheetForm::createFormRow('tile-manager', 'item', $item);
-		$form .= TileSheetForm::createFormRow('tile-manager', 'mod', $mod);
-		$form .= TileSheetForm::createInputHint('tile-manager', 'mod');
-		$form .= TileSheetForm::createFormRow('tile-manager', 'x', $x);
-		$form .= TileSheetForm::createFormRow('tile-manager', 'y', $y);
-		$form .= TileSheetForm::createFormRow('tile-manager', 'delete', 1, "checkbox");
-		$form .= TileSheetForm::createSubmitButton('tile-manager');
+		$form .= TilesheetsForm::createFormRow('tile-manager', 'id', $id, "text", 'readonly="readonly"');
+		$form .= TilesheetsForm::createFormRow('tile-manager', 'item', $item);
+		$form .= TilesheetsForm::createFormRow('tile-manager', 'mod', $mod);
+		$form .= TilesheetsForm::createInputHint('tile-manager', 'mod');
+		$form .= TilesheetsForm::createFormRow('tile-manager', 'x', $x);
+		$form .= TilesheetsForm::createFormRow('tile-manager', 'y', $y);
+		$form .= TilesheetsForm::createFormRow('tile-manager', 'delete', 1, "checkbox");
+		$form .= TilesheetsForm::createSubmitButton('tile-manager');
 		$form .= "</table>";
 
 		$out = Xml::openElement('form', array('method' => 'get', 'action' => $wgScript, 'id' => 'ext-tilesheet-tile-manager-form', 'class' => 'prefsection')) .

@@ -146,9 +146,9 @@ class SheetList extends SpecialPage {
 		}
 
 		$form = "<table>";
-		$form .= TileSheetForm::createFormRow('sheet-list', 'start', $opts->getValue('start'));
+		$form .= TilesheetsForm::createFormRow('sheet-list', 'start', $opts->getValue('start'));
 		$form .= '<tr><td style="text-align:right"><label for="limit">'.$this->msg('tilesheet-sheet-list-limit').'</td><td><select name="limit">'.$optionTags.'</select></td></tr>';
-		$form .= TileSheetForm::createSubmitButton('sheet-list');
+		$form .= TilesheetsForm::createSubmitButton('sheet-list');
 		$form .= "</table>";
 
 		$out = Xml::openElement('form', array('method' => 'get', 'action' => $wgScript, 'id' => 'ext-tilesheet-sheet-list-filter', 'class' => 'prefsection')) .
