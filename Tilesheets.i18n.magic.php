@@ -1,6 +1,6 @@
 <?php
 /**
- * Tile sheets alias file
+ * Tilesheets alias file
  *
  * @file
  * @ingroup Extensions

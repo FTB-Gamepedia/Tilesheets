@@ -205,8 +205,8 @@ class SheetManager extends SpecialPage {
 	private function buildSearchForm() {
 		global $wgScript;
 		$form = "<table>";
-		$form .= TileSheetForm::createFormRow('sheet-manager-filter', 'mod', '', 'text', 'id="form-entry-mod"');
-		$form .= TileSheetForm::createSubmitButton('sheet-manager-filter');
+		$form .= TilesheetsForm::createFormRow('sheet-manager-filter', 'mod', '', 'text', 'id="form-entry-mod"');
+		$form .= TilesheetsForm::createSubmitButton('sheet-manager-filter');
 		$form .= "</table>";
 
 		$out = Xml::openElement('form', array('method' => 'get', 'action' => $wgScript, 'id' => 'ext-tilesheet-sheet-manager-filter')) .
@@ -236,15 +236,15 @@ class SheetManager extends SpecialPage {
 
 		global $wgUser, $wgScript;
 		$form = "<table>";
-		$form .= TileSheetForm::createFormRow('sheet-manager', 'mod', $mod, "text", 'readonly="readonly"');
-		$form .= TileSheetForm::createInputHint('sheet-manager', 'mod');
-		$form .= TileSheetForm::createFormRow('sheet-manager', 'sizes', $sizes);
-		$form .= TileSheetForm::createInputHint('sheet-manager', 'sizes');
+		$form .= TilesheetsForm::createFormRow('sheet-manager', 'mod', $mod, "text", 'readonly="readonly"');
+		$form .= TilesheetsForm::createInputHint('sheet-manager', 'mod');
+		$form .= TilesheetsForm::createFormRow('sheet-manager', 'sizes', $sizes);
+		$form .= TilesheetsForm::createInputHint('sheet-manager', 'sizes');
 		// Create delete/truncate options if sysop
 		$disable = in_array('sysop', $wgUser->getGroups()) ? "" : "disabled=\"disabled\"";
-		$form .= TileSheetForm::createFormRow('sheet-manager', 'delete', 1, "checkbox", $disable);
-		$form .= TileSheetForm::createFormRow('sheet-manager', 'truncate', 1, "checkbox", $disable);
-		$form .= TileSheetForm::createSubmitButton('sheet-manager');
+		$form .= TilesheetsForm::createFormRow('sheet-manager', 'delete', 1, "checkbox", $disable);
+		$form .= TilesheetsForm::createFormRow('sheet-manager', 'truncate', 1, "checkbox", $disable);
+		$form .= TilesheetsForm::createSubmitButton('sheet-manager');
 		$form .= "</table>";
 
 		$out = Xml::openElement('form', array('method' => 'get', 'action' => $wgScript, 'id' => 'ext-tilesheet-sheet-manager-form', 'class' => 'prefsection')) .

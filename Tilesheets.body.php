@@ -1,6 +1,6 @@
 <?php
 /**
- * Tile Sheets main body file
+ * Tilesheets main body file
  *
  * @file
  * @ingroup Extensions
@@ -11,7 +11,7 @@
 
 if ( !defined( 'MEDIAWIKI' ) ) exit;
 
-class TileSheet {
+class Tilesheets {
 	static private $mQueriedItems;
 	static private $mQueriedSizes;
 	private $mOptions;
@@ -34,13 +34,13 @@ class TileSheet {
 		if (isset($options['size'])) $size = $options['size'];
 		if (isset($options['mod'])) $mod = $options['mod'];
 
-		TileSheetError::log("Preparing item: {$size}px $item ($mod)");
+		TilesheetsError::log("Preparing item: {$size}px $item ($mod)");
 
 		$dbr = wfGetDB(DB_SLAVE);
 
 		if (!isset(self::$mQueriedItems[$item])) {
 			$results = $dbr->select('ext_tilesheet_items','*',array('item_name' => $item));
-			TileSheetError::query($dbr->lastQuery());
+			TilesheetsError::query($dbr->lastQuery());
 			if ($results === false || $results->numRows() == 0) {
 				self::$mQueriedItems[$item] = null;
 			} else {
@@ -68,15 +68,15 @@ class TileSheet {
 		if (isset($this->mOptions['size'])) $size = $this->mOptions['size'];
 		if (isset($this->mOptions['mod'])) $mod = $this->mOptions['mod'];
 
-		TileSheetError::log("Outputting item: {$size}px $item ($mod)");
+		TilesheetsError::log("Outputting item: {$size}px $item ($mod)");
 
 		if (self::$mQueriedItems[$item] == null) {
-			TileSheetError::error("Entry missing for $item!");
+			TilesheetsError::error("Entry missing for $item!");
 			return $this->errorTile($size);
 		}
 		if ($mod != "undefined") {
 			if (!isset(self::$mQueriedItems[$item][$mod])) {
-				TileSheetError::error("Entry missing for $item ($mod)!");
+				TilesheetsError::error("Entry missing for $item ($mod)!");
 				return $this->errorTile($size);
 			} else {
 				$x = self::$mQueriedItems[$item][$mod]->x;
@@ -88,10 +88,10 @@ class TileSheet {
 				$x = current(self::$mQueriedItems[$item])->x;
 				$y = current(self::$mQueriedItems[$item])->y;
 				$mod = current(self::$mQueriedItems[$item])->mod_name;
-				TileSheetError::warn("Mod parameter is not defined but is able to decide which entry to use! Selecting entry from $mod!");
+				TilesheetsError::warn("Mod parameter is not defined but is able to decide which entry to use! Selecting entry from $mod!");
 				return $this->generateTile($mod, $size, $x, $y);
 			} else {
-				TileSheetError::error("Multiple entries exist for $item and the mod parameter is not defined, cannot decide which entry to use!");
+				TilesheetsError::error("Multiple entries exist for $item and the mod parameter is not defined, cannot decide which entry to use!");
 				return $this->errorTile($size);
 			}
 		}
@@ -108,20 +108,20 @@ class TileSheet {
 	 */
 	private function generateTile($mod, $size, $x, $y) {
 		// Validate tilesheet size
-		TileSheet::getModTileSizes($mod);
+		Tilesheets::getModTileSizes($mod);
 		if (self::$mQueriedSizes[$mod] == null) {
-			TileSheetError::error("Tilesheet for $mod is not defined!");
+			TilesheetsError::error("Tilesheet for $mod is not defined!");
 			return $this->errorTile($size);
 		} else {
 			if (!in_array($size, self::$mQueriedSizes[$mod])) {
-				TileSheetError::warn("No {$size}px tilesheet for $mod is defined! Selecting smallest size!");
+				TilesheetsError::warn("No {$size}px tilesheet for $mod is defined! Selecting smallest size!");
 				$size = min(self::$mQueriedSizes[$mod]);
 			}
 		}
 
 		$file = wfFindFile("Tilesheet $mod $size.png");
 		if ($file === false) {
-			TileSheetError::warn("Tilesheet $mod $size.png does not exist!");
+			TilesheetsError::warn("Tilesheet $mod $size.png does not exist!");
 			return $this->errorTile($size);
 		}
 		$url = $file->getUrl();
@@ -140,7 +140,7 @@ class TileSheet {
 		$dbr = wfGetDB(DB_SLAVE);
 		if (!isset(self::$mQueriedSizes[$mod])) {
 			$result = $dbr->select('ext_tilesheet_images','sizes',array("`mod`" => $mod));
-			TileSheetError::query($dbr->lastQuery());
+			TilesheetsError::query($dbr->lastQuery());
 			if ($result == false) {
 				self::$mQueriedSizes[$mod] = null;
 			} else {
@@ -170,7 +170,7 @@ class TileSheet {
 	}
 }
 
-class TileSheetError{
+class TilesheetsError{
 	static private $mDebug;
 	private $mDebugMode;
 
@@ -238,7 +238,7 @@ class TileSheetError{
 	 * @param $message
 	 */
 	public static function deprecated($message) {
-		MWDebug::deprecated("(TileSheets) ".$message);
+		MWDebug::deprecated("(Tilesheets) ".$message);
 		self::debug($message, "Deprecated");
 	}
 
@@ -257,7 +257,7 @@ class TileSheetError{
 	 * @param $message
 	 */
 	public static function log($message) {
-		MWDebug::log("(TileSheets) ".$message);
+		MWDebug::log("(Tilesheets) ".$message);
 		self::debug($message);
 	}
 
@@ -265,7 +265,7 @@ class TileSheetError{
 	 * @param $message
 	 */
 	public static function warn($message) {
-		MWDebug::warning("(TileSheets) ".$message);
+		MWDebug::warning("(Tilesheets) ".$message);
 		self::debug($message, "Warning");
 	}
 
@@ -273,7 +273,7 @@ class TileSheetError{
 	 * @param $message
 	 */
 	public static function error($message) {
-		MWDebug::warning("(TileSheets) "."Error: ".$message);
+		MWDebug::warning("(Tilesheets) "."Error: ".$message);
 		self::debug($message, "Error");
 	}
 
@@ -281,7 +281,7 @@ class TileSheetError{
 	 * @param $message
 	 */
 	public static function notice($message) {
-		MWDebug::warning("(TileSheets) "."Notice: ".$message);
+		MWDebug::warning("(Tilesheets) "."Notice: ".$message);
 		self::debug($message, "Notice");
 	}
 }

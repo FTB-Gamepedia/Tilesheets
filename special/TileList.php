@@ -99,7 +99,7 @@ class TileList extends SpecialPage {
 			$lMod = $result->mod_name;
 			$lX = $result->x;
 			$lY = $result->y;
-			$lSizes = TileSheet::getModTileSizes($lMod);
+			$lSizes = Tilesheets::getModTileSizes($lMod);
 			if ($lSizes == null);
 			else {
 				foreach ($lSizes as $key => $size) {
@@ -171,10 +171,10 @@ class TileList extends SpecialPage {
 		}
 
 		$form = "<table>";
-		$form .= TileSheetForm::createFormRow('tile-list', 'start', $opts->getValue('start'));
-		$form .= TileSheetForm::createFormRow('tile-list', 'mod', $opts->getValue('mod'));
+		$form .= TilesheetsForm::createFormRow('tile-list', 'start', $opts->getValue('start'));
+		$form .= TilesheetsForm::createFormRow('tile-list', 'mod', $opts->getValue('mod'));
 		$form .= '<tr><td style="text-align:right"><label for="limit">'.$this->msg('tilesheet-tile-list-limit').'</td><td><select name="limit">'.$optionTags.'</select></td></tr>';
-		$form .= TileSheetForm::createSubmitButton('tile-list');
+		$form .= TilesheetsForm::createSubmitButton('tile-list');
 		$form .= "</table>";
 
 		$out = Xml::openElement('form', array('method' => 'get', 'action' => $wgScript, 'id' => 'ext-tilesheet-tile-list-filter')) .
