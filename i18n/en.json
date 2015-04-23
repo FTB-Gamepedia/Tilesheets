@@ -67,5 +67,9 @@
 	"logentry-tilesheet-createsheet": "$1 created a new sheet for $4.",
 	"logentry-tilesheet-deletesheet": "$1 deleted the $4 tilesheet.",
 	"logentry-tilesheet-editsheet": "$1 edited the $6 tilesheet. Changes: $4.",
-	"logentry-tilesheet-edittile": "$1 edited tile #$6 ($7) positioned at ($9, $10) on the $8 tilesheet. Changes: $4."
+	"logentry-tilesheet-edittile": "$1 edited tile #$6 ($7) positioned at ($9, $10) on the $8 tilesheet. Changes: $4.",
+	"action-edittilesheets": "edit tiles",
+	"right-edittilesheets": "Edit tile data for the Tilesheets extension",
+	"action-importtilesheets": "upload new and update tilesheets",
+	"right-importtilesheets": "Upload new and update existing tilesheets for the Tilesheet extension"
 }
