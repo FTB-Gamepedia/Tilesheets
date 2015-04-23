@@ -64,6 +64,9 @@ $wgHooks['EditPage::showEditForm:initial'][] = 'TilesheetsHooks::OutputWarnings'
 $wgHooks['OreDictOutput'][] = 'TilesheetsHooks::OreDictOutput';
 $wgHooks['LoadExtensionSchemaUpdates'][] = 'TilesheetsHooks::SchemaUpdate';
 
+$wgAvailableRights[] = 'edittilesheets';
+$wgAvailableRights[] = 'importtilesheets';
+
 $paths = [
 	'localBasePath' => __DIR__,
 	'remoteExtPath' => 'Tilesheets',
