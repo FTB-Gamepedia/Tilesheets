@@ -13,8 +13,12 @@ class SheetManager extends SpecialPage {
 	/**
 	 * Calls parent constructor and sets special page title
 	 */
-	function __construct() {
+	public function __construct() {
 		parent::__construct('SheetManager', 'edittilesheets');
+	}
+
+	public function getGroupName() {
+		return 'tilesheet';
 	}
 
 	/**
@@ -22,12 +26,9 @@ class SheetManager extends SpecialPage {
 	 *
 	 * @param null|string $par Subpage name
 	 */
-	function execute($par) {
+	public function execute($par) {
 		// Restrict access from unauthorized users
-		if (!$this->userCanExecute($this->getUser())) {
-			$this->displayRestrictionError();
-			return;
-		}
+		$this->checkPermissions();
 
 		$out = $this->getOutput();
 		$out->addModuleStyles('ext.tilesheets.special');
@@ -234,14 +235,14 @@ class SheetManager extends SpecialPage {
 			$sizes = $result->current()->sizes;
 		}
 
-		global $wgUser, $wgScript;
+		global $wgScript;
 		$form = "<table>";
 		$form .= TilesheetsForm::createFormRow('sheet-manager', 'mod', $mod, "text", 'readonly="readonly"');
 		$form .= TilesheetsForm::createInputHint('sheet-manager', 'mod');
 		$form .= TilesheetsForm::createFormRow('sheet-manager', 'sizes', $sizes);
 		$form .= TilesheetsForm::createInputHint('sheet-manager', 'sizes');
 		// Create delete/truncate options if sysop
-		$disable = in_array('sysop', $wgUser->getGroups()) ? "" : "disabled=\"disabled\"";
+		$disable = in_array('sysop', $this->getUser()->getGroups()) ? "" : "disabled=\"disabled\"";
 		$form .= TilesheetsForm::createFormRow('sheet-manager', 'delete', 1, "checkbox", $disable);
 		$form .= TilesheetsForm::createFormRow('sheet-manager', 'truncate', 1, "checkbox", $disable);
 		$form .= TilesheetsForm::createSubmitButton('sheet-manager');

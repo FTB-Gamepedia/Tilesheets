@@ -13,8 +13,12 @@ class TileList extends SpecialPage {
 	/**
 	 * Calls parent constructor and sets special page title
 	 */
-	function __construct() {
+	public function __construct() {
 		parent::__construct('TileList');
+	}
+
+	public function getGroupName() {
+		return 'tilesheet';
 	}
 
 	/**
@@ -22,8 +26,8 @@ class TileList extends SpecialPage {
 	 *
 	 * @param null|string $par Subpage name
 	 */
-	function execute($par) {
-		global $wgQueryPageDefaultLimit, $wgUser;
+	public function execute($par) {
+		global $wgQueryPageDefaultLimit;
 		$out = $this->getOutput();
 
 		$this->setHeaders();
@@ -91,7 +95,7 @@ class TileList extends SpecialPage {
 		$msgSizesName = wfMessage('tilesheet-sizes');
 		$msgXName = wfMessage('tilesheet-x');
 		$msgYName = wfMessage('tilesheet-y');
-		$canEdit = in_array("edittilesheets", $wgUser->getRights());
+		$canEdit = in_array("edittilesheets", $this->getUser()->getRights());
 		$table .= "! !! # !!  $msgItemName !! $msgModName !! $msgXName !! $msgYName !! $msgSizesName\n";
 		foreach ($results as $result) {
 			$lId = $result->entry_id;

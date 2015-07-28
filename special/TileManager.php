@@ -13,8 +13,12 @@ class TileManager extends SpecialPage {
 	/**
 	 * Calls parent constructor and sets special page title
 	 */
-	function __construct() {
+	public function __construct() {
 		parent::__construct('TileManager', 'edittilesheets');
+	}
+
+	public function getGroupName() {
+		return 'tilesheet';
 	}
 
 	/**
@@ -22,12 +26,9 @@ class TileManager extends SpecialPage {
 	 *
 	 * @param null|string $par Subpage name
 	 */
-	function execute($par) {
+	public function execute($par) {
 		// Restrict access from unauthorized users
-		if (!$this->userCanExecute($this->getUser())) {
-			$this->displayRestrictionError();
-			return;
-		}
+		$this->checkPermissions();
 
 		$out = $this->getOutput();
 		$out->addModuleStyles('ext.tilesheets.special');
@@ -229,7 +230,7 @@ class TileManager extends SpecialPage {
 			$y = $result->current()->y;
 		}
 
-		global $wgUser, $wgScript;
+		global $wgScript;
 		$form = "<table>";
 		$form .= TilesheetsForm::createFormRow('tile-manager', 'id', $id, "text", 'readonly="readonly"');
 		$form .= TilesheetsForm::createFormRow('tile-manager', 'item', $item);
@@ -244,7 +245,7 @@ class TileManager extends SpecialPage {
 		$out = Xml::openElement('form', array('method' => 'get', 'action' => $wgScript, 'id' => 'ext-tilesheet-tile-manager-form', 'class' => 'prefsection')) .
 			Xml::fieldset($this->msg('tilesheet-tile-manager-legend')->text()) .
 			Html::hidden('title', $this->getTitle()->getPrefixedText()) .
-			Html::hidden('token', $wgUser->getEditToken()) .
+			Html::hidden('token', $this->getUser()->getEditToken()) .
 			Html::hidden('update', 1) .
 			$form .
 			Xml::closeElement( 'fieldset' ) . Xml::closeElement( 'form' ) . "\n";

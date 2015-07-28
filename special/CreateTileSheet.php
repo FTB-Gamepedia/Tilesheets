@@ -13,8 +13,12 @@ class CreateTileSheet extends SpecialPage {
 	/**
 	 * Calls parent constructor and sets special page title
 	 */
-	function __construct() {
+	public function __construct() {
 		parent::__construct('CreateTileSheet', 'importtilesheets');
+	}
+
+	public function getGroupName() {
+		return 'tilesheet';
 	}
 
 	/**
@@ -22,13 +26,9 @@ class CreateTileSheet extends SpecialPage {
 	 *
 	 * @param null|string $par Subpage name
 	 */
-	function execute($par) {
-		global $wgUser;
+	public function execute($par) {
 		// Restrict access from unauthorized users
-		if (!$this->userCanExecute($this->getUser())) {
-			$this->displayRestrictionError();
-			return;
-		}
+		$this->checkPermissions();
 
 		$out = $this->getOutput();
 		$out->addModuleStyles('ext.tilesheets.special');
@@ -53,7 +53,7 @@ class CreateTileSheet extends SpecialPage {
 		// Process and save POST data
 		if ($_POST) {
 			// XSRF prevention
-			if ( !$wgUser->matchEditToken( $this->getRequest()->getVal( 'token' ) ) ) {
+			if ( !$this->getUser()->matchEditToken( $this->getRequest()->getVal( 'token' ) ) ) {
 				return;
 			}
 
@@ -95,7 +95,7 @@ class CreateTileSheet extends SpecialPage {
 	 * @return string
 	 */
 	private function buildForm() {
-		global $wgArticlePath, $wgUser;
+		global $wgArticlePath;
 		$form = "<table>";
 		$form .= TilesheetsForm::createFormRow('create', 'mod');
 		$form .= TilesheetsForm::createInputHint('create', 'mod');
@@ -110,7 +110,7 @@ class CreateTileSheet extends SpecialPage {
 		$out = Xml::openElement('form', array('method' => 'post', 'action' => str_replace('$1', 'Special:CreateTileSheet', $wgArticlePath), 'id' => 'ext-tilesheet-create-form', 'class' => 'prefsection')) .
 			Xml::fieldset($this->msg('tilesheet-create-legend')->text()) .
 			Html::hidden('title', $this->getTitle()->getPrefixedText()) .
-			Html::hidden( 'token', $wgUser->getEditToken() ) .
+			Html::hidden( 'token', $this->getUser()->getEditToken() ) .
 			$form .
 			Xml::closeElement( 'fieldset' ) . Xml::closeElement( 'form' ) . "\n";
 

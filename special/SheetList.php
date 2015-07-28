@@ -13,8 +13,12 @@ class SheetList extends SpecialPage {
 	/**
 	 * Calls parent constructor and sets special page title
 	 */
-	function __construct() {
+	public function __construct() {
 		parent::__construct('SheetList');
+	}
+
+	public function getGroupName() {
+		return 'tilesheet';
 	}
 
 	/**
@@ -22,8 +26,8 @@ class SheetList extends SpecialPage {
 	 *
 	 * @param null|string $par Subpage name
 	 */
-	function execute($par) {
-		global $wgQueryPageDefaultLimit, $wgUser;
+	public function execute($par) {
+		global $wgQueryPageDefaultLimit;
 		$out = $this->getOutput();
 
 		$this->setHeaders();
@@ -79,7 +83,7 @@ class SheetList extends SpecialPage {
 		$table = "{| class=\"mw-datatable\" style=\"width:100%\"\n";
 		$msgModName = wfMessage('tilesheet-mod-name');
 		$msgSizesName = wfMessage('tilesheet-sizes');
-		$canEdit = in_array("edittilesheets", $wgUser->getRights());
+		$canEdit = in_array("edittilesheets", $this->getUser()->getRights());
 		$table .= "! !! $msgModName !! $msgSizesName\n";
 		foreach ($results as $result) {
 			$lMod = $result->mod;

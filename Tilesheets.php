@@ -48,15 +48,10 @@ $wgAutoloadClasses['TileManager'] = __DIR__ . "/special/TileManager.php";
 $wgAutoloadClasses['SheetManager'] = __DIR__ . "/special/SheetManager.php";
 
 $wgSpecialPages['TileList'] = "TileList";
-$wgSpecialPageGroups['TileList'] = "tilesheet";
 $wgSpecialPages['SheetList'] = "SheetList";
-$wgSpecialPageGroups['SheetList'] = "tilesheet";
 $wgSpecialPages['CreateTileSheet'] = "CreateTileSheet";
-$wgSpecialPageGroups['CreateTileSheet'] = "tilesheet";
 $wgSpecialPages['TileManager'] = "TileManager";
-$wgSpecialPageGroups['TileManager'] = "tilesheet";
 $wgSpecialPages['SheetManager'] = "SheetManager";
-$wgSpecialPageGroups['SheetManager'] = "tilesheet";
 
 $wgHooks['ParserFirstCallInit'][] = 'TilesheetsHooks::SetupParser';
 $wgHooks['BeforePageDisplay'][] = 'TilesheetsHooks::BeforePageDisplay';
@@ -76,7 +71,7 @@ $wgResourceModules += [
 		'styles' => 'css/tilesheets.css',
 	],
 	'ext.tilesheets.special' => $paths + [
-		'styles'   => 'css/tilesheets.special.css',
+		'styles' => 'css/tilesheets.special.css',
 	],
 ];
 
