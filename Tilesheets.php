@@ -23,7 +23,7 @@ $wgExtensionCredits['parserhooks'][] = array(
 	'name' => 'Tilesheets',
 	'descriptionmsg' => 'tilesheets-desc',
 	'version' => '1.1.3',
-	'author' => '[http://ftb.gamepedia.com/User:Jinbobo Jinbobo], [http://ftb.gamepedia.com/User:Retep998 Peter Atashian], [http://ftb.gamepedia.com/User:SatanicSanta Eli Foster], Telshin, Noahm',
+	'author' => '[http://ftb.gamepedia.com/User:Jinbobo Jinbobo], [http://ftb.gamepedia.com/User:Retep998 Peter Atashian], [http://ftb.gamepedia.com/User:TheSatanicSanta Eli Foster], Telshin, Noahm',
 	'url' => 'http://help.gamepedia.com/Extension:Tilesheets'
 );
 
