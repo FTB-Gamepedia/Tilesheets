@@ -17,7 +17,13 @@ class TileManager extends SpecialPage {
 		parent::__construct('TileManager', 'edittilesheets');
 	}
 
-	public function getGroupName() {
+	/**
+	 * Return the group name for this special page.
+	 *
+	 * @access	protected
+	 * @return	string
+	 */
+	protected function getGroupName() {
 		return 'tilesheet';
 	}
 

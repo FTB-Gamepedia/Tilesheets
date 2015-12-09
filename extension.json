@@ -1,0 +1,87 @@
+{
+	"name": "Tilesheets",
+	"version": "1.1.4",
+	"author": [
+		"[http://ftb.gamepedia.com/User:Jinbobo Jinbobo]",
+		"[http://ftb.gamepedia.com/User:Retep998 Peter Atashian]",
+		"[http://ftb.gamepedia.com/User:SatanicSanta Eli Foster]",
+		"Telshin",
+		"Noahm",
+		"Cameron Chunn"
+	],
+	"url": "http://help.gamepedia.com/Extension:Tilesheets",
+	"descriptionmsg": "tilesheets-desc",
+	"type": "parserhooks",
+	"AvailableRights": [
+		"edittilesheets",
+		"importtilesheets"
+	],
+	"SpecialPages": {
+		"TileList": "TileList",
+		"SheetList": "SheetList",
+		"CreateTileSheet": "CreateTileSheet",
+		"TileManager": "TileManager",
+		"SheetManager": "SheetManager"
+	},
+	"LogTypes": [
+		"tilesheet"
+	],
+	"LogActionsHandlers": {
+		"tilesheet/*": "LogFormatter"
+	},
+	"MessagesDirs": {
+		"Tilesheets": [
+			"i18n"
+		]
+	},
+	"ExtensionMessagesFiles": {
+		"TilesheetsMagic": "Tilesheets.i18n.magic.php"
+	},
+	"AutoloadClasses": {
+		"Tilesheets": "Tilesheets.body.php",
+		"TilesheetsError": "Tilesheets.body.php",
+		"TilesheetsHooks": "Tilesheets.hooks.php",
+		"TilesheetsForm": "classes/TilesheetsForm.php",
+		"TileList": "special/TileList.php",
+		"SheetList": "special/SheetList.php",
+		"CreateTileSheet": "special/CreateTileSheet.php",
+		"TileManager": "special/TileManager.php",
+		"SheetManager": "special/SheetManager.php"
+	},
+	"ResourceModules": {
+		"ext.tilesheets": {
+			"styles": "css/tilesheets.css",
+			"position": "top"
+		},
+		"ext.tilesheets.special": {
+			"styles": "css/tilesheets.special.css",
+			"position": "top"
+		}
+	},
+	"ResourceFileModulePaths": {
+		"localBasePath": "/",
+		"remoteExtPath": "Tilesheets"
+	},
+	"Hooks": {
+		"ParserFirstCallInit": [
+			"TilesheetsHooks::SetupParser"
+		],
+		"BeforePageDisplay": [
+			"TilesheetsHooks::BeforePageDisplay"
+		],
+		"EditPage::showEditForm:initial": [
+			"TilesheetsHooks::OutputWarnings"
+		],
+		"OreDictOutput": [
+			"TilesheetsHooks::OreDictOutput"
+		],
+		"LoadExtensionSchemaUpdates": [
+			"TilesheetsHooks::SchemaUpdate"
+		]
+	},
+	"config": {
+		"ShowExceptionDetails": true,
+		"TilesheetsDebug": false
+	},
+	"manifest_version": 1
+}

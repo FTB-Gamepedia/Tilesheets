@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS /*_*/ext_tilesheet_items (
-  `entry_id` int(11) PRIMARY KEY NULL AUTO_INCREMENT,
+  `entry_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `item_name` varchar(100) NOT NULL,
   `mod_name` varchar(10) NOT NULL,
   `x` int(11) NOT NULL,

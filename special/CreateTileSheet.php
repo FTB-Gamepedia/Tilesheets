@@ -17,7 +17,13 @@ class CreateTileSheet extends SpecialPage {
 		parent::__construct('CreateTileSheet', 'importtilesheets');
 	}
 
-	public function getGroupName() {
+	/**
+	 * Return the group name for this special page.
+	 *
+	 * @access	protected
+	 * @return	string
+	 */
+	protected function getGroupName() {
 		return 'tilesheet';
 	}
 

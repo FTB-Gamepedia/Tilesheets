@@ -17,7 +17,13 @@ class SheetList extends SpecialPage {
 		parent::__construct('SheetList');
 	}
 
-	public function getGroupName() {
+	/**
+	 * Return the group name for this special page.
+	 *
+	 * @access	protected
+	 * @return	string
+	 */
+	protected function getGroupName() {
 		return 'tilesheet';
 	}
 
