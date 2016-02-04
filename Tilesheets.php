@@ -19,6 +19,10 @@
     wfLoadExtension( 'Tilesheets' );
     // Keep i18n globals so mergeMessageFileList.php doesn't break
     $wgMessagesDirs['Tilesheets'] = __DIR__ . '/i18n';
+    $wgAutoloadClasses['TilesheetsQuerySheetsApi'] = __DIR__ . '/api/TilesheetsQuerySheetsApi.php';
+    $wgAPIListModules['tilesheets'] = 'TilesheetsQuerySheetsApi';
+    $wgAutoloadClasses['TilesheetsQueryTilesApi'] = __DIR__ . '/api/TilesheetsQueryTilesApi.php';
+    $wgAPIListModules['tiles'] = 'TilesheetsQueryTilesApi';
     wfWarn(
  	   'Deprecated PHP entry point used for Tilesheets extension. Please use wfLoadExtension instead, ' .
  	   'see https://www.mediawiki.org/wiki/Extension_registration for more details.'
