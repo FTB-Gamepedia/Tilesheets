@@ -121,7 +121,7 @@ class TileManager extends SpecialPage {
 		$stuff = $dbw->select('ext_tilesheet_items', '*', array('entry_id' => $id));
 		$dbw->delete('ext_tilesheet_items', array('entry_id' => $id));
 
-		if ($stuff->numRows() == 0) return;
+		if ($stuff->numRows() == 0) return false;
 
 		foreach ($stuff as $item) {
 			$target = empty($item->mod_name) || $item->mod_name == "undefined" ? $item->item_name : "$item->item_name ($item->mod_name)";
@@ -136,6 +136,7 @@ class TileManager extends SpecialPage {
 			$logEntry->publish($logId);
 			// End log
 		}
+		return true;
 	}
 
 	/**
@@ -156,7 +157,7 @@ class TileManager extends SpecialPage {
 		$stuff = $dbw->select('ext_tilesheet_items', '*', array('entry_id' => $id));
 		$dbw->update('ext_tilesheet_items', array('mod_name' => $mod, 'item_name' => $item, 'x' => $x, 'y' => $y), array('entry_id' => $id));if ($stuff->numRows() == 0) return;
 
-		if ($stuff->numRows() == 0) return;
+		if ($stuff->numRows() == 0) return 1;
 
 		$fItem = $item;
 		foreach ($stuff as $item) {
@@ -183,7 +184,7 @@ class TileManager extends SpecialPage {
 			foreach ($diff as $field => $change) {
 				$diffString .= "$field [$change[0] -> $change[1]] ";
 			}
-			if ($diffString == "" || count($diff) == 0) return; // No change
+			if ($diffString == "" || count($diff) == 0) return 2; // No change
 
 			// Start log
 			$logEntry = new ManualLogEntry('tilesheet', 'edittile');
@@ -194,6 +195,7 @@ class TileManager extends SpecialPage {
 			$logId = $logEntry->insert();
 			$logEntry->publish($logId);
 			// End log
+			return 0;
 		}
 	}
 

@@ -168,6 +168,49 @@ class Tilesheets {
 		}
 		return $diffString;
 	}
+
+	/**
+	 * Updates the tilesheet row.
+	 * @param string $curMod 	The current mod abbreviation.
+	 * @param string $toMod 	The new mod abbreviation.
+	 * @param string $toSizes 	The new sizes, separated by commas.
+	 * @param User $user 		The user performing the change.
+	 * @param string $comment	The edit summary.
+	 * @return bool				Whether or not the edit was successful.
+	 * @throws MWException		See Database#query.
+	 */
+	public static function updateSheetRow($curMod, $toMod, $toSizes, $user, $comment = '') {
+		$dbw = wfGetDB(DB_MASTER);
+		$stuff = $dbw->select('ext_tilesheet_images', '*', array('`mod`' => $curMod));
+		$result = $dbw->update('ext_tilesheet_images', array('sizes' => $toSizes, '`mod`' => $toMod), array('`mod`' => $curMod));
+
+		if ($stuff->numRows() == 0 || $result == false) {
+			return false;
+		}
+
+		$diff = array();
+		if ($stuff->current()->sizes != $toSizes) {
+			$diff['sizes'][] = $stuff->current()->sizes;
+			$diff['sizes'][] = $toSizes;
+		}
+		$diffString = Tilesheets::buildDiffString($diff);
+
+		if ($diffString == "" || count($diff) == 0) {
+			return false;
+		}
+
+		// Start log
+		$logEntry = new ManualLogEntry('tilesheet', 'editsheet');
+		$logEntry->setPerformer($user);
+		$logEntry->setTarget(Title::newFromText("Sheet/$toMod", NS_SPECIAL));
+		$logEntry->setComment($comment);
+		$logEntry->setParameters(array("4::diff" => $diffString, "5::diff_json" => json_encode($diff), "6::mod" => $curMod, "7::sizes" => $stuff->current()->sizes, "8::to_sizes" => $toSizes));
+		$logId = $logEntry->insert();
+		$logEntry->publish($logId);
+		// End log
+
+		return true;
+	}
 }
 
 class TilesheetsError{
