@@ -4,15 +4,16 @@
  *
  * @file
  * @ingroup Extensions
- * @version 1.1.4
+ * @version 2.0.0
  * @author Jinbobo <paullee05149745@gmail.com>
  * @author Peter Atashian
  * @author Telshin <timmrysk@gmail.com>
  * @author Noahm <noah@manneschmidt.net>
  * @author Cameron Chunn <cchunn@curse.com>
+ * @author Eli Foster <elifosterwy@gmail.com>
  * @license
  * @package	Tilesheets
- * @link	https://github.com/CurseStaff/Tilesheets
+ * @link	https://github.com/HydraWiki/Tilesheets
  */
 
  if ( function_exists( 'wfLoadExtension' ) ) {

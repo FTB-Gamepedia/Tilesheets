@@ -1,6 +1,17 @@
 # Changelog
 This changelog only shows recent version history, because of the lack of documentation from the former maintainers. The very first changelog (1.1.2) is likely incomplete.
 
+## Version 2
+### 2.0.0
+* Implement a web API for the extension with the following new actions (issue #2 PR #15):
+  * action=query&list=tilesheets
+  * action=query&list=tiles
+  * action=editsheet
+  * action=addtile
+  * action=createsheet
+  * action=deletetiles
+  * action=edittile
+
 ## Version 1
 ### 1.1.4
 * Fix minor SQL installation issues
