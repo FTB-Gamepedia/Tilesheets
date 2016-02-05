@@ -46,7 +46,27 @@
 		"SheetList": "special/SheetList.php",
 		"CreateTileSheet": "special/CreateTileSheet.php",
 		"TileManager": "special/TileManager.php",
-		"SheetManager": "special/SheetManager.php"
+		"SheetManager": "special/SheetManager.php",
+		"TilesheetsQuerySheetsApi": "api/TilesheetsQuerySheetsApi.php",
+		"TilesheetsQueryTilesApi": "api/TilesheetsQueryTilesApi.php",
+		"TilesheetsAddTileApi": "api/TilesheetsAddTileApi.php",
+		"TilesheetsDeleteSheetApi": "api/TilesheetsDeleteSheetApi.php",
+		"TilesheetsAddSheetApi": "api/TilesheetsAddSheetApi.php",
+		"TilesheetsDeleteTilesApi": "api/TilesheetsDeleteTilesApi",
+		"TilesheetsEditTileApi": "api/TilesheetsEditTileApi",
+		"TilesheetsEditSheetApi": "api/TilesheetsEditSheetApi"
+	},
+	"APIModules": {
+		"addtile": "TilesheetsAddTileApi",
+		"deletesheet": "TilesheetsDeleteSheetApi",
+		"createsheet": "TilesheetsAddSheetApi",
+		"deletetiles": "TilesheetsDeleteTilesApi",
+		"edittile": "TilesheetsEditTileApi",
+		"editsheet": "TilesheetsEditSheetApi"
+	},
+	"APIListModules": {
+		"tilesheets": "TilesheetsQuerySheetsApi",
+		"tiles": "TilesheetsQueryTilesApi"
 	},
 	"ResourceModules": {
 		"ext.tilesheets": {
