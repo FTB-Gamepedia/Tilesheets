@@ -29,6 +29,8 @@
     $wgAPIModules['deletesheet'] = 'TilesheetsDeleteSheetApi';
     $wgAutoloadClasses['TilesheetsAddSheetApi'] = __DIR__ . '/api/TilesheetsAddSheetApi.php';
     $wgAPIModules['createsheet'] = 'TilesheetsAddSheetApi';
+    $wgAutoloadClasses['TilesheetsDeleteTilesApi'] = __DIR__ . '/api/TilesheetsDeleteTilesApi.php';
+    $wgAPIModules['deletetiles'] = 'TilesheetsDeleteTilesApi';
     wfWarn(
  	   'Deprecated PHP entry point used for Tilesheets extension. Please use wfLoadExtension instead, ' .
  	   'see https://www.mediawiki.org/wiki/Extension_registration for more details.'

@@ -121,7 +121,7 @@ class TileManager extends SpecialPage {
 		$stuff = $dbw->select('ext_tilesheet_items', '*', array('entry_id' => $id));
 		$dbw->delete('ext_tilesheet_items', array('entry_id' => $id));
 
-		if ($stuff->numRows() == 0) return;
+		if ($stuff->numRows() == 0) return false;
 
 		foreach ($stuff as $item) {
 			$target = empty($item->mod_name) || $item->mod_name == "undefined" ? $item->item_name : "$item->item_name ($item->mod_name)";
@@ -136,6 +136,7 @@ class TileManager extends SpecialPage {
 			$logEntry->publish($logId);
 			// End log
 		}
+		return true;
 	}
 
 	/**
