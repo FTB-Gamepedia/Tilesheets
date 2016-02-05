@@ -66,7 +66,7 @@ class SheetManager extends SpecialPage {
 		if ($mod == '') return;
 
 		// Update stuff
-		if ($opts->getValue('update') == 1) self::updateTable($mod, $sizes);
+		if ($opts->getValue('update') == 1) Tilesheets::updateSheetRow($mod, $mod, $sizes, $this->getUser());
 		if ($opts->getValue('delete') == 1 && in_array('sysop', $this->getUser()->getGroups())) self::deleteEntry($mod, "");
 		if ($opts->getValue('truncate') == 1 || $opts->getValue('delete') == 1 && in_array('sysop', $this->getUser()->getGroups())) self::truncateTable($mod, "");
 
@@ -134,46 +134,6 @@ class SheetManager extends SpecialPage {
 			$logEntry->publish($logId);
 			// End log
 		}
-
-		return true;
-	}
-
-	/**
-	 * Update the sheets table
-	 *
-	 * @param string $mod
-	 * @param string $sizes
-	 * @param string $comment
-	 * @return bool
-	 */
-	public static function updateTable($mod, $sizes, $comment = "") {
-		global $wgUser;
-
-		$dbw = wfGetDB(DB_MASTER);
-		$stuff = $dbw->select('ext_tilesheet_images', '*', array('`mod`' => $mod));
-		$result = $dbw->update('ext_tilesheet_images', array('sizes' => $sizes), array('`mod`' => $mod));
-
-		if ($stuff->numRows() == 0) return false;
-		if ($result == false) return false;
-
-		$diff = array();
-		if ($stuff->current()->sizes != $sizes) {
-			$diff['sizes'][] = $stuff->current()->sizes;
-			$diff['sizes'][] = $sizes;
-		}
-		$diffString = TileSheet::buildDiffString($diff);
-
-		if ($diffString == "" || count($diff) == 0) return false; // No change
-
-		// Start log
-		$logEntry = new ManualLogEntry('tilesheet', 'editsheet');
-		$logEntry->setPerformer($wgUser);
-		$logEntry->setTarget(Title::newFromText("Sheet/$mod", NS_SPECIAL));
-		$logEntry->setComment($comment);
-		$logEntry->setParameters(array("4::diff" => $diffString, "5::diff_json" => json_encode($diff), "6::mod" => $mod, "7::sizes" => $stuff->current()->sizes, "8::to_sizes" => $sizes));
-		$logId = $logEntry->insert();
-		$logEntry->publish($logId);
-		// End log
 
 		return true;
 	}
@@ -257,7 +217,7 @@ class SheetManager extends SpecialPage {
 		$out = Xml::openElement('form', array('method' => 'get', 'action' => $wgScript, 'id' => 'ext-tilesheet-sheet-manager-form', 'class' => 'prefsection')) .
 			Xml::fieldset($this->msg('tilesheet-sheet-manager-legend')->text()) .
 			Html::hidden('title', $this->getTitle()->getPrefixedText()) .
-			Html::hidden('token', $wgUser->getEditToken()) .
+			Html::hidden('token', $this->getUser()->getEditToken()) .
 			Html::hidden('update', 1) .
 			$form .
 			Xml::closeElement( 'fieldset' ) . Xml::closeElement( 'form' ) . "\n";
