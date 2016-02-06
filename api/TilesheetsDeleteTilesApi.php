@@ -62,7 +62,7 @@ class TilesheetsDeleteTilesApi extends ApiBase {
 
         $ret = array();
         foreach ($ids as $id) {
-            $result = TileManager::deleteEntry($id, $summary);
+            $result = TileManager::deleteEntry($id, $this->getUser(), $summary);
             $ret[$id] = $result;
         }
 

@@ -163,7 +163,7 @@ class SheetList extends SpecialPage {
 
 		$out = Xml::openElement('form', array('method' => 'get', 'action' => $wgScript, 'id' => 'ext-tilesheet-sheet-list-filter', 'class' => 'prefsection')) .
 			Xml::fieldset($this->msg('tilesheet-sheet-list-legend')->text()) .
-			Html::hidden('title', $this->getTitle()->getPrefixedText()) .
+			Html::hidden('title', $this->getPageTitle()->getPrefixedText()) .
 			$form .
 			Xml::closeElement( 'fieldset' ) . Xml::closeElement( 'form' ) . "\n";
 

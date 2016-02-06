@@ -77,7 +77,7 @@ class TilesheetsAddTileApi extends ApiBase {
         $name = $this->getParameter('name');
         $x = $this->getParameter('x');
         $y = $this->getParameter('y');
-        $res = TileManager::createTile($mod, $name, $x, $y, $summary);
+        $res = TileManager::createTile($mod, $name, $x, $y, $this->getUser(), $summary);
         $this->getResult()->addValue('edit', 'addtile', array($name => $res));
     }
 }

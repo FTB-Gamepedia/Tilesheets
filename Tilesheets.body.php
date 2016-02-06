@@ -8,9 +8,6 @@
  * @author Jinbobo <paullee05149745@gmail.com>
  * @license
  */
-
-if ( !defined( 'MEDIAWIKI' ) ) exit;
-
 class Tilesheets {
 	static private $mQueriedItems;
 	static private $mQueriedSizes;

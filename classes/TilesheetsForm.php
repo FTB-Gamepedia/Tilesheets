@@ -8,7 +8,6 @@
  * @author Jinbobo <paullee05149745@gmail.com>, Telshin <timmrysk@gmail.com>
  * @license
  */
-
 class TilesheetsForm {
 	/**
 	 * Helper function for creating form rows
