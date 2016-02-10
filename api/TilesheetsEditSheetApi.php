@@ -91,7 +91,7 @@ class TilesheetsEditSheetApi extends ApiBase {
 
         $result = Tilesheets::updateSheetRow($curMod, $toMod, $toSizes, $this->getUser(), $summary);
         if ($result) {
-            $this->getResult()->addValue('edit', 'edittile', array($curMod => $toMod, $row->sizes => $toSizes));
+            $this->getResult()->addValue('edit', 'editsheet', array($curMod => $toMod, $row->sizes => $toSizes));
         } else {
             $this->dieUsage('The update errored. This does not necessarily mean that it failed, please see your logs.', 'updateerror');
         }

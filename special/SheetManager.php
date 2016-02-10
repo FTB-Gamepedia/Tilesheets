@@ -88,8 +88,9 @@ class SheetManager extends SpecialPage {
 		$stuff = $dbw->select('ext_tilesheet_images', '*', array('`mod`' => $mod));
 		$result = $dbw->delete('ext_tilesheet_images', array('`mod`' => $mod));
 
-		if ($stuff->numRows() == 0) return false;
-		if ($result == false) return false;
+		if ($stuff->numRows() == 0 || $result == false) {
+			return false;
+		}
 
 		// Start log
 		$logEntry = new ManualLogEntry('tilesheet', 'deletesheet');

@@ -7,7 +7,7 @@ class TilesheetsDeleteSheetApi extends ApiBase {
 
     public function getAllowedParams() {
         return array(
-            'mod' => array(
+            'mods' => array(
                 ApiBase::PARAM_TYPE => 'string',
                 ApiBase::PARAM_REQUIRED => true,
                 ApiBase::PARAM_ALLOW_DUPLICATES => false,
@@ -38,7 +38,7 @@ class TilesheetsDeleteSheetApi extends ApiBase {
         return array(
             'token' => 'The edit token',
             'summary' => 'An optional edit summary',
-            'mod' => 'The mod to delete by its abbreviation',
+            'mods' => 'The mod abbreviations to delete',
         );
     }
 
@@ -48,7 +48,7 @@ class TilesheetsDeleteSheetApi extends ApiBase {
 
     public function getExamples() {
         return array(
-            'api.php?action=deletesheet&tsmod=A&tssummary=Because I hate A.',
+            'api.php?action=deletesheet&tsmods=A|B|C&tssummary=Because I don\'t know my ABCs.',
         );
     }
 
@@ -57,10 +57,14 @@ class TilesheetsDeleteSheetApi extends ApiBase {
             $this->dieUsage('You do not have permission to edit tilesheets', 'permissiondenied');
         }
 
-        $mod = $this->getParameter('mod');
+        $mods = $this->getParameter('mod');
         $summary = $this->getParameter('summary');
+        $ret = array();
 
-        $result = SheetManager::deleteEntry($mod, $summary);
-        $this->getResult()->addValue('edit', 'deletesheet', array($mod => $result));
+        foreach ($mods as $mod) {
+            $ret[$mod] = SheetManager::deleteEntry($mod, $summary);
+        }
+
+        $this->getResult()->addValue('edit', 'deletesheet', $ret);
     }
 }
