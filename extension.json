@@ -52,9 +52,9 @@
 		"TilesheetsAddTileApi": "api/TilesheetsAddTileApi.php",
 		"TilesheetsDeleteSheetApi": "api/TilesheetsDeleteSheetApi.php",
 		"TilesheetsAddSheetApi": "api/TilesheetsAddSheetApi.php",
-		"TilesheetsDeleteTilesApi": "api/TilesheetsDeleteTilesApi",
-		"TilesheetsEditTileApi": "api/TilesheetsEditTileApi",
-		"TilesheetsEditSheetApi": "api/TilesheetsEditSheetApi"
+		"TilesheetsDeleteTilesApi": "api/TilesheetsDeleteTilesApi.php",
+		"TilesheetsEditTileApi": "api/TilesheetsEditTileApi.php",
+		"TilesheetsEditSheetApi": "api/TilesheetsEditSheetApi.php"
 	},
 	"APIModules": {
 		"addtile": "TilesheetsAddTileApi",
