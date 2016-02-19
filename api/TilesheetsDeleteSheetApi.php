@@ -62,7 +62,7 @@ class TilesheetsDeleteSheetApi extends ApiBase {
         $ret = array();
 
         foreach ($mods as $mod) {
-            $ret[$mod] = SheetManager::deleteEntry($mod, $summary);
+            $ret[$mod] = SheetManager::deleteEntry($mod, $this->getUser(), $summary);
         }
 
         $this->getResult()->addValue('edit', 'deletesheet', $ret);

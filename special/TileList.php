@@ -189,7 +189,7 @@ class TileList extends SpecialPage {
 
 		$out = Xml::openElement('form', array('method' => 'get', 'action' => $wgScript, 'id' => 'ext-tilesheet-tile-list-filter')) .
 			Xml::fieldset($this->msg('tilesheet-tile-list-legend')->text()) .
-			Html::hidden('title', $this->getTitle()->getPrefixedText()) .
+			Html::hidden('title', $this->getPageTitle()->getPrefixedText()) .
 			$form .
 			Xml::closeElement( 'fieldset' ) . Xml::closeElement( 'form' ) . "\n";
 

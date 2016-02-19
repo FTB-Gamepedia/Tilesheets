@@ -64,8 +64,6 @@ class CreateTileSheet extends SpecialPage {
 			}
 
 			$out->addHtml('<tt>');
-			$dbw = wfGetDB(DB_MASTER);
-
 			$mod = $opts->getValue('mod');
 			$sizes = $opts->getValue('sizes');
 			// If update mode

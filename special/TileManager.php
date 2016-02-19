@@ -71,16 +71,14 @@ class TileManager extends SpecialPage {
 		if ($id == 0) return;
 
 		// Process and save POST data
-		if ($opts->getValue('update') == 1) self::updateTable($id, $item, $mod, $x, $y);
-		if ($opts->getValue('delete') == 1) self::deleteEntry($id);
+		if ($opts->getValue('update') == 1) self::updateTable($id, $item, $mod, $x, $y, $this->getUser());
+		if ($opts->getValue('delete') == 1) self::deleteEntry($id, $this->getUser());
 
 		// Output update form
 		$out->addHTML($this->buildUpdateForm($id));
 	}
 
-	public static function createTile($mod, $item, $x, $y, $comment = "") {
-		global $wgUser;
-
+	public static function createTile($mod, $item, $x, $y, $user, $comment = "") {
 		$dbw = wfGetDB(DB_MASTER);
 		// Check if position on tilesheet is already occupied
 		$result = $dbw->select('ext_tilesheet_items', 'COUNT(`entry_id`) AS count', array('`mod_name`' => $mod, '`x`' => intval($x), '`y`' => intval($y)));
@@ -102,7 +100,7 @@ class TileManager extends SpecialPage {
 
 			// Start log
 			$logEntry = new ManualLogEntry('tilesheet', 'createtile');
-			$logEntry->setPerformer($wgUser);
+			$logEntry->setPerformer($user);
 			$logEntry->setTarget(Title::newFromText("Tile/$target", NS_SPECIAL));
 			$logEntry->setComment($comment);
 			$logEntry->setParameters(array("4::mod" => $mod, "5::item" => $item, "6::x" => $x, "7::y" => $y));
@@ -114,9 +112,7 @@ class TileManager extends SpecialPage {
 		return true;
 	}
 
-	public static function deleteEntry($id, $comment = "") {
-		global $wgUser;
-
+	public static function deleteEntry($id, $user, $comment = "") {
 		$dbw = wfGetDB(DB_MASTER);
 		$stuff = $dbw->select('ext_tilesheet_items', '*', array('entry_id' => $id));
 		$dbw->delete('ext_tilesheet_items', array('entry_id' => $id));
@@ -128,7 +124,7 @@ class TileManager extends SpecialPage {
 
 			// Start log
 			$logEntry = new ManualLogEntry('tilesheet', 'deletetile');
-			$logEntry->setPerformer($wgUser);
+			$logEntry->setPerformer($user);
 			$logEntry->setTarget(Title::newFromText("Tile/$target", NS_SPECIAL));
 			$logEntry->setParameters(array("4::id" => $item->entry_id, "5::item" => $item->item_name, "6::mod" => $item->mod_name, "7::x" => $item->x, "8::y" => $item->y));
 			$logEntry->setComment($comment);
@@ -147,15 +143,14 @@ class TileManager extends SpecialPage {
 	 * @param string $mod
 	 * @param string|int $x
 	 * @param string|int $y
+	 * @param User $user
 	 * @param string $comment
 	 * @return bool
 	 */
-	public static function updateTable($id, $item, $mod, $x, $y, $comment = "") {
-		global $wgUser;
-
+	public static function updateTable($id, $item, $mod, $x, $y, $user, $comment = "") {
 		$dbw = wfGetDB(DB_MASTER);
 		$stuff = $dbw->select('ext_tilesheet_items', '*', array('entry_id' => $id));
-		$dbw->update('ext_tilesheet_items', array('mod_name' => $mod, 'item_name' => $item, 'x' => $x, 'y' => $y), array('entry_id' => $id));if ($stuff->numRows() == 0) return;
+		$dbw->update('ext_tilesheet_items', array('mod_name' => $mod, 'item_name' => $item, 'x' => $x, 'y' => $y), array('entry_id' => $id));
 
 		if ($stuff->numRows() == 0) return 1;
 
@@ -188,15 +183,16 @@ class TileManager extends SpecialPage {
 
 			// Start log
 			$logEntry = new ManualLogEntry('tilesheet', 'edittile');
-			$logEntry->setPerformer($wgUser);
+			$logEntry->setPerformer($user);
 			$logEntry->setTarget(Title::newFromText("Tile/$target", NS_SPECIAL));
-			$logEntry->getComment($comment);
+			$logEntry->setComment($comment);
 			$logEntry->setParameters(array("6::id" => $item->entry_id, "7::item" => $item->item_name, "8::mod" => $item->mod_name, "9::x" => $item->x, "10::y" => $item->y, "11::to_item" => $fItem, "12::to_mod" => $mod, "13::to_x" => $x, "14::to_y" => $y, "4::diff" => $diffString, "5::diff_json" => json_encode($diff)));
 			$logId = $logEntry->insert();
 			$logEntry->publish($logId);
 			// End log
 			return 0;
 		}
+		return 1;
 	}
 
 	/**
@@ -213,7 +209,7 @@ class TileManager extends SpecialPage {
 
 		$out = Xml::openElement('form', array('method' => 'get', 'action' => $wgScript, 'id' => 'ext-tilesheet-tile-manager-filter')) .
 			Xml::fieldset($this->msg('tilesheet-tile-manager-filter-legend')->text()) .
-			Html::hidden('title', $this->getTitle()->getPrefixedText()) .
+			Html::hidden('title', $this->getPageTitle()->getPrefixedText()) .
 			$form .
 			Xml::closeElement( 'fieldset' ) . Xml::closeElement( 'form' ) . "\n";
 
@@ -252,7 +248,7 @@ class TileManager extends SpecialPage {
 
 		$out = Xml::openElement('form', array('method' => 'get', 'action' => $wgScript, 'id' => 'ext-tilesheet-tile-manager-form', 'class' => 'prefsection')) .
 			Xml::fieldset($this->msg('tilesheet-tile-manager-legend')->text()) .
-			Html::hidden('title', $this->getTitle()->getPrefixedText()) .
+			Html::hidden('title', $this->getPageTitle()->getPrefixedText()) .
 			Html::hidden('token', $this->getUser()->getEditToken()) .
 			Html::hidden('update', 1) .
 			$form .

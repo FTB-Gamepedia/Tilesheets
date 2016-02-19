@@ -67,8 +67,8 @@ class SheetManager extends SpecialPage {
 
 		// Update stuff
 		if ($opts->getValue('update') == 1) Tilesheets::updateSheetRow($mod, $mod, $sizes, $this->getUser());
-		if ($opts->getValue('delete') == 1 && in_array('sysop', $this->getUser()->getGroups())) self::deleteEntry($mod, "");
-		if ($opts->getValue('truncate') == 1 || $opts->getValue('delete') == 1 && in_array('sysop', $this->getUser()->getGroups())) self::truncateTable($mod, "");
+		if ($opts->getValue('delete') == 1 && in_array('sysop', $this->getUser()->getGroups())) self::deleteEntry($mod, $this->getUser());
+		if ($opts->getValue('truncate') == 1 || $opts->getValue('delete') == 1 && in_array('sysop', $this->getUser()->getGroups())) self::truncateTable($mod, $this->getUser());
 
 		// Output update table
 		$out->addHTML($this->buildUpdateForm($mod));
@@ -79,11 +79,10 @@ class SheetManager extends SpecialPage {
 	 *
 	 * @param string $mod
 	 * @param $comment
+	 * @param User $user
 	 * @return  bool
 	 */
-	public static function deleteEntry($mod, $comment = "") {
-		global $wgUser;
-
+	public static function deleteEntry($mod, $user, $comment = "") {
 		$dbw = wfGetDB(DB_MASTER);
 		$stuff = $dbw->select('ext_tilesheet_images', '*', array('`mod`' => $mod));
 		$result = $dbw->delete('ext_tilesheet_images', array('`mod`' => $mod));
@@ -94,7 +93,7 @@ class SheetManager extends SpecialPage {
 
 		// Start log
 		$logEntry = new ManualLogEntry('tilesheet', 'deletesheet');
-		$logEntry->setPerformer($wgUser);
+		$logEntry->setPerformer($user);
 		$logEntry->setTarget(Title::newFromText("Sheet/$mod", NS_SPECIAL));
 		$logEntry->setComment($comment);
 		$logEntry->setParameters(array("4::mod" => $mod, "5::sizes" => $stuff->current()->sizes));
@@ -110,11 +109,10 @@ class SheetManager extends SpecialPage {
 	 *
 	 * @param string $mod
 	 * @param $comment
+	 * @param User $user
 	 * @return bool
 	 */
-	public static function truncateTable($mod, $comment = "") {
-		global $wgUser;
-
+	public static function truncateTable($mod, $user, $comment = "") {
 		$dbw = wfGetDB(DB_MASTER);
 		$stuff = $dbw->select('ext_tilesheet_items', '*', array('mod_name' => $mod));
 		$result = $dbw->delete('ext_tilesheet_items', array('mod_name' => $mod));
@@ -127,7 +125,7 @@ class SheetManager extends SpecialPage {
 
 			// Start log
 			$logEntry = new ManualLogEntry('tilesheet', 'deletetile');
-			$logEntry->setPerformer($wgUser);
+			$logEntry->setPerformer($user);
 			$logEntry->setTarget(Title::newFromText("Tile/$target", NS_SPECIAL));
 			$logEntry->setComment($comment);
 			$logEntry->setParameters(array("4::id" => $item->entry_id, "5::item" => $item->item_name, "6::mod" => $item->mod_name, "7::x" => $item->x, "8::y" => $item->y));
@@ -139,9 +137,7 @@ class SheetManager extends SpecialPage {
 		return true;
 	}
 
-	public static function createSheet($mod, $sizes, $comment = "") {
-		global $wgUser;
-
+	public static function createSheet($mod, $sizes, $user, $comment = "") {
 		$dbw = wfGetDB(DB_MASTER);
 		// Check if already exists
 		$result = $dbw->select('ext_tilesheet_images', 'COUNT(`mod`) AS count', array('`mod`' => $mod));
@@ -154,7 +150,7 @@ class SheetManager extends SpecialPage {
 
 		// Start log
 		$logEntry = new ManualLogEntry('tilesheet', 'createsheet');
-		$logEntry->setPerformer($wgUser);
+		$logEntry->setPerformer($user);
 		$logEntry->setTarget(Title::newFromText("Sheet/$mod", NS_SPECIAL));
 		$logEntry->setComment($comment);
 		$logEntry->setParameters(array("4::mod" => $mod, "5::sizes" => $sizes));
@@ -179,7 +175,7 @@ class SheetManager extends SpecialPage {
 
 		$out = Xml::openElement('form', array('method' => 'get', 'action' => $wgScript, 'id' => 'ext-tilesheet-sheet-manager-filter')) .
 			Xml::fieldset($this->msg('tilesheet-sheet-manager-filter-legend')->text()) .
-			Html::hidden('title', $this->getTitle()->getPrefixedText()) .
+			Html::hidden('title', $this->getPageTitle()->getPrefixedText()) .
 			$form .
 			Xml::closeElement( 'fieldset' ) . Xml::closeElement( 'form' ) . "\n";
 
@@ -217,7 +213,7 @@ class SheetManager extends SpecialPage {
 
 		$out = Xml::openElement('form', array('method' => 'get', 'action' => $wgScript, 'id' => 'ext-tilesheet-sheet-manager-form', 'class' => 'prefsection')) .
 			Xml::fieldset($this->msg('tilesheet-sheet-manager-legend')->text()) .
-			Html::hidden('title', $this->getTitle()->getPrefixedText()) .
+			Html::hidden('title', $this->getPageTitle()->getPrefixedText()) .
 			Html::hidden('token', $this->getUser()->getEditToken()) .
 			Html::hidden('update', 1) .
 			$form .

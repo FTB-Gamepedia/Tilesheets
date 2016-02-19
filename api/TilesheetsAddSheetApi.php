@@ -66,7 +66,7 @@ class TilesheetsAddSheetApi extends ApiBase {
         $sizes = implode(',', $sizes);
         $summary = $this->getParameter('summary');
 
-        $result = SheetManager::createSheet($mod, $sizes, $summary);
+        $result = SheetManager::createSheet($mod, $sizes, $this->getUser(), $summary);
         $this->getResult()->addValue('edit', 'createsheet', array($mod => $result));
     }
 }

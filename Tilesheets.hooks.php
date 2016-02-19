@@ -1,6 +1,6 @@
 <?php
 /**
- * Tile sheets hooks file
+ * Tilesheets hooks file
  * Entrance points to the tilesheets extension
  *
  * @file
@@ -9,14 +9,13 @@
  * @author Jinbobo <paullee05149745@gmail.com>
  * @license
  */
-if ( !defined( 'MEDIAWIKI' ) ) exit;
 
 class TilesheetsHooks {
 	/**
 	 * Setups and Modifies Database Information
 	 *
 	 * @access	public
-	 * @param	object	DatabaseUpdater Object
+	 * @param	DatabaseUpdater
 	 * @return	boolean	true
 	 */
 	public static function SchemaUpdate($updater) {
