@@ -2,6 +2,12 @@
 This changelog only shows recent version history, because of the lack of documentation from the former maintainers. The very first changelog (1.1.2) is likely incomplete.
 
 ## Version 2
+### 2.0.1
+* Fix autoloading through the extension JSON (PR #20).
+* Update various method and variable calls, which might resolve issues with some special pages (PR #18).
+* Fix typo in editsheet API's return value, 'edittile' is now 'editsheet' (#17).
+* Fix API deletesheet's return value; no longer returns empty array (#16).
+
 ### 2.0.0
 * Implement a web API for the extension with the following new actions (issue #2 PR #15):
   * action=query&list=tilesheets
