@@ -2,6 +2,9 @@
 This changelog only shows recent version history, because of the lack of documentation from the former maintainers. The very first changelog (1.1.2) is likely incomplete.
 
 ## Version 2
+### 2.0.2
+* Fix parameter typo in deletesheet API causing it to do absolutely nothing (#24).
+
 ### 2.0.1
 * Fix autoloading through the extension JSON (PR #20).
 * Update various method and variable calls, which might resolve issues with some special pages (PR #18).
