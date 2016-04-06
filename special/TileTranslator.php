@@ -42,6 +42,7 @@ class TileTranslator extends SpecialPage {
         $opts->add('display_name', '');
         $opts->add('language', 'en');
         $opts->add('update', 0);
+        $opts->add('delete', 0);
 
         $opts->fetchValuesFromRequest($this->getRequest());
 
@@ -55,6 +56,7 @@ class TileTranslator extends SpecialPage {
         $displayName = $opts->getValue('display_name');
         $language = $opts->getValue('language');
         $update = $opts->getValue('update');
+        $delete = $opts->getValue('delete');
 
         $out->addHTML($this->buildSearchForm($id, $language));
 
@@ -63,7 +65,13 @@ class TileTranslator extends SpecialPage {
         }
 
         // Process and save POST data
-        if ($update == 1) {
+        if ($delete == 1) {
+            if ($language == 'en') {
+                $out->addHTML(wfMessage('tilesheet-translatedelete-warning'));
+            } else {
+                $this->deleteEntry($id, $language, $this->getUser());
+            }
+        } else if ($update == 1) {
             self::updateTable($id, $displayName, $description, $language, $this->getUser());
         }
 
@@ -117,6 +125,23 @@ class TileTranslator extends SpecialPage {
         return 0;
     }
 
+    public static function deleteEntry($id, $language, $user, $comment = "") {
+        $dbw = wfGetDB(DB_MASTER);
+        $stuff = $dbw->select('ext_tilesheet_languages', '*', array('entry_id' => $id, 'lang' => $language));
+        if ($stuff->numRows() == 0) {
+            return false;
+        }
+        $dbw->delete('ext_tilesheet_languages', array('entry_id' => $id, 'lang' => $language));
+        $logEntry = new ManualLogEntry('tilesheet', 'deletetranslation');
+        $logEntry->setPerformer($user);
+        $logEntry->setComment($comment);
+        $logEntry->setTarget(Title::newFromText("Tile/$id", NS_SPECIAL));
+        $logEntry->setParameters(array('4::id' => $id, '5::lang' => $language));
+        $logID = $logEntry->insert();
+        $logEntry->publish($logID);
+        return true;
+    }
+
     /**
      * Builds the filter form.
      *
@@ -159,6 +184,7 @@ class TileTranslator extends SpecialPage {
         $form .= TilesheetsForm::createFormRow('tile-translator', 'description', $description);
         $form .= TilesheetsForm::createFormRow('tile-translator', 'language', $language);
         $form .= TilesheetsForm::createInputHint('tile-translator', 'language');
+        $form .= TilesheetsForm::createFormRow('tile-translator', 'delete', 1, "checkbox");
         $form .= TilesheetsForm::createSubmitButton('tile-translator');
         $form .= "</table>";
 
