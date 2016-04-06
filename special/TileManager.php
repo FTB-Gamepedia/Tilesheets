@@ -95,7 +95,19 @@ class TileManager extends SpecialPage {
 			'`x`' => $x,
 			'`y`' => $y));
 
-		if ($result != false) {
+		// Insert to tilesheet localization list
+		$id = $dbw->select('ext_tilesheet_items', 'entry_id', array(
+			'`item_name`' => $item,
+			'`mod_name`' => $mod
+		));
+		$langResult = $dbw->insert('ext_tilesheet_languages', array(
+			'entry_id' => $id->current()->entry_id,
+			'lang' => 'en',
+			'display_name' => $item,
+			'description' => '',
+		));
+
+		if ($result != false && $langResult != false) {
 			$target = empty($mod) || $mod == "undefined" ? $item : "$item ($mod)";
 
 			// Start log

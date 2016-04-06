@@ -75,7 +75,7 @@ class CreateTileSheet extends SpecialPage {
 			}
 
 			// Create sheet
-			$out->addHtml($this->returnMessage(SheetManager::createSheet($mod, $sizes), "Adding new tilesheet..."));
+			$out->addHtml($this->returnMessage(SheetManager::createSheet($mod, $sizes, $this->getUser()), "Adding new tilesheet..."));
 
 			$input = explode("\n", trim($opts->getValue('input')));
 			foreach ($input as $line) {
@@ -84,7 +84,7 @@ class CreateTileSheet extends SpecialPage {
 				$item = trim($item);
 
 				// Create tile
-				$out->addHtml($this->returnMessage(TileManager::createTile($mod, $item, $x, $y, "Importing tilesheet."), "Adding $item from $mod on [Tilesheet $mod %.png] ($x,$y) to entry list..."));
+				$out->addHtml($this->returnMessage(TileManager::createTile($mod, $item, $x, $y, $this->getUser(), "Importing tilesheet."), "Adding $item from $mod on [Tilesheet $mod %.png] ($x,$y) to entry list..."));
 			}
 		$out->addHtml('</tt>');
 		} else {

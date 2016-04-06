@@ -37,6 +37,7 @@ class TilesheetsHooks {
 	 */
 	public static function SetupParser(Parser &$parser) {
 		$parser->setFunctionHook('icon', 'TilesheetsHooks::RenderParser');
+		$parser->setFunctionHook('iconloc', 'TilesheetsHooks::IconLocalization');
 
 		return true;
 	}
@@ -72,6 +73,42 @@ class TilesheetsHooks {
 		// Run main class and output
 		$tile = new Tilesheets($options);
 		return $tile->output();
+	}
+
+	/**
+	 * Gets the localized name or description for the given item/mod.
+	 * @param Parser $parser
+	 * @param string $item The item's name.
+	 * @param string $mod The mod abbreviation.
+	 * @param string $type Either 'name' or 'description'. The type of data to get.
+	 * @param string $language The language code. Falls back to 'en'.
+	 * @return string The localized content, or the provided item's name as fall back.
+	 */
+	public static function IconLocalization(Parser &$parser, $item, $mod, $type = 'name', $language = 'en') {
+		// Replace all the error messages with return $item
+		if ($type != 'name' && $type != 'description') {
+			return 'BAD TYPE';
+		}
+
+		$dbr = wfGetDB(DB_SLAVE);
+		$items = $dbr->select('ext_tilesheet_items', 'entry_id', array('item_name' => $item, 'mod_name' => $mod));
+		if ($items->numRows() == 0) {
+			return 'NO ENTRIES';
+		}
+		$locs = $dbr->select('ext_tilesheet_languages', '*', array('entry_id' => $items->current()->entry_id, 'lang' => $language));
+		if ($locs->numRows() == 0) {
+			$locs = $dbr->select('ext_tilesheet_languages', '*', array('entry_id' => $items->current()->entry_id, 'lang' => 'en'));
+		}
+		if ($locs->numRows() == 0) {
+			return 'NO LOCALIZED ENTRIES';
+		}
+		if ($type == 'name') {
+//			return 'TYPE IS NAME';
+			return $locs->current()->display_name;
+		} else {
+//			return 'TYPE IS DESCRIPTION';
+			return $locs->current()->description;
+		}
 	}
 
 	/**

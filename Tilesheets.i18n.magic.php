@@ -12,4 +12,5 @@
 $magicWords = [];
 $magicWords['en'] = [
 	'icon' => array(0, 'icon'),
+	'iconloc' => array(0, 'iconloc')
 ];
