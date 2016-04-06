@@ -2,7 +2,6 @@
 
 /**
  * TileTranslator special page
- * TODO Actually write this damn thing.
  */
 class TileTranslator extends SpecialPage {
     /**
