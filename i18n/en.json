@@ -76,7 +76,6 @@
 	"tilesheet-tile-translator-filter-submit": "Go",
 	"tilesheet-tile-translator-legend": "Translate",
 	"tilesheet-tile-translator-delete": "<span style=\"color:red; font-weight:bold;\">Delete Translation</span>",
-	"tilesheet-translatedelete-warning": "<span style=\"color:red; font-weight:bold;\">You cannot delete fallback en translations!</span>",
 	"log-name-tilesheet": "Tilesheets log",
 	"log-description-tilesheet": "Here you can find a list of changes made to tilesheets.",
 	"logentry-tilesheet-createtile": "$1 created a new tile ($5) positioned at ($6, $7) on the $4 tilesheet.",

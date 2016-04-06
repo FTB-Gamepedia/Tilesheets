@@ -66,11 +66,7 @@ class TileTranslator extends SpecialPage {
 
         // Process and save POST data
         if ($delete == 1) {
-            if ($language == 'en') {
-                $out->addHTML(wfMessage('tilesheet-translatedelete-warning'));
-            } else {
-                $this->deleteEntry($id, $language, $this->getUser());
-            }
+            $this->deleteEntry($id, $language, $this->getUser());
         } else if ($update == 1) {
             self::updateTable($id, $displayName, $description, $language, $this->getUser());
         }
@@ -81,8 +77,7 @@ class TileTranslator extends SpecialPage {
 
     public static function updateTable($id, $displayName, $description, $language, $user, $comment = '') {
         $dbw = wfGetDB(DB_MASTER);
-        $byID = $dbw->select('ext_tilesheet_languages', '*', array('entry_id'));
-        if ($byID->numRows() == 0 || empty($language)) {
+        if (empty($language)) {
             return 1;
         }
         $stuff = $dbw->select('ext_tilesheet_languages', '*', array('entry_id' => $id, 'lang' => $language));
@@ -171,7 +166,8 @@ class TileTranslator extends SpecialPage {
         $dbr = wfGetDB(DB_SLAVE);
         $result = $dbr->select('ext_tilesheet_languages', '*', array('entry_id' => $id, 'lang' => $language));
         if ($result->numRows() == 0) {
-            return "Query returned an empty set (i.e. zero rows).";
+            $displayName = '';
+            $description = '';
         } else {
             $displayName = $result->current()->display_name;
             $description = $result->current()->description;

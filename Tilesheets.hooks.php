@@ -85,10 +85,6 @@ class TilesheetsHooks {
 	 * @return string The localized content, or the provided item's name as fall back.
 	 */
 	public static function IconLocalization(Parser &$parser, $item, $mod, $type = 'name', $language = 'en') {
-		if ($type != 'name' && $type != 'description') {
-			return $item;
-		}
-
 		$dbr = wfGetDB(DB_SLAVE);
 		$items = $dbr->select('ext_tilesheet_items', 'entry_id', array('item_name' => $item, 'mod_name' => $mod));
 		if ($items->numRows() == 0) {
@@ -96,15 +92,15 @@ class TilesheetsHooks {
 		}
 		$locs = $dbr->select('ext_tilesheet_languages', '*', array('entry_id' => $items->current()->entry_id, 'lang' => $language));
 		if ($locs->numRows() == 0) {
-			$locs = $dbr->select('ext_tilesheet_languages', '*', array('entry_id' => $items->current()->entry_id, 'lang' => 'en'));
-		}
-		if ($locs->numRows() == 0) {
 			return $item;
 		}
 		if ($type == 'name') {
-			return $locs->current()->display_name;
-		} else {
+			$name = $locs->current()->display_name;
+			return empty($name) ? $item : $name;
+		} else if ($type == 'description') {
 			return $locs->current()->description;
+		} else {
+			return $item;
 		}
 	}
 
