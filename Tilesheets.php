@@ -24,6 +24,8 @@
     $wgAPIListModules['tilesheets'] = 'TilesheetsQuerySheetsApi';
     $wgAutoloadClasses['TilesheetsQueryTilesApi'] = __DIR__ . '/api/TilesheetsQueryTilesApi.php';
     $wgAPIListModules['tiles'] = 'TilesheetsQueryTilesApi';
+    $wgAutoloadClasses['TilesheetsQueryTranslationsApi'] = __DIR__ . '/api/TilesheetsQueryTranslationsApi.php';
+    $wgAPIListModules['tiletranslations'] = 'TilesheetsQueryTranslationsApi';
     $wgAutoloadClasses['TilesheetsAddTileApi'] = __DIR__ . '/api/TilesheetsAddTileApi.php';
     $wgAPIModules['addtile'] = 'TilesheetsAddTileApi';
     $wgAutoloadClasses['TilesheetsDeleteSheetApi'] = __DIR__ . '/api/TilesheetsDeleteSheetApi.php';
