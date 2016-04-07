@@ -56,7 +56,9 @@
 		"TilesheetsAddSheetApi": "api/TilesheetsAddSheetApi.php",
 		"TilesheetsDeleteTilesApi": "api/TilesheetsDeleteTilesApi.php",
 		"TilesheetsEditTileApi": "api/TilesheetsEditTileApi.php",
-		"TilesheetsEditSheetApi": "api/TilesheetsEditSheetApi.php"
+		"TilesheetsEditSheetApi": "api/TilesheetsEditSheetApi.php",
+		"TilesheetsDeleteTranslationApi": "api/TilesheetsDeleteTranslationApi.php",
+		"TilesheetsTranslateTileApi": "api/TilesheetsTranslateTileApi.php"
 	},
 	"APIModules": {
 		"addtile": "TilesheetsAddTileApi",
@@ -64,7 +66,9 @@
 		"createsheet": "TilesheetsAddSheetApi",
 		"deletetiles": "TilesheetsDeleteTilesApi",
 		"edittile": "TilesheetsEditTileApi",
-		"editsheet": "TilesheetsEditSheetApi"
+		"editsheet": "TilesheetsEditSheetApi",
+		"deletetranslation": "TilesheetsDeleteTranslationApi",
+		"translatetile": "TilesheetsTranslateTileApi"
 	},
 	"APIListModules": {
 		"tilesheets": "TilesheetsQuerySheetsApi",
