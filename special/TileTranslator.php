@@ -156,7 +156,7 @@ class TileTranslator extends SpecialPage {
             Xml::fieldset($this->msg('tilesheet-tile-translator-filter-legend')->text()) .
             Html::hidden('title', $this->getPageTitle()->getPrefixedText()) .
             $form .
-            Xml::closeElement( 'fieldset' ) . Xml::closeElement( 'form' ) . "\n";
+            Xml::closeElement('fieldset') . Xml::closeElement('form') . "\n";
 
         return $out;
     }

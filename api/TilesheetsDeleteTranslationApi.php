@@ -50,7 +50,7 @@ class TilesheetsDeleteTranslationApi extends ApiBase {
 
     public function getExamples() {
         return array(
-            'api.php?action=deletetranslation&tsid=6&tslang=es-ni',
+            'api.php?action=deletetranslation&tsid=6&tslang=es',
         );
     }
 
