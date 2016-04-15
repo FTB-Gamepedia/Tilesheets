@@ -1,6 +1,15 @@
 # Changelog
 This changelog only shows recent version history, because of the lack of documentation from the former maintainers. The very first changelog (1.1.2) is likely incomplete.
 
+## Version 3
+### 3.0.0
+* Tiles can now be translated (Issue #8, Pull Request #28).
+  * New table in the database ext_tilesheet_languages that has 4 rows: `entry_id`, `lang`, `display_name`, and `description`
+  * New special page TileTranslator where translators can translate tilesheet icon display names and descriptions for their languages. This will create a log entry.
+    * Default display names and descriptions can be added by translating to `en`. This will override the default functionality, which can be useful for things like Clay (Item) which should be shown as simply Clay.
+  * New `#iconloc` parser function to get the localized name or description for a tilesheet item. It takes 4 arguments: item name, mod abbreviation, type (name or description), and language code.
+
+
 ## Version 2
 ### 2.0.2
 * Fix parameter typo in deletesheet API causing it to do absolutely nothing (#24).
