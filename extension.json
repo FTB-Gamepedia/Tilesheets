@@ -21,7 +21,8 @@
 		"SheetList": "SheetList",
 		"CreateTileSheet": "CreateTileSheet",
 		"TileManager": "TileManager",
-		"SheetManager": "SheetManager"
+		"SheetManager": "SheetManager",
+		"TileTranslator": "TileTranslator"
 	},
 	"LogTypes": [
 		"tilesheet"
@@ -47,14 +48,18 @@
 		"CreateTileSheet": "special/CreateTileSheet.php",
 		"TileManager": "special/TileManager.php",
 		"SheetManager": "special/SheetManager.php",
+		"TileTranslator": "special/TileTranslator.php",
 		"TilesheetsQuerySheetsApi": "api/TilesheetsQuerySheetsApi.php",
 		"TilesheetsQueryTilesApi": "api/TilesheetsQueryTilesApi.php",
+		"TilesheetsQueryTranslationsApi": "api/TilesheetsQueryTranslationsApi.php",
 		"TilesheetsAddTileApi": "api/TilesheetsAddTileApi.php",
 		"TilesheetsDeleteSheetApi": "api/TilesheetsDeleteSheetApi.php",
 		"TilesheetsAddSheetApi": "api/TilesheetsAddSheetApi.php",
 		"TilesheetsDeleteTilesApi": "api/TilesheetsDeleteTilesApi.php",
 		"TilesheetsEditTileApi": "api/TilesheetsEditTileApi.php",
-		"TilesheetsEditSheetApi": "api/TilesheetsEditSheetApi.php"
+		"TilesheetsEditSheetApi": "api/TilesheetsEditSheetApi.php",
+		"TilesheetsDeleteTranslationApi": "api/TilesheetsDeleteTranslationApi.php",
+		"TilesheetsTranslateTileApi": "api/TilesheetsTranslateTileApi.php"
 	},
 	"APIModules": {
 		"addtile": "TilesheetsAddTileApi",
@@ -62,11 +67,14 @@
 		"createsheet": "TilesheetsAddSheetApi",
 		"deletetiles": "TilesheetsDeleteTilesApi",
 		"edittile": "TilesheetsEditTileApi",
-		"editsheet": "TilesheetsEditSheetApi"
+		"editsheet": "TilesheetsEditSheetApi",
+		"deletetranslation": "TilesheetsDeleteTranslationApi",
+		"translatetile": "TilesheetsTranslateTileApi"
 	},
 	"APIListModules": {
 		"tilesheets": "TilesheetsQuerySheetsApi",
-		"tiles": "TilesheetsQueryTilesApi"
+		"tiles": "TilesheetsQueryTilesApi",
+		"tiletranslations": "TilesheetsQueryTranslationsApi"
 	},
 	"ResourceModules": {
 		"ext.tilesheets": {
