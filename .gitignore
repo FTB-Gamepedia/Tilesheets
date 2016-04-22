@@ -1,4 +1,12 @@
-.DS_Store
+# IDEA
 .idea
-*.sublime-workspace
+
+# Sublime
 *.sublime-project
+*.sublime-workspace
+
+# Eclipse
+.project
+
+# OS X
+.DS_Store
