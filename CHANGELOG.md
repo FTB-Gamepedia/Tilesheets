@@ -2,6 +2,9 @@
 This changelog only shows recent version history, because of the lack of documentation from the former maintainers. The very first changelog (1.1.2) is likely incomplete.
 
 ## Version 3
+### 3.0.1
+* Add the ext_tilesheet_languages table on schema update.
+
 ### 3.0.0
 * Tiles can now be translated (Issue #8, Pull Request #28).
   * New table in the database ext_tilesheet_languages that has 4 rows: `entry_id`, `lang`, `display_name`, and `description`

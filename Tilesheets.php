@@ -4,7 +4,7 @@
  *
  * @file
  * @ingroup Extensions
- * @version 3.0.0
+ * @version 3.0.1
  * @author Jinbobo <paullee05149745@gmail.com>
  * @author Peter Atashian
  * @author Telshin <timmrysk@gmail.com>
