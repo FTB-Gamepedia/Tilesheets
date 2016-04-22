@@ -88,13 +88,16 @@ class TilesheetsHooks {
 	public static function IconLocalization(Parser &$parser, $item, $mod, $type = 'name', $language = 'en') {
 		$dbr = wfGetDB(DB_SLAVE);
 		$items = $dbr->select('ext_tilesheet_items', 'entry_id', array('item_name' => $item, 'mod_name' => $mod));
+
 		if ($items->numRows() == 0) {
-			return $item;
+			return $type == 'name' ? $item : '';
 		}
+
 		$locs = $dbr->select('ext_tilesheet_languages', '*', array('entry_id' => $items->current()->entry_id, 'lang' => $language));
 		if ($locs->numRows() == 0) {
-			return $item;
+			return $type == 'name' ? $item : '';
 		}
+
 		if ($type == 'name') {
 			$name = $locs->current()->display_name;
 			return empty($name) ? $item : $name;
