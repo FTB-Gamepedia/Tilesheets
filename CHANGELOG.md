@@ -2,6 +2,11 @@
 This changelog only shows recent version history, because of the lack of documentation from the former maintainers. The very first changelog (1.1.2) is likely incomplete.
 
 ## Version 3
+### 3.0.2
+* Description row is now `test` instead of `varchar` (#29, PR #32)
+* Add original item name (from items table) to the translation log (#31).
+* Return empty string when type is not name, and the entry does not exist (#30).
+
 ### 3.0.1
 * Add the ext_tilesheet_languages table on schema update.
 
