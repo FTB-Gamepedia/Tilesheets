@@ -84,7 +84,7 @@
 	"logentry-tilesheet-deletesheet": "$1 deleted the $4 tilesheet.",
 	"logentry-tilesheet-editsheet": "$1 edited the $6 tilesheet. Changes: $4.",
 	"logentry-tilesheet-edittile": "$1 edited tile #$6 ($7) positioned at ($9, $10) on the $8 tilesheet. Changes: $4.",
-	"logentry-tilesheet-translatetile": "$1 translated tile #$4 to $5 with name \"$6\" and description \"$7\"",
+	"logentry-tilesheet-translatetile": "$1 translated tile #$4 ($8) to $5 with name \"$6\" and description \"$7\"",
 	"logentry-tilesheet-deletetranslation": "$1 deleted $5 translation for entry #$4",
 	"action-edittilesheets": "edit tiles",
 	"right-edittilesheets": "Edit tile data for the Tilesheets extension",

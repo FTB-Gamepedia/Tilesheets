@@ -105,6 +105,8 @@ class TileTranslator extends SpecialPage {
             );
         }
 
+        $item = $dbw->select('ext_tilesheet_items', 'item_name', array('entry_id' => $id));
+
         $logEntry = new ManualLogEntry('tilesheet', 'translatetile');
         $logEntry->setPerformer($user);
         $logEntry->setComment($comment);
@@ -113,7 +115,8 @@ class TileTranslator extends SpecialPage {
             '4::id' => $id,
             '5::lang' => $language,
             '6::name' => $displayName,
-            '7::desc' => $description
+            '7::desc' => $description,
+            '8::original' => $item->current()->item_name
         ));
         $logID = $logEntry->insert();
         $logEntry->publish($logID);
