@@ -1,9 +1,4 @@
-# IDEA
+.DS_Store
 .idea
-
-# Sublime
-*.sublime-project
 *.sublime-workspace
-
-# Eclipse
-.project
+*.sublime-project
