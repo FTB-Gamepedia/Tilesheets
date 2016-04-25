@@ -25,7 +25,7 @@ class TilesheetsHooks {
 		$updater->addExtensionUpdate(['addTable', 'ext_tilesheet_images', "{$extDir}/install/sql/ext_tilesheet_images.sql", true]);
 		$updater->addExtensionUpdate(['addTable', 'ext_tilesheet_languages', "{$extDir}/install/sql/ext_tilesheet_languages.sql", true]);
 
-		$updater->addExtensionUpdate(['modifyField', 'ext_tilesheet_languages', 'field_name', "{$extDir}/upgrade/sql/ext_tilesheet_languages/change_description_to_text.sql", true]);
+		$updater->addExtensionUpdate(['modifyField', 'ext_tilesheet_languages', 'description', "{$extDir}/upgrade/sql/ext_tilesheet_languages/change_description_to_text.sql", true]);
 
 		return true;
 	}
