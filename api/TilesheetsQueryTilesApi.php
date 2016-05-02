@@ -12,11 +12,11 @@ class TilesheetsQueryTilesApi extends ApiQueryBase {
                 ApiBase::PARAM_TYPE => 'limit',
                 ApiBase::PARAM_MIN => 1,
                 ApiBase::PARAM_MAX => ApiBase::LIMIT_BIG1,
-                Apibase::PARAM_MAX2 => ApiBase::LIMIT_BIG2,
+                ApiBase::PARAM_MAX2 => ApiBase::LIMIT_BIG2,
             ),
-            'start' => array(
-                ApiBase::PARAM_TYPE => 'string',
-                ApiBase::PARAM_DFLT => '',
+            'from' => array(
+                ApiBase::PARAM_TYPE => 'integer',
+                ApiBase::PARAM_DFLT => 0,
             ),
             'mod' => array(
                 ApiBase::PARAM_TYPE => 'string',
@@ -28,7 +28,7 @@ class TilesheetsQueryTilesApi extends ApiQueryBase {
     public function getParamDescription() {
         return array(
             'limit' => 'The maximum number of tiles to list',
-            'start' => 'The tile name to start listing at',
+            'from' => 'The tile ID to start listing at',
             'mod' => 'The mod to filter by',
         );
     }
@@ -40,13 +40,13 @@ class TilesheetsQueryTilesApi extends ApiQueryBase {
     public function getExamples() {
         return array(
             'api.php?action=query&list=tiles&tslimit=50&tsmod=W',
-            'api.php?action=query&list=tiles&tsstart=Cobblestone&tsmod=V',
+            'api.php?action=query&list=tiles&tsfrom=15&tsmod=V',
         );
     }
 
     public function execute() {
         $limit = $this->getParameter('limit');
-        $start = $this->getParameter('start');
+        $from = $this->getParameter('from');
         $mod = $this->getParameter('mod');
         $dbr = wfGetDB(DB_SLAVE);
 
@@ -55,15 +55,20 @@ class TilesheetsQueryTilesApi extends ApiQueryBase {
             '*',
             array(
                 "mod_name = {$dbr->addQuotes($mod)} or {$dbr->addQuotes($mod)} = ''",
-                "item_name BETWEEN {$dbr->addQuotes($start)} AND 'zzzzzzzz'"
+                "entry_id >= $from"
             ),
             __METHOD__,
-            array('LIMIT' => $limit,)
+            array('LIMIT' => $limit + 1,)
         );
 
         $ret = array();
-
+        $count = 0;
         foreach ($results as $res) {
+            $count++;
+            if ($count > $limit) {
+                $this->setContinueEnumParameter('from', $res->entry_id);
+                break;
+            }
             $ret[$res->entry_id] = array(
                 'mod' => $res->mod_name,
                 'name' => $res->item_name,
