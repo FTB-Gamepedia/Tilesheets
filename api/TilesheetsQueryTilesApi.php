@@ -69,7 +69,8 @@ class TilesheetsQueryTilesApi extends ApiQueryBase {
                 $this->setContinueEnumParameter('from', $res->entry_id);
                 break;
             }
-            $ret[$res->entry_id] = array(
+            $ret[] = array(
+                'id' => intval($res->entry_id),
                 'mod' => $res->mod_name,
                 'name' => $res->item_name,
                 'x' => intval($res->x),
