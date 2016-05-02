@@ -2,6 +2,11 @@
 This changelog only shows recent version history, because of the lack of documentation from the former maintainers. The very first changelog (1.1.2) is likely incomplete.
 
 ## Version 3
+### 3.1.1
+* Fix a typo on the delete tiles API documentation.
+* Return entry ID as a field rather than the key in list=tiles (#35).
+* Deleting tiles through the TileManager no longer results in 2 log entries (37).
+
 ### 3.1.0
 * Use query continue API for sheet and tile query APIs.
 * Fix entry_id and language returning null in translation query API.
