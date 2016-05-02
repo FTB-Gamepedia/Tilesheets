@@ -12,6 +12,10 @@ class TilesheetsQueryTranslationsApi extends ApiQueryBase {
                 ApiBase::PARAM_REQUIRED => true,
                 ApiBase::PARAM_MIN => 1,
             ),
+            'lang' => array(
+                ApiBase::PARAM_TYPE => 'string',
+                ApiBase::PARAM_DFLT => '',
+            )
         );
     }
 
