@@ -14,7 +14,8 @@ class TilesheetsQueryTranslationsApi extends ApiQueryBase {
             ),
             'lang' => array(
                 ApiBase::PARAM_TYPE => 'string',
-            ),
+                ApiBase::PARAM_DFLT => '',
+            )
         );
     }
 
@@ -45,10 +46,10 @@ class TilesheetsQueryTranslationsApi extends ApiQueryBase {
 
         $results = $dbr->select(
             'ext_tilesheet_languages',
-            array('display_name', 'description'),
+            '*',
             array(
                 'entry_id' => $id,
-                'lang' => $lang,
+                "lang = {$dbr->addQuotes($lang)} OR {$dbr->addQuotes($lang)} = ''",
             )
         );
 
