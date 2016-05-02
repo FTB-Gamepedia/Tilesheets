@@ -37,7 +37,7 @@ class TilesheetsDeleteTilesApi extends ApiBase {
     public function getParamDescription() {
         return array(
             'token' => 'The edit token',
-            'summary' => 'An optional edit token',
+            'summary' => 'An optional edit summary',
             'ids' => 'A list of entry IDs to delete',
         );
     }
