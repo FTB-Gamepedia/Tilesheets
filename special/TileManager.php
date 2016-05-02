@@ -71,8 +71,11 @@ class TileManager extends SpecialPage {
 		if ($id == 0) return;
 
 		// Process and save POST data
-		if ($opts->getValue('update') == 1) self::updateTable($id, $item, $mod, $x, $y, $this->getUser());
-		if ($opts->getValue('delete') == 1) self::deleteEntry($id, $this->getUser());
+		if ($opts->getValue('delete') == 1) {
+			self::deleteEntry($id, $this->getUser());
+		} else if ($opts->getValue('update') == 1) {
+			self::updateTable($id, $item, $mod, $x, $y, $this->getUser());
+		}
 
 		// Output update form
 		$out->addHTML($this->buildUpdateForm($id));
