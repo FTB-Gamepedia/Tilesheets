@@ -2,6 +2,9 @@
 This changelog only shows recent version history, because of the lack of documentation from the former maintainers. The very first changelog (1.1.2) is likely incomplete.
 
 ## Version 3
+### 3.1.2
+* Fix potential SQL injection in query tiles API (#38).
+
 ### 3.1.1
 * Fix a typo on the delete tiles API documentation.
 * Return entry ID as a field rather than the key in list=tiles (#35).
