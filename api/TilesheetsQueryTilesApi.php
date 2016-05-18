@@ -54,8 +54,8 @@ class TilesheetsQueryTilesApi extends ApiQueryBase {
             'ext_tilesheet_items',
             '*',
             array(
-                "mod_name = {$dbr->addQuotes($mod)} or {$dbr->addQuotes($mod)} = ''",
-                "entry_id >= $from"
+                "mod_name = {$dbr->addQuotes($mod)} OR {$dbr->addQuotes($mod)} = ''",
+                "entry_id >= ".intval($from)
             ),
             __METHOD__,
             array('LIMIT' => $limit + 1,)
