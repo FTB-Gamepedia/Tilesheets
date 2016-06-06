@@ -91,6 +91,19 @@ class TilesheetsAddTileApi extends ApiBase {
         }
 
         $res = TileManager::createTile($mod, $name, $x, $y, $this->getUser(), $summary);
-        $this->getResult()->addValue('edit', 'addtile', array($name => $res));
+        $return = array($name => $res);
+
+        // Get the new tile's ID.
+        if ($res) {
+            $selectResult = $dbr->select(
+                'ext_tilesheet_items',
+                '`entry_id`',
+                array('item_name' => $name, 'mod_name' => $mod, 'x' => $x, 'y' => $y),
+                __METHOD__
+            );
+            $id = $selectResult->current()->entry_id;
+            $return[$name] = $id;
+        }
+        $this->getResult()->addValue('edit', 'addtile', $return);
     }
 }
