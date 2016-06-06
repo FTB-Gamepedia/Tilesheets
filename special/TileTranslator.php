@@ -168,9 +168,22 @@ class TileTranslator extends SpecialPage {
         // TODO: Dropdown to list all available languages.
         $dbr = wfGetDB(DB_SLAVE);
         $result = $dbr->select('ext_tilesheet_languages', '*', array('entry_id' => $id, 'lang' => $language));
+        // If there is no translation, fallback to either the english translation or the default item name.
         if ($result->numRows() == 0) {
-            $displayName = '';
-            $description = '';
+            $enResult = $dbr->select(
+                'ext_tilesheet_languages',
+                '*',
+                array('entry_id' => $id, 'lang' => 'en'),
+                __METHOD__
+            );
+            if ($enResult->numRows() == 0) {
+                $nameResult = $dbr->select('ext_tilesheet_items', 'item_name', array('entry_id' => $id), __METHOD__);
+                $displayName = $nameResult->numRows() == 0 ? '' : $nameResult->current()->item_name;
+                $description = '';
+            } else {
+                $displayName = $enResult->current()->display_name;
+                $description = $enResult->current()->description;
+            }
         } else {
             $displayName = $result->current()->display_name;
             $description = $result->current()->description;
