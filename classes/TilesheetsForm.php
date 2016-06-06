@@ -27,6 +27,26 @@ class TilesheetsForm {
 	}
 
 	/**
+	 * Helper function for creating deletion checkboxes for the various managers (SheetManager, TileManager, etc).
+	 * 
+	 * See createFormRow for parameters descriptions.
+	 * @param $ext
+	 * @param $name
+	 * @param int $value
+	 * @param string $attr
+	 * @param string $lattr
+	 * @return string
+	 */
+	static public function createDeleteCheckboxRow($ext, $name = 'delete', $value = 1, $attr = '', $lattr = '') {
+		$msg = wfMessage("tilesheet-$ext-$name")->text();
+		$html = "<tr>";
+		$html .= "<td class=\"mw-label\"><label for=\"$name\" $lattr><span style=\"color: red; font-weight: bold;\">$msg</span></td>";
+		$html .= "<td class=\"mw-input\"><input type=\"checkbox\" name=\"$name\" id=\"$name\" value=\"$value\" $attr></td>";
+		$html .= "</tr>";
+		return $html;
+	}
+
+	/**
 	 * Helper function for creating submit buttons
 	 *
 	 * @param string $ext Submodule name
@@ -42,9 +62,10 @@ class TilesheetsForm {
 	 *
 	 * @param string $ext Submodule name
 	 * @param string $name Field name
+	 * @param string $hint The format hint, e.g. <code>$x $y $item_name</code>.
 	 * @return string
 	 */
-	static public function createInputHint($ext, $name) {
+	static public function createInputHint($ext, $name, $hint = '') {
 		return "<tr><td colspan=\"2\" class=\"htmlform-tip\">".wfMessage("tilesheet-$ext-$name-hint")->parse()."</td></tr>";
 	}
 }

@@ -196,7 +196,7 @@ class TileTranslator extends SpecialPage {
         $form .= TilesheetsForm::createFormRow('tile-translator', 'description', $description);
         $form .= TilesheetsForm::createFormRow('tile-translator', 'language', $language);
         $form .= TilesheetsForm::createInputHint('tile-translator', 'language');
-        $form .= TilesheetsForm::createFormRow('tile-translator', 'delete', 1, "checkbox");
+        $form .= TilesheetsForm::createDeleteCheckboxRow('tile-translator');
         $form .= TilesheetsForm::createSubmitButton('tile-translator');
         $form .= "</table>";
 

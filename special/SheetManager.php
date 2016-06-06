@@ -206,8 +206,8 @@ class SheetManager extends SpecialPage {
 		$form .= TilesheetsForm::createInputHint('sheet-manager', 'sizes');
 		// Create delete/truncate options if sysop
 		$disable = in_array('sysop', $this->getUser()->getGroups()) ? "" : "disabled=\"disabled\"";
-		$form .= TilesheetsForm::createFormRow('sheet-manager', 'delete', 1, "checkbox", $disable);
-		$form .= TilesheetsForm::createFormRow('sheet-manager', 'truncate', 1, "checkbox", $disable);
+		$form .= TilesheetsForm::createDeleteCheckboxRow('sheet-manager', 'delete', 1, '', $disable);
+		$form .= TilesheetsForm::createDeleteCheckboxRow('sheet-manager', 'truncate', 1, '', $disable);
 		$form .= TilesheetsForm::createSubmitButton('sheet-manager');
 		$form .= "</table>";
 

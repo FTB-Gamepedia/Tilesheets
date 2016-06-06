@@ -245,7 +245,7 @@ class TileManager extends SpecialPage {
 		$form .= TilesheetsForm::createInputHint('tile-manager', 'mod');
 		$form .= TilesheetsForm::createFormRow('tile-manager', 'x', $x);
 		$form .= TilesheetsForm::createFormRow('tile-manager', 'y', $y);
-		$form .= TilesheetsForm::createFormRow('tile-manager', 'delete', 1, "checkbox");
+		$form .= TilesheetsForm::createDeleteCheckboxRow('tile-manager');
 		$form .= TilesheetsForm::createSubmitButton('tile-manager');
 		$form .= "</table>";
 
