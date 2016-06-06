@@ -77,6 +77,19 @@ class TilesheetsAddTileApi extends ApiBase {
         $name = $this->getParameter('name');
         $x = $this->getParameter('x');
         $y = $this->getParameter('y');
+
+        $dbr = wfGetDB(DB_SLAVE);
+        $result = $dbr->select(
+            'ext_tilesheet_images',
+            '`mod`',
+            array('`mod`' => $mod),
+            __METHOD__
+        );
+
+        if ($result->numRows() == 0) {
+            $this->dieUsage("No sheet found for mod $mod", 'nosheetfound');
+        }
+
         $res = TileManager::createTile($mod, $name, $x, $y, $this->getUser(), $summary);
         $this->getResult()->addValue('edit', 'addtile', array($name => $res));
     }
