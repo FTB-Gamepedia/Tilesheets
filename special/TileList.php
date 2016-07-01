@@ -102,6 +102,7 @@ class TileList extends SpecialPage {
 		$msgXName = wfMessage('tilesheet-x');
 		$msgYName = wfMessage('tilesheet-y');
 		$canEdit = in_array("edittilesheets", $this->getUser()->getRights());
+		$canTranslate = in_array('translatetiles', $this->getUser()->getRights());
 		$table .= "! !! !! # !!  $msgItemName !! $msgModName !! $msgXName !! $msgYName !! $msgSizesName\n";
 		$linkStyle = "style=\"width:23px; padding-left:5px; padding-right: 5px; text-align:center; font-weight:bold;\"";
 		foreach ($results as $result) {
@@ -121,13 +122,13 @@ class TileList extends SpecialPage {
 
 			if ($canEdit) {
 				$editLink = "[[Special:TileManager/$lId|Edit]]";
-				$translateLink = "[[Special:TileTranslator/$lId|Translate]]";
 				$sEditLink = "[[Special:SheetManager/$lMod|$lMod]]";
 			} else {
 				$editLink = "";
-				$translateLink = "";
 				$sEditLink = "$lMod";
 			}
+
+			$translateLink = $canTranslate ? "[[Special:TileTranslator/$lId|Translate]]" : '';
 
 			$table .= "|-\n";
 			$table .= "| $linkStyle | $editLink || $linkStyle | $translateLink || $lId ||  $lItem || $sEditLink || $lX || $lY || $lSizes\n";
