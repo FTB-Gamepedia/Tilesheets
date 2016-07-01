@@ -8,7 +8,7 @@ class TileTranslator extends SpecialPage {
      * Calls parent constructor and sets special page title
      */
     public function __construct() {
-        parent::__construct('TileTranslator', 'edittilesheets');
+        parent::__construct('TileTranslator', 'translatetiles');
     }
 
     /**

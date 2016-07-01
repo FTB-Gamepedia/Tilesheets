@@ -15,7 +15,8 @@
 	"type": "parserhooks",
 	"AvailableRights": [
 		"edittilesheets",
-		"importtilesheets"
+		"importtilesheets",
+		"translatetiles"
 	],
 	"SpecialPages": {
 		"TileList": "TileList",

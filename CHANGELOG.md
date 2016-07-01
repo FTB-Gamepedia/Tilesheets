@@ -2,6 +2,9 @@
 This changelog only shows recent version history, because of the lack of documentation from the former maintainers. The very first changelog (1.1.2) is likely incomplete.
 
 ## Version 3
+### 3.2.0
+* New translatetiles right.
+
 ### 3.1.2
 * Fix potential SQL injection in query tiles API (#38).
 
