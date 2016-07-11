@@ -89,5 +89,7 @@
 	"action-edittilesheets": "edit tiles",
 	"right-edittilesheets": "Edit tile data for the Tilesheets extension",
 	"action-importtilesheets": "upload new and update tilesheets",
-	"right-importtilesheets": "Upload new and update existing tilesheets for the Tilesheet extension"
+	"right-importtilesheets": "Upload new and update existing tilesheets for the Tilesheet extension",
+	"action-translatetiles": "translate tiles",
+	"right-translatetiles": "Translate tile names and descriptions for the Tilesheets extension"
 }
