@@ -63,7 +63,7 @@ class TilesheetsTranslateTileApi extends ApiBase {
     }
 
     public function execute() {
-        if (!in_array('edittilesheets', $this->getUser()->getRights())) {
+        if (!in_array('translatetiles', $this->getUser()->getRights())) {
             $this->dieUsage('You do not have permission to add tiles', 'permissiondenied');
         }
 
