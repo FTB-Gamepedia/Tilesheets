@@ -54,7 +54,7 @@ class Tilesheets {
 	 *
 	 * @return array|string
 	 */
-	public function output() {
+	public function output(Parser &$parser) {
 		// Set default values
 		$item = $this->mOptions['item'];
 		$size = 32;
@@ -68,6 +68,10 @@ class Tilesheets {
 		TilesheetsError::log("Outputting item: {$size}px $item ($mod)");
 
 		if (self::$mQueriedItems[$item] == null) {
+			$parser->addTrackingCategory('tilesheet-missing-item-category');
+			if ($mod == "undefined") {
+				$parser->addTrackingCategory('tilesheet-no-mod-provided-category');
+			}
 			TilesheetsError::error("Entry missing for $item!");
 			return $this->errorTile($size);
 		}
@@ -78,16 +82,18 @@ class Tilesheets {
 			} else {
 				$x = self::$mQueriedItems[$item][$mod]->x;
 				$y = self::$mQueriedItems[$item][$mod]->y;
-				return $this->generateTile($mod, $size, $x, $y);
+				return $this->generateTile($parser, $mod, $size, $x, $y);
 			}
 		} else {
 			if (count(self::$mQueriedItems[$item]) == 1) {
 				$x = current(self::$mQueriedItems[$item])->x;
 				$y = current(self::$mQueriedItems[$item])->y;
 				$mod = current(self::$mQueriedItems[$item])->mod_name;
+				$parser->addTrackingCategory('tilesheet-no-mod-provided-easy-category');
 				TilesheetsError::warn("Mod parameter is not defined but is able to decide which entry to use! Selecting entry from $mod!");
-				return $this->generateTile($mod, $size, $x, $y);
+				return $this->generateTile($parser, $mod, $size, $x, $y);
 			} else {
+				$parser->addTrackingCategory('tilesheet-no-mod-provided-category');
 				TilesheetsError::error("Multiple entries exist for $item and the mod parameter is not defined, cannot decide which entry to use!");
 				return $this->errorTile($size);
 			}
@@ -103,14 +109,17 @@ class Tilesheets {
 	 * @param $y
 	 * @return array
 	 */
-	private function generateTile($mod, $size, $x, $y) {
+	private function generateTile(Parser &$parser, $mod, $size, $x, $y) {
 		// Validate tilesheet size
 		Tilesheets::getModTileSizes($mod);
 		if (self::$mQueriedSizes[$mod] == null) {
+			$parser->addTrackingCategory('tilesheet-invalid-sheet-category');
 			TilesheetsError::error("Tilesheet for $mod is not defined!");
+
 			return $this->errorTile($size);
 		} else {
 			if (!in_array($size, self::$mQueriedSizes[$mod])) {
+				$parser->addTrackingCategory('tilesheet-invalid-size-category');
 				TilesheetsError::warn("No {$size}px tilesheet for $mod is defined! Selecting smallest size!");
 				$size = min(self::$mQueriedSizes[$mod]);
 			}
@@ -118,6 +127,7 @@ class Tilesheets {
 
 		$file = wfFindFile("Tilesheet $mod $size.png");
 		if ($file === false) {
+			$parser->addTrackingCategory('tilesheet-missing-image-category');
 			TilesheetsError::warn("Tilesheet $mod $size.png does not exist!");
 			return $this->errorTile($size);
 		}

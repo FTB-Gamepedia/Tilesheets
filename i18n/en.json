@@ -91,5 +91,11 @@
 	"action-importtilesheets": "upload new and update tilesheets",
 	"right-importtilesheets": "Upload new and update existing tilesheets for the Tilesheet extension",
 	"action-translatetiles": "translate tiles",
-	"right-translatetiles": "Translate tile names and descriptions for the Tilesheets extension"
+	"right-translatetiles": "Translate tile names and descriptions for the Tilesheets extension",
+	"tilesheet-invalid-sheet-category": "Pages using an invalid tilesheet",
+	"tilesheet-invalid-size-category": "Pages using an incorrect tilesheet size",
+	"tilesheet-missing-image-category": "Pages using a missing tilesheet image",
+	"tilesheet-missing-item-category": "Pages with a missing tile name",
+	"tilesheet-no-mod-provided-category": "Pages with a missing mod parameter",
+	"tilesheet-no-mod-provided-easy-category": "Pages with an easily fixable missing mod parameter"
 }

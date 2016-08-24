@@ -2,6 +2,15 @@
 This changelog only shows recent version history, because of the lack of documentation from the former maintainers. The very first changelog (1.1.2) is likely incomplete.
 
 ## Version 3
+### 3.3.0
+* New tracking categories:
+  * Pages using an invalid tilesheet
+  * Pages using an incorrect tilesheet size
+  * Pages using a missing tilesheet image
+  * Pages with a missing tile name
+  * Pages with a missing mod parameter
+  * Pages with an easily fixable missing mod parameter
+
 ### 3.2.0
 * New translatetiles right.
 

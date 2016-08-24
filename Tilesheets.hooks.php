@@ -75,7 +75,7 @@ class TilesheetsHooks {
 
 		// Run main class and output
 		$tile = new Tilesheets($options);
-		return $tile->output();
+		return $tile->output($parser);
 	}
 
 	/**
