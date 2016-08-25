@@ -1,6 +1,6 @@
 {
 	"name": "Tilesheets",
-	"version": "3.2.0",
+	"version": "3.3.0",
 	"author": [
 		"[http://ftb.gamepedia.com/User:Jinbobo Jinbobo]",
 		"[http://ftb.gamepedia.com/User:Retep998 Peter Atashian]",
@@ -111,7 +111,15 @@
 	},
 	"config": {
 		"ShowExceptionDetails": true,
-		"TilesheetsDebug": false
+		"TilesheetsDebug": false,
+		"TrackingCategories": [
+			"tilesheet-invalid-sheet-category",
+			"tilesheet-invalid-size-category",
+			"tilesheet-missing-image-category",
+			"tilesheet-missing-item-category",
+			"tilesheet-no-mod-provided-category",
+			"tilesheet-no-mod-provided-easy-category"
+		]
 	},
 	"manifest_version": 1
 }
