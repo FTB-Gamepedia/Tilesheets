@@ -90,7 +90,7 @@ class Tilesheets {
 				$y = current(self::$mQueriedItems[$item])->y;
 				$mod = current(self::$mQueriedItems[$item])->mod_name;
 				$parser->addTrackingCategory('tilesheet-no-mod-provided-easy-category');
-				TilesheetsError::warn("Mod parameter is not defined but is able to decide which entry to use! Selecting entry from $mod!");
+				TilesheetsError::warn("Mod parameter is not defined for $item but is able to decide which entry to use! Selecting entry from $mod!");
 				return $this->generateTile($parser, $mod, $size, $x, $y);
 			} else {
 				$parser->addTrackingCategory('tilesheet-no-mod-provided-category');
