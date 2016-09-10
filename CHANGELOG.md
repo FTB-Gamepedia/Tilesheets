@@ -2,6 +2,9 @@
 This changelog only shows recent version history, because of the lack of documentation from the former maintainers. The very first changelog (1.1.2) is likely incomplete.
 
 ## Version 3
+### 3.3.1
+* Improve easily fixable mod parameter log warning to improve item name.
+
 ### 3.3.0
 * New tracking categories:
   * Pages using an invalid tilesheet
