@@ -19,7 +19,7 @@ class TilesheetsAddTileApi extends ApiBase {
             ),
             'x' => array(
                 ApiBase::PARAM_TYPE => 'integer',
-                APiBase::PARAM_REQUIRED => true,
+                ApiBase::PARAM_REQUIRED => true,
                 ApiBase::PARAM_MIN => 0,
             ),
             'y' => array(
