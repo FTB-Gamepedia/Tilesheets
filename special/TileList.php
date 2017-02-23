@@ -90,6 +90,7 @@ class TileList extends SpecialPage {
 
 		if ($maxRows == 0) {
 			$out->addHTML($this->buildForm($opts));
+            // TODO: Localization
 			$out->addWikiText("Query returned an empty set (i.e. zero rows).");
 			return;
 		}
@@ -121,6 +122,7 @@ class TileList extends SpecialPage {
 			}
 
 			if ($canEdit) {
+			    // TODO: Localization
 				$editLink = "[[Special:TileManager/$lId|Edit]]";
 				$sEditLink = "[[Special:SheetManager/$lMod|$lMod]]";
 			} else {
@@ -128,6 +130,7 @@ class TileList extends SpecialPage {
 				$sEditLink = "$lMod";
 			}
 
+			// TODO: Localization
 			$translateLink = $canTranslate ? "[[Special:TileTranslator/$lId|Translate]]" : '';
 
 			$table .= "|-\n";
@@ -141,6 +144,7 @@ class TileList extends SpecialPage {
 		$pPage = $page-1;
 		$nPage = $page+1;
 		$lPage = floor($maxRows / $limit);
+        // TODO: Localization for all of this "<Thing> Page" stuff.
 		if ($page == 0) {
 			$prevPage = "'''First Page'''";
 		} else {
