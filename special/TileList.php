@@ -44,7 +44,6 @@ class TileList extends SpecialPage {
 
 		$opts->add( 'limit', $wgQueryPageDefaultLimit );
 		$opts->add( 'mod', '' );
-		$opts->add( 'start', '' );
 		$opts->add( 'page', 0 );
 
 		$opts->fetchValuesFromRequest( $this->getRequest() );
@@ -52,7 +51,6 @@ class TileList extends SpecialPage {
 
 		// Init variables
 		$mod = $opts->getValue('mod');
-		$start = $opts->getValue('start');
 		$limit = intval($opts->getValue('limit'));
 		$page = intval($opts->getValue('page'));
 
@@ -63,7 +61,6 @@ class TileList extends SpecialPage {
 			'COUNT(entry_id) AS row_count',
 			array(
 				"mod_name = {$dbr->addQuotes($mod)} OR {$dbr->addQuotes($mod)} = ''",
-				"item_name BETWEEN {$dbr->addQuotes($start)} AND 'zzzzzzzz'"
 			)
 		);
 		foreach ($result as $row) {
@@ -72,13 +69,13 @@ class TileList extends SpecialPage {
 
 		if (!isset($maxRows)) return;
 
-		$order = $opts->getValue('start') == '' ? 'entry_id ASC' : 'item_name ASC';
+        // TODO: Specify between: `entry_id ASC`; `item_name ASC`; `entry_id DESC`; `item_name DESC`
+        $order = 'entry_id ASC';
 		$results = $dbr->select(
 			'ext_tilesheet_items',
 			'*',
 			array(
 				"mod_name = {$dbr->addQuotes($mod)} OR {$dbr->addQuotes($mod)} = ''",
-				"item_name BETWEEN {$dbr->addQuotes($start)} AND 'zzzzzzzz'"
 			),
 			__METHOD__,
 			array(
@@ -149,18 +146,18 @@ class TileList extends SpecialPage {
 			$prevPage = "'''First Page'''";
 		} else {
 			if ($page == 1) {
-				$prevPage = "[{{fullurl:{{FULLPAGENAME}}|start=".$opts->getValue('start')."&mod=".$opts->getValue('mod')."&limit=".$opts->getValue('limit')."}} &laquo; First Page]";
+				$prevPage = "[{{fullurl:{{FULLPAGENAME}}|&mod=".$opts->getValue('mod')."&limit=".$opts->getValue('limit')."}} &laquo; First Page]";
 			} else {
-				$prevPage = "[{{fullurl:{{FULLPAGENAME}}|start=".$opts->getValue('start')."&mod=".$opts->getValue('mod')."&limit=".$opts->getValue('limit')."}} &laquo; First Page] [{{fullurl:{{FULLPAGENAME}}|page={$pPage}&start=".$opts->getValue('start')."&mod=".$opts->getValue('mod')."&limit=".$opts->getValue('limit')."}} &lsaquo; Previous Page]";
+				$prevPage = "[{{fullurl:{{FULLPAGENAME}}|&mod=".$opts->getValue('mod')."&limit=".$opts->getValue('limit')."}} &laquo; First Page] [{{fullurl:{{FULLPAGENAME}}|page={$pPage}&mod=".$opts->getValue('mod')."&limit=".$opts->getValue('limit')."}} &lsaquo; Previous Page]";
 			}
 		}
 		if ($lPage == $page) {
 			$nextPage = "'''Last Page'''";
 		} else {
 			if ($lPage == $page + 1) {
-				$nextPage = "[{{fullurl:{{FULLPAGENAME}}|page={$nPage}&start=".$opts->getValue('start')."&mod=".$opts->getValue('mod')."&limit=".$opts->getValue('limit')."}} Last Page &raquo;]";
+				$nextPage = "[{{fullurl:{{FULLPAGENAME}}|page={$nPage}&mod=".$opts->getValue('mod')."&limit=".$opts->getValue('limit')."}} Last Page &raquo;]";
 			} else {
-				$nextPage = "[{{fullurl:{{FULLPAGENAME}}|page={$nPage}&start=".$opts->getValue('start')."&mod=".$opts->getValue('mod')."&limit=".$opts->getValue('limit')."}} Next Page &rsaquo;] [{{fullurl:{{FULLPAGENAME}}|page={$lPage}&start=".$opts->getValue('start')."&mod=".$opts->getValue('mod')."&limit=".$opts->getValue('limit')."}} Last Page &raquo;]";
+				$nextPage = "[{{fullurl:{{FULLPAGENAME}}|page={$nPage}&mod=".$opts->getValue('mod')."&limit=".$opts->getValue('limit')."}} Next Page &rsaquo;] [{{fullurl:{{FULLPAGENAME}}|page={$lPage}&mod=".$opts->getValue('mod')."&limit=".$opts->getValue('limit')."}} Last Page &raquo;]";
 			}
 		}
 		$pageSelection = "<div style=\"text-align:center;\" class=\"plainlinks\">$prevPage | $nextPage</div>";
@@ -189,7 +186,6 @@ class TileList extends SpecialPage {
 		}
 
 		$form = "<table>";
-		$form .= TilesheetsForm::createFormRow('tile-list', 'start', $opts->getValue('start'));
 		$form .= TilesheetsForm::createFormRow('tile-list', 'mod', $opts->getValue('mod'));
 		$form .= '<tr><td style="text-align:right"><label for="limit">'.$this->msg('tilesheet-tile-list-limit').'</td><td><select name="limit">'.$optionTags.'</select></td></tr>';
 		$form .= TilesheetsForm::createSubmitButton('tile-list');

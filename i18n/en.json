@@ -22,7 +22,6 @@
 	"tilesheet-sheet-list-submit": "Go",
 	"tilesheet-sheet-list-limit": "Entries per page",
 	"tilesheet-tile-list-legend": "Filter",
-	"tilesheet-tile-list-start": "Filter by prefix",
 	"tilesheet-tile-list-mod": "Filter by mod",
 	"tilesheet-item-name": "Item name",
 	"tilesheet-mod-name": "Mod name",
