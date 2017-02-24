@@ -23,6 +23,7 @@
 	"tilesheet-sheet-list-limit": "Entries per page",
 	"tilesheet-tile-list-legend": "Filter",
 	"tilesheet-tile-list-mod": "Filter by mod",
+	"tilesheet-tile-list-regex": "Search item names matching regex",
 	"tilesheet-item-name": "Item name",
 	"tilesheet-mod-name": "Mod name",
 	"tilesheet-x": "X position",
