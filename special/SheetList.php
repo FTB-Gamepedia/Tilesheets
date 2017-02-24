@@ -42,15 +42,13 @@ class SheetList extends SpecialPage {
 
 		$opts = new FormOptions();
 
-		$opts->add( 'limit', $wgQueryPageDefaultLimit );
-		$opts->add( 'start', '' );
-		$opts->add( 'page', 0 );
+		$opts->add('limit', $wgQueryPageDefaultLimit);
+		$opts->add('page', 0);
 
-		$opts->fetchValuesFromRequest( $this->getRequest() );
-		$opts->validateIntBounds( 'limit', 0, 5000 );
+		$opts->fetchValuesFromRequest($this->getRequest());
+		$opts->validateIntBounds('limit', 0, 5000);
 
 		// Init variables
-		$start = $opts->getValue('start');
 		$limit = intval($opts->getValue('limit'));
 		$page = intval($opts->getValue('page'));
 
@@ -58,8 +56,7 @@ class SheetList extends SpecialPage {
 		$dbr = wfGetDB(DB_SLAVE);
 		$result = $dbr->select(
 			'ext_tilesheet_images',
-			'COUNT(`mod`) AS row_count',
-			array("`mod` BETWEEN {$dbr->addQuotes($start)} AND 'zzzzzzzz'")
+			'COUNT(`mod`) AS row_count'
 		);
 		foreach ($result as $row) {
 			$maxRows = $row->row_count;
@@ -70,7 +67,7 @@ class SheetList extends SpecialPage {
 		$results = $dbr->select(
 			'ext_tilesheet_images',
 			'*',
-			array("`mod` BETWEEN {$dbr->addQuotes($start)} AND 'zzzzzzzz'"),
+			array(),
 			__METHOD__,
 			array(
 				'ORDER BY' => '`mod` ASC',
@@ -116,18 +113,18 @@ class SheetList extends SpecialPage {
 			$prevPage = "'''First Page'''";
 		} else {
 			if ($page == 1) {
-				$prevPage = "[{{fullurl:{{FULLPAGENAME}}|start=".$opts->getValue('start')."&limit=".$opts->getValue('limit')."}} &laquo; First Page]";
+				$prevPage = "[{{fullurl:{{FULLPAGENAME}}|limit=".$opts->getValue('limit')."}} &laquo; First Page]";
 			} else {
-				$prevPage = "[{{fullurl:{{FULLPAGENAME}}|start=".$opts->getValue('start')."&limit=".$opts->getValue('limit')."}} &laquo; First Page] [{{fullurl:{{FULLPAGENAME}}|page={$pPage}&start=".$opts->getValue('start')."&limit=".$opts->getValue('limit')."}} &lsaquo; Previous Page]";
+				$prevPage = "[{{fullurl:{{FULLPAGENAME}}|limit=".$opts->getValue('limit')."}} &laquo; First Page] [{{fullurl:{{FULLPAGENAME}}|page={$pPage}&limit=".$opts->getValue('limit')."}} &lsaquo; Previous Page]";
 			}
 		}
 		if ($lPage == $page) {
 			$nextPage = "'''Last Page'''";
 		} else {
 			if ($lPage == $page + 1) {
-				$nextPage = "[{{fullurl:{{FULLPAGENAME}}|page={$nPage}&start=".$opts->getValue('start')."&limit=".$opts->getValue('limit')."}} Last Page &raquo;]";
+				$nextPage = "[{{fullurl:{{FULLPAGENAME}}|page={$nPage}&limit=".$opts->getValue('limit')."}} Last Page &raquo;]";
 			} else {
-				$nextPage = "[{{fullurl:{{FULLPAGENAME}}|page={$nPage}&start=".$opts->getValue('start')."&limit=".$opts->getValue('limit')."}} Next Page &rsaquo;] [{{fullurl:{{FULLPAGENAME}}|page={$lPage}&start=".$opts->getValue('start')."&limit=".$opts->getValue('limit')."}} Last Page &raquo;]";
+				$nextPage = "[{{fullurl:{{FULLPAGENAME}}|page={$nPage}&limit=".$opts->getValue('limit')."}} Next Page &rsaquo;] [{{fullurl:{{FULLPAGENAME}}|page={$lPage}&limit=".$opts->getValue('limit')."}} Last Page &raquo;]";
 			}
 		}
 		$pageSelection = "<div style=\"text-align:center;\" class=\"plainlinks\">$prevPage | $nextPage</div>";
@@ -156,7 +153,6 @@ class SheetList extends SpecialPage {
 		}
 
 		$form = "<table>";
-		$form .= TilesheetsForm::createFormRow('sheet-list', 'start', $opts->getValue('start'));
 		$form .= '<tr><td style="text-align:right"><label for="limit">'.$this->msg('tilesheet-sheet-list-limit').'</td><td><select name="limit">'.$optionTags.'</select></td></tr>';
 		$form .= TilesheetsForm::createSubmitButton('sheet-list');
 		$form .= "</table>";

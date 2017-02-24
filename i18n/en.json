@@ -18,7 +18,6 @@
 	"tilesheets-desc": "Adds a parser function that looks up a table for an item and returns the requested image.",
 	"specialpages-group-tilesheet": "Tilesheets Configuration & Tools",
 	"tilesheet-sheet-list-legend": "Filter",
-	"tilesheet-sheet-list-start": "Filter by prefix",
 	"tilesheet-sheet-list-submit": "Go",
 	"tilesheet-sheet-list-limit": "Entries per page",
 	"tilesheet-tile-list-legend": "Filter",
