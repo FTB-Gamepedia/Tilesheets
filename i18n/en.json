@@ -24,6 +24,8 @@
 	"tilesheet-tile-list-legend": "Filter",
 	"tilesheet-tile-list-mod": "Filter by mod",
 	"tilesheet-tile-list-regex": "Search item names matching regex",
+	"tilesheet-tile-list-langs": "Filter by languages translated to (comma separated)",
+	"tilesheet-tile-list-invertlang": "Invert language selection",
 	"tilesheet-item-name": "Item name",
 	"tilesheet-mod-name": "Mod name",
 	"tilesheet-x": "X position",

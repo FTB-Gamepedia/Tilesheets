@@ -45,6 +45,8 @@ class TileList extends SpecialPage {
 		$opts->add('limit', $wgQueryPageDefaultLimit);
 		$opts->add('mod', '');
 		$opts->add('regex', '');
+		$opts->add('langs', '');
+		$opts->add('invertlang', 0);
 		$opts->add('page', 0);
 
 		$opts->fetchValuesFromRequest($this->getRequest());
@@ -55,9 +57,38 @@ class TileList extends SpecialPage {
 		$regex = $opts->getValue('regex');
 		$limit = intval($opts->getValue('limit'));
 		$page = intval($opts->getValue('page'));
+		$langs = explode(',', str_replace(' ', '', $opts->getValue('langs')));
 
 		// Load data
 		$dbr = wfGetDB(DB_SLAVE);
+		$formattedEntryIDs = '';
+
+		if (!empty($langs)) {
+			$safeLangs = array();
+			foreach ($langs as $lang) {
+				$safeLangs[] = $dbr->addQuotes($lang);
+			}
+
+			$langResult = $dbr->select(
+				'ext_tilesheet_languages',
+				'entry_id',
+				array(
+					'lang IN (' . implode(', ', $safeLangs) . ')'
+				)
+			);
+
+			$filteredEntryIDs = array();
+			foreach ($langResult as $result) {
+				$filteredEntryIDs[] = $result->entry_id;
+			}
+
+			$formattedEntryIDs = implode(', ', $filteredEntryIDs);
+		}
+
+		$langFilteredEntryInCondition = $formattedEntryIDs == ''
+			? "'' = ''"
+			: 'entry_id ' . ($opts->getValue('invertlang') == 1 ? 'NOT' : '') . ' IN (' . $formattedEntryIDs . ')';
+
 		try {
 			$searchValue = "item_name REGEXP {$dbr->addQuotes($regex)}";
 			$result = $dbr->select(
@@ -66,6 +97,7 @@ class TileList extends SpecialPage {
 				array(
 					"mod_name = {$dbr->addQuotes($mod)} OR {$dbr->addQuotes($mod)} = ''",
 					$searchValue,
+					$langFilteredEntryInCondition,
 				)
 			);
 		} catch (Exception $exception) {
@@ -77,6 +109,7 @@ class TileList extends SpecialPage {
 				array(
 					"mod_name = {$dbr->addQuotes($mod)} OR {$dbr->addQuotes($mod)} = ''",
 					$searchValue,
+					$langFilteredEntryInCondition,
 				)
 			);
 		}
@@ -94,6 +127,7 @@ class TileList extends SpecialPage {
 			array(
 				"mod_name = {$dbr->addQuotes($mod)} OR {$dbr->addQuotes($mod)} = ''",
 				$searchValue,
+				$langFilteredEntryInCondition,
 			),
 			__METHOD__,
 			array(
@@ -206,6 +240,8 @@ class TileList extends SpecialPage {
 		$form = "<table>";
 		$form .= TilesheetsForm::createFormRow('tile-list', 'regex', $opts->getValue('regex'));
 		$form .= TilesheetsForm::createFormRow('tile-list', 'mod', $opts->getValue('mod'));
+		$form .= TilesheetsForm::createFormRow('tile-list', 'langs', $opts->getValue('langs'));
+		$form .= TilesheetsForm::createCheckboxRow('tile-list', 'invertlang', 1);
 		$form .= '<tr><td style="text-align:right"><label for="limit">'.$this->msg('tilesheet-tile-list-limit').'</td><td><select name="limit">'.$optionTags.'</select></td></tr>';
 		$form .= TilesheetsForm::createSubmitButton('tile-list');
 		$form .= "</table>";
