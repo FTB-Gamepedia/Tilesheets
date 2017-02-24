@@ -48,6 +48,7 @@ class TileList extends SpecialPage {
 		$opts->add('langs', '');
 		$opts->add('invertlang', 0);
 		$opts->add('page', 0);
+		$opts->add('from', 1);
 
 		$opts->fetchValuesFromRequest($this->getRequest());
 		$opts->validateIntBounds('limit', 0, 5000);
@@ -58,6 +59,7 @@ class TileList extends SpecialPage {
 		$limit = intval($opts->getValue('limit'));
 		$page = intval($opts->getValue('page'));
 		$langs = explode(',', str_replace(' ', '', $opts->getValue('langs')));
+		$from = intval($opts->getValue('from'));
 
 		// Load data
 		$dbr = wfGetDB(DB_SLAVE);
@@ -73,7 +75,7 @@ class TileList extends SpecialPage {
 				'ext_tilesheet_languages',
 				'entry_id',
 				array(
-					'lang IN (' . implode(', ', $safeLangs) . ')'
+					'lang IN (' . implode(', ', $safeLangs) . ')',
 				)
 			);
 
@@ -95,6 +97,7 @@ class TileList extends SpecialPage {
 				'ext_tilesheet_items',
 				'COUNT(entry_id) AS row_count',
 				array(
+					"entry_id >= $from",
 					"mod_name = {$dbr->addQuotes($mod)} OR {$dbr->addQuotes($mod)} = ''",
 					$searchValue,
 					$langFilteredEntryInCondition,
@@ -107,6 +110,7 @@ class TileList extends SpecialPage {
 				'ext_tilesheet_items',
 				'COUNT(entry_id) AS row_count',
 				array(
+					"entry_id >= $from",
 					"mod_name = {$dbr->addQuotes($mod)} OR {$dbr->addQuotes($mod)} = ''",
 					$searchValue,
 					$langFilteredEntryInCondition,
@@ -125,6 +129,7 @@ class TileList extends SpecialPage {
 			'ext_tilesheet_items',
 			'*',
 			array(
+				"entry_id >= $from",
 				"mod_name = {$dbr->addQuotes($mod)} OR {$dbr->addQuotes($mod)} = ''",
 				$searchValue,
 				$langFilteredEntryInCondition,
@@ -238,6 +243,7 @@ class TileList extends SpecialPage {
 		}
 
 		$form = "<table>";
+		$form .= TilesheetsForm::createFormRow('tile-list', 'from', $opts->getValue('from'), 'number', "min=\"1\"");
 		$form .= TilesheetsForm::createFormRow('tile-list', 'regex', $opts->getValue('regex'));
 		$form .= TilesheetsForm::createFormRow('tile-list', 'mod', $opts->getValue('mod'));
 		$form .= TilesheetsForm::createFormRow('tile-list', 'langs', $opts->getValue('langs'));
