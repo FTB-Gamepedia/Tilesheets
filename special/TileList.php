@@ -248,7 +248,7 @@ class TileList extends SpecialPage {
 		$form .= TilesheetsForm::createFormRow('tile-list', 'regex', $opts->getValue('regex'));
 		$form .= TilesheetsForm::createFormRow('tile-list', 'mod', $opts->getValue('mod'));
 		$form .= TilesheetsForm::createFormRow('tile-list', 'langs', $opts->getValue('langs'));
-		$form .= TilesheetsForm::createCheckboxRow('tile-list', 'invertlang', 1);
+		$form .= TilesheetsForm::createCheckboxRow('tile-list', 'invertlang', 1, $opts->getValue('invertlang') == 1 ? 'checked' : '');
 		$form .= '<tr><td style="text-align:right"><label for="limit">'.$this->msg('tilesheet-tile-list-limit').'</td><td><select name="limit">'.$optionTags.'</select></td></tr>';
 		$form .= TilesheetsForm::createSubmitButton('tile-list');
 		$form .= "</table>";
