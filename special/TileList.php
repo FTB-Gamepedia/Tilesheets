@@ -58,7 +58,8 @@ class TileList extends SpecialPage {
 		$regex = $opts->getValue('regex');
 		$limit = intval($opts->getValue('limit'));
 		$page = intval($opts->getValue('page'));
-		$langs = explode(',', str_replace(' ', '', $opts->getValue('langs')));
+		$opts->setValue('langs', str_replace(' ', '', $opts->getValue('langs')));
+		$langs = explode(',', $opts->getValue('langs'));
 		$from = intval($opts->getValue('from'));
 
 		// Load data
@@ -203,18 +204,18 @@ class TileList extends SpecialPage {
 			$prevPage = "'''First Page'''";
 		} else {
 			if ($page == 1) {
-				$prevPage = "[{{fullurl:{{FULLPAGENAME}}|regex=".$opts->getValue('regex')."&mod=".$opts->getValue('mod')."&limit=".$opts->getValue('limit')."}} &laquo; First Page]";
+				$prevPage = "[{{fullurl:{{FULLPAGENAME}}|regex=".$opts->getValue('regex')."&mod=".$opts->getValue('mod')."&langs=".$opts->getValue('langs')."&invertlang=".$opts->getValue('invertlang')."&from=".$opts->getValue('from')."&limit=".$opts->getValue('limit')."}} &laquo; First Page]";
 			} else {
-				$prevPage = "[{{fullurl:{{FULLPAGENAME}}|regex=".$opts->getValue('regex')."&mod=".$opts->getValue('mod')."&limit=".$opts->getValue('limit')."}} &laquo; First Page] [{{fullurl:{{FULLPAGENAME}}|page={$pPage}&mod=".$opts->getValue('mod')."&limit=".$opts->getValue('limit')."}} &lsaquo; Previous Page]";
+				$prevPage = "[{{fullurl:{{FULLPAGENAME}}|regex=".$opts->getValue('regex')."&mod=".$opts->getValue('mod')."&langs=".$opts->getValue('langs')."&invertlang=".$opts->getValue('invertlang')."&from=".$opts->getValue('from')."&limit=".$opts->getValue('limit')."}} &laquo; First Page] [{{fullurl:{{FULLPAGENAME}}|page={$pPage}&mod=".$opts->getValue('mod')."&langs=".$opts->getValue('langs')."&invertlang=".$opts->getValue('invertlang')."&limit=".$opts->getValue('limit')."}} &lsaquo; Previous Page]";
 			}
 		}
 		if ($lPage == $page) {
 			$nextPage = "'''Last Page'''";
 		} else {
 			if ($lPage == $page + 1) {
-				$nextPage = "[{{fullurl:{{FULLPAGENAME}}|page={$nPage}&regex=".$opts->getValue('regex')."&mod=".$opts->getValue('mod')."&limit=".$opts->getValue('limit')."}} Last Page &raquo;]";
+				$nextPage = "[{{fullurl:{{FULLPAGENAME}}|page={$nPage}&regex=".$opts->getValue('regex')."&mod=".$opts->getValue('mod')."&langs=".$opts->getValue('langs')."&invertlang=".$opts->getValue('invertlang')."&from=".$opts->getValue('from')."&limit=".$opts->getValue('limit')."}} Last Page &raquo;]";
 			} else {
-				$nextPage = "[{{fullurl:{{FULLPAGENAME}}|page={$nPage}&regex=".$opts->getValue('regex')."&mod=".$opts->getValue('mod')."&limit=".$opts->getValue('limit')."}} Next Page &rsaquo;] [{{fullurl:{{FULLPAGENAME}}|page={$lPage}&regex=".$opts->getValue('regex')."&mod=".$opts->getValue('mod')."&limit=".$opts->getValue('limit')."}} Last Page &raquo;]";
+				$nextPage = "[{{fullurl:{{FULLPAGENAME}}|page={$nPage}&regex=".$opts->getValue('regex')."&mod=".$opts->getValue('mod')."&langs=".$opts->getValue('langs')."&invertlang=".$opts->getValue('invertlang')."&from=".$opts->getValue('from')."&limit=".$opts->getValue('limit')."}} Next Page &rsaquo;] [{{fullurl:{{FULLPAGENAME}}|page={$lPage}&regex=".$opts->getValue('regex')."&mod=".$opts->getValue('mod')."&langs=".$opts->getValue('langs')."&invertlang=".$opts->getValue('invertlang')."&limit=".$opts->getValue('limit')."}} Last Page &raquo;]";
 			}
 		}
 		$pageSelection = "<div style=\"text-align:center;\" class=\"plainlinks\">$prevPage | $nextPage</div>";
