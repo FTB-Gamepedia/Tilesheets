@@ -1,6 +1,6 @@
 <?php
 
-class TilesheetsAddTileApi extends ApiBase {
+class TilesheetsAddTilesApi extends ApiBase {
     public function __construct($query, $moduleName) {
         parent::__construct($query, $moduleName, 'ts');
     }
@@ -13,19 +13,11 @@ class TilesheetsAddTileApi extends ApiBase {
                 ApiBase::PARAM_TYPE => 'string',
                 ApiBase::PARAM_REQUIRED => true,
             ),
-            'name' => array(
+            'import' => array(
                 ApiBase::PARAM_TYPE => 'string',
                 ApiBase::PARAM_REQUIRED => true,
-            ),
-            'x' => array(
-                ApiBase::PARAM_TYPE => 'integer',
-                ApiBase::PARAM_REQUIRED => true,
-                ApiBase::PARAM_MIN => 0,
-            ),
-            'y' => array(
-                ApiBase::PARAM_TYPE => 'integer',
-                ApiBase::PARAM_REQUIRED => true,
-                ApiBase::PARAM_MIN => 0,
+                ApiBase::PARAM_ISMULTI => true,
+                ApiBase::PARAM_ALLOW_DUPLICATES => false,
             ),
         );
     }
@@ -50,10 +42,8 @@ class TilesheetsAddTileApi extends ApiBase {
         return array(
             'token' => 'The edit token',
             'summary' => 'An optional edit summary',
-            'name' => 'The tile name',
             'mod' => 'The mod abbreviation',
-            'x' => 'The X coordinate of the tile',
-            'y' => 'The Y coordinate of the tile',
+            'import' => 'A pipe separated list of entries. Format each entry as `X Y Item Name`.',
         );
     }
 
@@ -63,7 +53,7 @@ class TilesheetsAddTileApi extends ApiBase {
 
     public function getExamples() {
         return array(
-            'api.php?action=addtile&tssummary=Forgot to add a tile&tsname=Item&tsmod=V&tsx=0&tsy=0',
+            'api.php?action=addtiles&tssummary=Adding many tiles&tsmod=V&tsimport=0 0 Item|0 1 Other Item'
         );
     }
 
@@ -74,9 +64,7 @@ class TilesheetsAddTileApi extends ApiBase {
 
         $mod = $this->getParameter('mod');
         $summary = $this->getParameter('summary');
-        $name = $this->getParameter('name');
-        $x = $this->getParameter('x');
-        $y = $this->getParameter('y');
+        $import = $this->getParameter('import');
 
         $dbr = wfGetDB(DB_SLAVE);
         $result = $dbr->select(
@@ -90,20 +78,22 @@ class TilesheetsAddTileApi extends ApiBase {
             $this->dieUsage("No sheet found for mod $mod", 'nosheetfound');
         }
 
-        $res = TileManager::createTile($mod, $name, $x, $y, $this->getUser(), $summary);
-        $return = array($name => $res);
-
-        // Get the new tile's ID.
-        if ($res) {
-            $selectResult = $dbr->select(
-                'ext_tilesheet_items',
-                '`entry_id`',
-                array('item_name' => $name, 'mod_name' => $mod, 'x' => $x, 'y' => $y),
-                __METHOD__
-            );
-            $id = $selectResult->current()->entry_id;
-            $return[$name] = $id;
+        $return = [];
+        foreach ($import as $entry) {
+            list($x, $y, $item) = explode(' ', $entry, 3);
+            $res = TileManager::createTile($mod, $item, $x, $y, $this->getUser(), $summary);
+            // Get the new tile's ID.
+            if ($res) {
+                $selectResult = $dbr->select(
+                    'ext_tilesheet_items',
+                    '`entry_id`',
+                    array('item_name' => $item, 'mod_name' => $mod, 'x' => $x, 'y' => $y),
+                    __METHOD__
+                );
+                $id = $selectResult->current()->entry_id;
+                $return[$item] = $id;
+            }
         }
-        $this->getResult()->addValue('edit', 'addtile', $return);
+        $this->getResult()->addValue('edit', 'addtiles', $return);
     }
 }
