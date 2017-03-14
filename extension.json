@@ -119,7 +119,14 @@
 			"tilesheet-missing-item-category",
 			"tilesheet-no-mod-provided-category",
 			"tilesheet-no-mod-provided-easy-category"
-		]
+		],
+		"GrantPermissions": {
+			"tilesheets": {
+				"edittilesheets": true,
+				"importtilesheets": true,
+				"translatetiles": true
+			}
+		}
 	},
 	"manifest_version": 1
 }

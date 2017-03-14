@@ -97,5 +97,6 @@
 	"tilesheet-missing-image-category": "Pages using a missing tilesheet image",
 	"tilesheet-missing-item-category": "Pages with a missing tile name",
 	"tilesheet-no-mod-provided-category": "Pages with a missing mod parameter",
-	"tilesheet-no-mod-provided-easy-category": "Pages with an easily fixable missing mod parameter"
+	"tilesheet-no-mod-provided-easy-category": "Pages with an easily fixable missing mod parameter",
+	"grant-tilesheets": "Edit, import, or translate tilesheets"
 }
