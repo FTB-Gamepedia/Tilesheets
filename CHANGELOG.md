@@ -1,6 +1,23 @@
 # Changelog
 This changelog only shows recent version history, because of the lack of documentation from the former maintainers. The very first changelog (1.1.2) is likely incomplete.
 
+## Version 4
+### 4.0.0
+* Add ability to grant permissions to bots (for Special:BotPasswords thing on Gamepedia) (#55) (Alexia E. Smith)
+* SheetList filtering improvement (#53 and #49):
+  * Remove prefix filtering
+* TileList filtering improvements (#53 and #49):
+  * Remove "Filter by prefix"
+  * Add regex searching, which falls back to standard string searching.
+  * Add language filter with an invert selection box.
+  * Add searching after a certain entry ID.
+* addtile -> addtiles, which allows for importing many tiles at once (#51 and #39)
+  * This is a breaking change to the API!
+  * Specify tiles to add using the format "X Y Name|X Y Name|X Y Name" in the import parameter.
+  * API no longer has name, x, and y parameters.
+  * Return value is in the "addtiles" object, not the "addtile" object.
+* Set entry_id and lang as a composite primary key for lang table (#50 and #48)
+
 ## Version 3
 ### 3.3.1
 * Improve easily fixable mod parameter log warning to improve item name.
