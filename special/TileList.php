@@ -42,49 +42,97 @@ class TileList extends SpecialPage {
 
 		$opts = new FormOptions();
 
-		$opts->add( 'limit', $wgQueryPageDefaultLimit );
-		$opts->add( 'mod', '' );
-		$opts->add( 'start', '' );
-		$opts->add( 'page', 0 );
+		$opts->add('limit', $wgQueryPageDefaultLimit);
+		$opts->add('mod', '');
+		$opts->add('regex', '');
+		$opts->add('langs', '');
+		$opts->add('invertlang', 0);
+		$opts->add('page', 0);
+		$opts->add('from', 1);
 
-		$opts->fetchValuesFromRequest( $this->getRequest() );
-		$opts->validateIntBounds( 'limit', 0, 5000 );
+		$opts->fetchValuesFromRequest($this->getRequest());
+		$opts->validateIntBounds('limit', 0, 5000);
 
 		// Init variables
 		$mod = $opts->getValue('mod');
-		$start = $opts->getValue('start');
+		$regex = $opts->getValue('regex');
 		$limit = intval($opts->getValue('limit'));
 		$page = intval($opts->getValue('page'));
+		$opts->setValue('langs', str_replace(' ', '', $opts->getValue('langs')));
+		$langs = explode(',', $opts->getValue('langs'));
+		$from = intval($opts->getValue('from'));
 
 		// Load data
 		$dbr = wfGetDB(DB_SLAVE);
-		$result = $dbr->select(
-			'ext_tilesheet_items',
-			'COUNT(entry_id) AS row_count',
-			array(
-				"mod_name = {$dbr->addQuotes($mod)} OR {$dbr->addQuotes($mod)} = ''",
-				"item_name BETWEEN {$dbr->addQuotes($start)} AND 'zzzzzzzz'"
-			)
-		);
+		$formattedEntryIDs = '';
+
+		if (!empty($langs)) {
+			$langResult = $dbr->select(
+				'ext_tilesheet_languages',
+				'entry_id',
+				array('lang' => $langs)
+			);
+
+			$filteredEntryIDs = array();
+			foreach ($langResult as $result) {
+				$filteredEntryIDs[] = $result->entry_id;
+			}
+
+			$formattedEntryIDs = implode(', ', $filteredEntryIDs);
+		}
+
+		$langFilteredEntryInCondition = $formattedEntryIDs == ''
+			? "'' = ''"
+			: 'entry_id ' . ($opts->getValue('invertlang') == 1 ? 'NOT' : '') . ' IN (' . $formattedEntryIDs . ')';
+
+		try {
+			$searchValue = "item_name REGEXP {$dbr->addQuotes($regex)}";
+			$result = $dbr->select(
+				'ext_tilesheet_items',
+				'COUNT(entry_id) AS row_count',
+				array(
+					"entry_id >= $from",
+					"mod_name = {$dbr->addQuotes($mod)} OR {$dbr->addQuotes($mod)} = ''",
+					$searchValue,
+					$langFilteredEntryInCondition,
+				)
+			);
+		} catch (Exception $exception) {
+			// Fallback to the following query when the regex is invalid.
+			$searchValue = "item_name = {$dbr->addQuotes($regex)}";
+			$result = $dbr->select(
+				'ext_tilesheet_items',
+				'COUNT(entry_id) AS row_count',
+				array(
+					"entry_id >= $from",
+					"mod_name = {$dbr->addQuotes($mod)} OR {$dbr->addQuotes($mod)} = ''",
+					$searchValue,
+					$langFilteredEntryInCondition,
+				)
+			);
+		}
 		foreach ($result as $row) {
 			$maxRows = $row->row_count;
 		}
 
 		if (!isset($maxRows)) return;
 
-		$order = $opts->getValue('start') == '' ? 'entry_id ASC' : 'item_name ASC';
+        // TODO: Specify between: `entry_id ASC`; `item_name ASC`; `entry_id DESC`; `item_name DESC`
+		$order = 'entry_id ASC';
 		$results = $dbr->select(
 			'ext_tilesheet_items',
 			'*',
 			array(
+				"entry_id >= $from",
 				"mod_name = {$dbr->addQuotes($mod)} OR {$dbr->addQuotes($mod)} = ''",
-				"item_name BETWEEN {$dbr->addQuotes($start)} AND 'zzzzzzzz'"
+				$searchValue,
+				$langFilteredEntryInCondition,
 			),
 			__METHOD__,
 			array(
 				'ORDER BY' => $order,
 				'LIMIT' => $limit,
-				'OFFSET' => $page * $limit
+				'OFFSET' => $page * $limit,
 			)
 		);
 
@@ -149,18 +197,18 @@ class TileList extends SpecialPage {
 			$prevPage = "'''First Page'''";
 		} else {
 			if ($page == 1) {
-				$prevPage = "[{{fullurl:{{FULLPAGENAME}}|start=".$opts->getValue('start')."&mod=".$opts->getValue('mod')."&limit=".$opts->getValue('limit')."}} &laquo; First Page]";
+				$prevPage = "[{{fullurl:{{FULLPAGENAME}}|regex=".$opts->getValue('regex')."&mod=".$opts->getValue('mod')."&langs=".$opts->getValue('langs')."&invertlang=".$opts->getValue('invertlang')."&from=".$opts->getValue('from')."&limit=".$opts->getValue('limit')."}} &laquo; First Page]";
 			} else {
-				$prevPage = "[{{fullurl:{{FULLPAGENAME}}|start=".$opts->getValue('start')."&mod=".$opts->getValue('mod')."&limit=".$opts->getValue('limit')."}} &laquo; First Page] [{{fullurl:{{FULLPAGENAME}}|page={$pPage}&start=".$opts->getValue('start')."&mod=".$opts->getValue('mod')."&limit=".$opts->getValue('limit')."}} &lsaquo; Previous Page]";
+				$prevPage = "[{{fullurl:{{FULLPAGENAME}}|regex=".$opts->getValue('regex')."&mod=".$opts->getValue('mod')."&langs=".$opts->getValue('langs')."&invertlang=".$opts->getValue('invertlang')."&from=".$opts->getValue('from')."&limit=".$opts->getValue('limit')."}} &laquo; First Page] [{{fullurl:{{FULLPAGENAME}}|page={$pPage}&mod=".$opts->getValue('mod')."&langs=".$opts->getValue('langs')."&invertlang=".$opts->getValue('invertlang')."&limit=".$opts->getValue('limit')."}} &lsaquo; Previous Page]";
 			}
 		}
 		if ($lPage == $page) {
 			$nextPage = "'''Last Page'''";
 		} else {
 			if ($lPage == $page + 1) {
-				$nextPage = "[{{fullurl:{{FULLPAGENAME}}|page={$nPage}&start=".$opts->getValue('start')."&mod=".$opts->getValue('mod')."&limit=".$opts->getValue('limit')."}} Last Page &raquo;]";
+				$nextPage = "[{{fullurl:{{FULLPAGENAME}}|page={$nPage}&regex=".$opts->getValue('regex')."&mod=".$opts->getValue('mod')."&langs=".$opts->getValue('langs')."&invertlang=".$opts->getValue('invertlang')."&from=".$opts->getValue('from')."&limit=".$opts->getValue('limit')."}} Last Page &raquo;]";
 			} else {
-				$nextPage = "[{{fullurl:{{FULLPAGENAME}}|page={$nPage}&start=".$opts->getValue('start')."&mod=".$opts->getValue('mod')."&limit=".$opts->getValue('limit')."}} Next Page &rsaquo;] [{{fullurl:{{FULLPAGENAME}}|page={$lPage}&start=".$opts->getValue('start')."&mod=".$opts->getValue('mod')."&limit=".$opts->getValue('limit')."}} Last Page &raquo;]";
+				$nextPage = "[{{fullurl:{{FULLPAGENAME}}|page={$nPage}&regex=".$opts->getValue('regex')."&mod=".$opts->getValue('mod')."&langs=".$opts->getValue('langs')."&invertlang=".$opts->getValue('invertlang')."&from=".$opts->getValue('from')."&limit=".$opts->getValue('limit')."}} Next Page &rsaquo;] [{{fullurl:{{FULLPAGENAME}}|page={$lPage}&regex=".$opts->getValue('regex')."&mod=".$opts->getValue('mod')."&langs=".$opts->getValue('langs')."&invertlang=".$opts->getValue('invertlang')."&limit=".$opts->getValue('limit')."}} Last Page &raquo;]";
 			}
 		}
 		$pageSelection = "<div style=\"text-align:center;\" class=\"plainlinks\">$prevPage | $nextPage</div>";
@@ -189,8 +237,11 @@ class TileList extends SpecialPage {
 		}
 
 		$form = "<table>";
-		$form .= TilesheetsForm::createFormRow('tile-list', 'start', $opts->getValue('start'));
+		$form .= TilesheetsForm::createFormRow('tile-list', 'from', $opts->getValue('from'), 'number', "min=\"1\"");
+		$form .= TilesheetsForm::createFormRow('tile-list', 'regex', $opts->getValue('regex'));
 		$form .= TilesheetsForm::createFormRow('tile-list', 'mod', $opts->getValue('mod'));
+		$form .= TilesheetsForm::createFormRow('tile-list', 'langs', $opts->getValue('langs'));
+		$form .= TilesheetsForm::createCheckboxRow('tile-list', 'invertlang', 1, $opts->getValue('invertlang') == 1 ? 'checked' : '');
 		$form .= '<tr><td style="text-align:right"><label for="limit">'.$this->msg('tilesheet-tile-list-limit').'</td><td><select name="limit">'.$optionTags.'</select></td></tr>';
 		$form .= TilesheetsForm::createSubmitButton('tile-list');
 		$form .= "</table>";
@@ -199,7 +250,7 @@ class TileList extends SpecialPage {
 			Xml::fieldset($this->msg('tilesheet-tile-list-legend')->text()) .
 			Html::hidden('title', $this->getPageTitle()->getPrefixedText()) .
 			$form .
-			Xml::closeElement( 'fieldset' ) . Xml::closeElement( 'form' ) . "\n";
+			Xml::closeElement('fieldset') . Xml::closeElement('form') . "\n";
 
 		return $out;
 	}

@@ -47,6 +47,26 @@ class TilesheetsForm {
 	}
 
 	/**
+	 * Helper function for creating checkboxes.
+	 *
+	 * See createFormRow for parameters descriptions.
+	 * @param $ext
+	 * @param $name
+	 * @param int $value
+	 * @param string $attr
+	 * @param string $lattr
+	 * @return string
+	 */
+	static public function createCheckboxRow($ext, $name, $value = 1, $attr = '', $lattr = '') {
+	    $msg = wfMessage("tilesheet-$ext-$name")->text();
+        $html = "<tr>";
+		$html .= "<td class=\"mw-label\"><label for=\"$name\" $lattr>$msg</label></td>";
+        $html .= "<td class=\"mw-input\"><input type=\"checkbox\" name=\"$name\" id=\"$name\" value=\"$value\" $attr></td>";
+		$html .= "</tr>";
+		return $html;
+    }
+
+	/**
 	 * Helper function for creating submit buttons
 	 *
 	 * @param string $ext Submodule name
