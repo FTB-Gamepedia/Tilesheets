@@ -67,17 +67,10 @@ class TileList extends SpecialPage {
 		$formattedEntryIDs = '';
 
 		if (!empty($langs)) {
-			$safeLangs = array();
-			foreach ($langs as $lang) {
-				$safeLangs[] = $dbr->addQuotes($lang);
-			}
-
 			$langResult = $dbr->select(
 				'ext_tilesheet_languages',
 				'entry_id',
-				array(
-					'lang IN (' . implode(', ', $safeLangs) . ')',
-				)
+				array('lang' => $langs)
 			);
 
 			$filteredEntryIDs = array();
@@ -125,7 +118,7 @@ class TileList extends SpecialPage {
 		if (!isset($maxRows)) return;
 
         // TODO: Specify between: `entry_id ASC`; `item_name ASC`; `entry_id DESC`; `item_name DESC`
-        $order = 'entry_id ASC';
+		$order = 'entry_id ASC';
 		$results = $dbr->select(
 			'ext_tilesheet_items',
 			'*',
