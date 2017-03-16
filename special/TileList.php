@@ -81,34 +81,34 @@ class TileList extends SpecialPage {
 			$formattedEntryIDs = implode(', ', $filteredEntryIDs);
 		}
 
-		$langFilteredEntryInCondition = $formattedEntryIDs == ''
-			? "'' = ''"
-			: 'entry_id ' . ($opts->getValue('invertlang') == 1 ? 'NOT' : '') . ' IN (' . $formattedEntryIDs . ')';
+		$conditions = array("entry_id >= $from");
+		if ($formattedEntryIDs != '') {
+			$conditions[] = 'entry_id ' . ($opts->getValue('invertlang') == 1 ? 'NOT' : '') . ' IN (' . $formattedEntryIDs . ')';
+		}
+		if ($mod != '') {
+			$conditions[] = "mod_name = {$dbr->addQuotes($mod)}";
+		}
+
+		$searchNames = $regex != '';
 
 		try {
-			$searchValue = "item_name REGEXP {$dbr->addQuotes($regex)}";
+			if ($searchNames) {
+				$conditions[] = "item_name REGEXP {$dbr->addQuotes($regex)}";
+			}
 			$result = $dbr->select(
 				'ext_tilesheet_items',
 				'COUNT(entry_id) AS row_count',
-				array(
-					"entry_id >= $from",
-					"mod_name = {$dbr->addQuotes($mod)} OR {$dbr->addQuotes($mod)} = ''",
-					$searchValue,
-					$langFilteredEntryInCondition,
-				)
+				$conditions
 			);
 		} catch (Exception $exception) {
 			// Fallback to the following query when the regex is invalid.
-			$searchValue = "item_name = {$dbr->addQuotes($regex)}";
+			if ($searchNames) {
+				$conditions = array_replace($conditions, array(count($conditions) - 1 => "item_name = {$dbr->addQuotes($regex)}"));
+			}
 			$result = $dbr->select(
 				'ext_tilesheet_items',
 				'COUNT(entry_id) AS row_count',
-				array(
-					"entry_id >= $from",
-					"mod_name = {$dbr->addQuotes($mod)} OR {$dbr->addQuotes($mod)} = ''",
-					$searchValue,
-					$langFilteredEntryInCondition,
-				)
+				$conditions
 			);
 		}
 		foreach ($result as $row) {
@@ -122,12 +122,7 @@ class TileList extends SpecialPage {
 		$results = $dbr->select(
 			'ext_tilesheet_items',
 			'*',
-			array(
-				"entry_id >= $from",
-				"mod_name = {$dbr->addQuotes($mod)} OR {$dbr->addQuotes($mod)} = ''",
-				$searchValue,
-				$langFilteredEntryInCondition,
-			),
+			$conditions,
 			__METHOD__,
 			array(
 				'ORDER BY' => $order,
