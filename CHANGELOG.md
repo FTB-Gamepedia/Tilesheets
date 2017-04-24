@@ -2,6 +2,10 @@
 This changelog only shows recent version history, because of the lack of documentation from the former maintainers. The very first changelog (1.1.2) is likely incomplete.
 
 ## Version 4
+### 4.0.1
+* Improve tile searching code in TileList.
+  * Fix blank-regex searching issue. When mod, formattedEntryIDs, or regex are empty, instead of doing `whatever = ''`, the condition is simply omitted. This fixes the issue where it was searching for regex `//` instead of `item_name = ''` (#57 and #58).
+
 ### 4.0.0
 * Add ability to grant permissions to bots (for Special:BotPasswords thing on Gamepedia) (#55) (Alexia E. Smith)
 * SheetList filtering improvement (#53 and #49):
