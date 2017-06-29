@@ -38,6 +38,7 @@
 		]
 	},
 	"ExtensionMessagesFiles": {
+		"SpecialTilesheets": "Tilesheets.alias.php",
 		"TilesheetsMagic": "Tilesheets.i18n.magic.php"
 	},
 	"AutoloadClasses": {
