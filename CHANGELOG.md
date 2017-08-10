@@ -2,6 +2,11 @@
 This changelog only shows recent version history, because of the lack of documentation from the former maintainers. The very first changelog (1.1.2) is likely incomplete.
 
 ## Version 4
+### 4.1.0
+*  New Item Viewer special page Special:ViewTile/ID ($62, #67)
+  * Displays a table of the item for each size that it is registered for.
+* Missing special page alias file. (#65) (Alexia E. Smith)
+
 ### 4.0.1
 * Improve tile searching code in TileList.
   * Fix blank-regex searching issue. When mod, formattedEntryIDs, or regex are empty, instead of doing `whatever = ''`, the condition is simply omitted. This fixes the issue where it was searching for regex `//` instead of `item_name = ''` (#57 and #58).
