@@ -147,7 +147,7 @@ class TileList extends SpecialPage {
 		$msgYName = wfMessage('tilesheet-y');
 		$canEdit = in_array("edittilesheets", $this->getUser()->getRights());
 		$canTranslate = in_array('translatetiles', $this->getUser()->getRights());
-		$table .= "! !! !! # !!  $msgItemName !! $msgModName !! $msgXName !! $msgYName !! $msgSizesName\n";
+		$table .= "! !! !! !! # !!  $msgItemName !! $msgModName !! $msgXName !! $msgYName !! $msgSizesName\n";
 		$linkStyle = "style=\"width:23px; padding-left:5px; padding-right: 5px; text-align:center; font-weight:bold;\"";
 		foreach ($results as $result) {
 			$lId = $result->entry_id;
@@ -176,8 +176,11 @@ class TileList extends SpecialPage {
 			// TODO: Localization
 			$translateLink = $canTranslate ? "[[Special:TileTranslator/$lId|Translate]]" : '';
 
+			// todo localization
+			$viewLink = "[[Special:ViewTile/$lId|View]]";
+
 			$table .= "|-\n";
-			$table .= "| $linkStyle | $editLink || $linkStyle | $translateLink || $lId ||  $lItem || $sEditLink || $lX || $lY || $lSizes\n";
+			$table .= "| $linkStyle | $editLink || $linkStyle | $translateLink || $linkStyle | $viewLink || $lId ||  $lItem || $sEditLink || $lX || $lY || $lSizes\n";
 		}
 		$table .= "|}\n";
 
