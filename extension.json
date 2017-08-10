@@ -24,7 +24,8 @@
 		"CreateTileSheet": "CreateTileSheet",
 		"TileManager": "TileManager",
 		"SheetManager": "SheetManager",
-		"TileTranslator": "TileTranslator"
+		"TileTranslator": "TileTranslator",
+		"ViewTile": "ViewTile"
 	},
 	"LogTypes": [
 		"tilesheet"
@@ -51,6 +52,7 @@
 		"TileManager": "special/TileManager.php",
 		"SheetManager": "special/SheetManager.php",
 		"TileTranslator": "special/TileTranslator.php",
+		"ViewTile": "special/ViewTile.php",
 		"TilesheetsQuerySheetsApi": "api/TilesheetsQuerySheetsApi.php",
 		"TilesheetsQueryTilesApi": "api/TilesheetsQueryTilesApi.php",
 		"TilesheetsQueryTranslationsApi": "api/TilesheetsQueryTranslationsApi.php",
