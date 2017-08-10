@@ -17,5 +17,6 @@ $specialPageAliases['en'] = [
 	'SheetManager' => ['SheetManager'],
 	'TileList' => ['TileList'],
 	'TileManager' => ['TileManager'],
-	'TileTranslator' => ['TileTranslator']
+	'TileTranslator' => ['TileTranslator'],
+	'ViewTile' => ['ViewTile']
 ];
