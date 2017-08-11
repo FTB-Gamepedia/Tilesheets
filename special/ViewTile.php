@@ -18,7 +18,7 @@ class ViewTile extends SpecialPage {
 		$dbr = wfGetDB(DB_SLAVE);
 		$result = $dbr->select('ext_tilesheet_items', '*', array('entry_id' => $subPage));
 		if ($result->numRows() == 0) {
-			$out->addWikiText("Query returned an empty set (i.e. zero rows).");
+			$out->addWikiText($this->msg('tilesheet-fail-norows')->text());
 		} else {
 			$item = $result->current()->item_name;
 			$mod = $result->current()->mod_name;

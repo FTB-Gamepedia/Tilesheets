@@ -229,7 +229,7 @@ class TileManager extends SpecialPage {
 		$dbr = wfGetDB(DB_SLAVE);
 		$result = $dbr->select('ext_tilesheet_items', '*', array('entry_id' => $id));
 		if ($result->numRows() == 0) {
-			return "Query returned an empty set (i.e. zero rows).";
+			return $this->msg('tilesheet-fail-norows')->text();
 		} else {
 			$item = $result->current()->item_name;
 			$mod = $result->current()->mod_name;

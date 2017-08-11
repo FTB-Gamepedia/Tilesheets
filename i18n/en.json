@@ -32,6 +32,7 @@
 	"tilesheet-x": "X position",
 	"tilesheet-y": "Y position",
 	"tilesheet-sizes": "Registered sizes",
+	"tilesheet-fail-norows": "Query returned empty set (i.e., zero rows).",
 	"tilesheet-tile-list-submit": "Go",
 	"tilesheet-tile-list-limit": "Entries per page",
 	"tilesheet-create-legend": "Create new tilesheet",

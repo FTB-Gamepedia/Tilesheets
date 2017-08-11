@@ -192,7 +192,7 @@ class SheetManager extends SpecialPage {
 		$dbr = wfGetDB(DB_SLAVE);
 		$result = $dbr->select('ext_tilesheet_images', '*', array('`mod`' => $mod));
 		if ($result->numRows() == 0) {
-			return "Query returned an empty set (i.e. zero rows).";
+			return $this->msg('tilesheet-fail-norows')->text();
 		} else {
 			$mod = $result->current()->mod;
 			$sizes = $result->current()->sizes;

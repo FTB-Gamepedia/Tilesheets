@@ -133,8 +133,7 @@ class TileList extends SpecialPage {
 
 		if ($maxRows == 0) {
 			$out->addHTML($this->buildForm($opts));
-            // TODO: Localization
-			$out->addWikiText("Query returned an empty set (i.e. zero rows).");
+			$out->addWikiText($this->msg('tilesheet-fail-norows')->text());
 			return;
 		}
 
