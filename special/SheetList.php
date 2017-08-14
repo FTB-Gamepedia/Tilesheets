@@ -87,19 +87,23 @@ class SheetList extends SpecialPage {
 		$msgModName = wfMessage('tilesheet-mod-name');
 		$msgSizesName = wfMessage('tilesheet-sizes');
 		$canEdit = in_array("edittilesheets", $this->getUser()->getRights());
-		$table .= "! !! $msgModName !! $msgSizesName\n";
+		$table .= "!";
+		if ($canEdit) {
+			$table .= " !!";
+		}
+		$table .= " $msgModName !! $msgSizesName\n";
 		foreach ($results as $result) {
 			$lMod = $result->mod;
 			$lSizes = $result->sizes;
 
 			if ($canEdit) {
-				$editLink = "[[Special:SheetManager/$lMod|Edit]]";
+				$editLink = " style=\"width:23px; padding-left:5px; padding-right:5px; text-align:center; font-weight:bold;\" | [[Special:SheetManager/$lMod|Edit]] ||";
 			} else {
 				$editLink = "";
 			}
 
 			$table .= "|-\n";
-			$table .= "| style=\"width:23px; padding-left:5px; padding-right:5px; text-align:center; font-weight:bold;\" | $editLink || $lMod || $lSizes\n";
+			$table .= "|$editLink $lMod || $lSizes\n";
 		}
 		$table .= "|}\n";
 
