@@ -182,7 +182,7 @@ class SheetList extends SpecialPage {
 		]);
 		$form->appendContent(
 			$fieldset,
-			new OOUI\HtmlSnippet(Html::hidden('title', $this->getTitle()->getPrefixedText()))
+			new OOUI\HtmlSnippet(Html::hidden('title', $this->getPageTitle()->getPrefixedText()))
 		);
 		return new OOUI\PanelLayout([
 			'classes' => ['tilesheet-sheet-list-filter-wrapper'],
