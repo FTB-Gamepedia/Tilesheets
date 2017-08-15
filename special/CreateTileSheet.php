@@ -180,26 +180,6 @@ class CreateTileSheet extends SpecialPage {
 			'padded' => true,
 			'content' => $form
 		]);
-
-		$form = "<table>";
-		$form .= TilesheetsForm::createFormRow('create', 'mod');
-		$form .= TilesheetsForm::createInputHint('create', 'mod');
-		$form .= TilesheetsForm::createFormRow('create', 'sizes');
-		$form .= TilesheetsForm::createInputHint('create', 'sizes');
-		$form .= "<tr><td class='mw-label'>".$this->msg('tilesheet-create-input')->text()."</td><td></td></td>";
-		$form .= TilesheetsForm::createInputHint('create', 'input');
-		$form .= "<tr><td colspan=\"2\"><textarea name=\"input\" style=\"width:100%; height: 600px;\"></textarea></td></td>";
-		$form .= "<tr><td colspan=\"2\"><input type=\"submit\" value=\"".$this->msg("tilesheet-create-submit")->text()."\"><input type=\"checkbox\" value=\"1\" name=\"update_table\" id=\"update_table\"><label for=\"update_table\">".$this->msg("tilesheet-create-update")->text()."</label><span style=\"font-size: x-small;padding: .2em .5em;color: #666;\">".$this->msg("tilesheet-create-update-hint")->parse()."</span></td></tr>";
-		$form .= "</table>";
-
-		$out = Xml::openElement('form', array('method' => 'post', 'action' => str_replace('$1', 'Special:CreateTileSheet', $wgArticlePath), 'id' => 'ext-tilesheet-create-form', 'class' => 'prefsection')) .
-			Xml::fieldset($this->msg('tilesheet-create-legend')->text()) .
-			Html::hidden('title', $this->getTitle()->getPrefixedText()) .
-			Html::hidden( 'token', $this->getUser()->getEditToken() ) .
-			$form .
-			Xml::closeElement( 'fieldset' ) . Xml::closeElement( 'form' ) . "\n";
-
-		return $out;
 	}
 
 	/**
