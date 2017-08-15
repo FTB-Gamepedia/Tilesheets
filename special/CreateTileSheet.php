@@ -37,6 +37,7 @@ class CreateTileSheet extends SpecialPage {
 		$this->checkPermissions();
 
 		$out = $this->getOutput();
+		$out->enableOOUI();
 		$out->addModuleStyles('ext.tilesheets.special');
 
 		$this->setHeaders();
@@ -100,6 +101,86 @@ class CreateTileSheet extends SpecialPage {
 	 */
 	private function buildForm() {
 		global $wgArticlePath;
+		$fieldset = new OOUI\FieldsetLayout([
+			'label' => $this->msg('tilesheet-create-legend')->text(),
+			'items' => [
+				new OOUI\FieldLayout(
+					new OOUI\TextInputWidget([
+						'name' => 'mod',
+						'id' => 'mod'
+					]),
+					['label' => $this->msg('tilesheet-create-mod')->text()]
+				),
+				new OOUI\LabelWidget([
+					'label' => $this->msg('tilesheet-create-mod-hint')->text()
+				]),
+				new OOUI\FieldLayout(
+					new OOUI\TextInputWidget([
+						'name' => 'sizes',
+						'id' => 'sizes'
+					]),
+					['label' => $this->msg('tilesheet-create-sizes')->text()]
+				),
+				new OOUI\LabelWidget([
+					'label' => new OOUI\HtmlSnippet($this->msg('tilesheet-create-sizes-hint')->parse())
+				]),
+				new OOUI\HorizontalLayout([
+					'items' => [
+						new OOUI\LabelWidget([
+							'label' => $this->msg('tilesheet-create-input')->text()
+						])
+					]
+				]),
+				new OOUI\TextInputWidget([
+					'classes' => ['tilesheet-importer-textarea'],
+					'multiline' => true,
+					'rows' => 40,
+					'name' => 'input'
+				]),
+				new OOUI\HorizontalLayout([
+					'items' => [
+						new OOUI\ButtonInputWidget([
+							'type' => 'submit',
+							'label' => $this->msg('tilesheet-create-submit')->text(),
+							'flags' => ['primary', 'progressive']
+						]),
+						new OOUI\CheckboxInputWidget([
+							'value' => '1',
+							'name' => 'update_table',
+							'inputId' => 'update_table',
+							'label' => $this->msg('tilesheet-create-update')->text()
+						]),
+						new OOUI\LabelWidget([
+							'label' => $this->msg('tilesheet-create-update')->text()
+						]),
+						new OOUI\LabelWidget([
+							'classes' => ['tilesheet-create-update-hint'],
+							'label' => new OOUI\HtmlSnippet($this->msg('tilesheet-create-update-hint')->parse())
+						])
+					]
+				])
+			]
+		]);
+		$form = new OOUI\FormLayout([
+			'method' => 'POST',
+			'action' => str_replace('$1', 'Special:CreateTileSheet', $wgArticlePath),
+			'id' => 'ext-tilesheet-create-form'
+		]);
+		$form->appendContent(
+			$fieldset,
+			new OOUI\HtmlSnippet(
+				Html::hidden('title', $this->getPageTitle()->getPrefixedText()) .
+				Html::hidden('token', $this->getUser()->getEditToken())
+			)
+		);
+		return new OOUI\PanelLayout([
+			'classes' => ['tilesheet-importer-wrapper'],
+			'framed' => true,
+			'expanded' => false,
+			'padded' => true,
+			'content' => $form
+		]);
+
 		$form = "<table>";
 		$form .= TilesheetsForm::createFormRow('create', 'mod');
 		$form .= TilesheetsForm::createInputHint('create', 'mod');

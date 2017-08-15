@@ -2,3 +2,22 @@
 	padding-left: 0.5em;
 	padding-right: 0.5em;
 }
+
+.tilesheet-importer-textarea {
+	padding-bottom: 0.5em;
+}
+
+.tilesheet-importer-textarea textarea {
+	width: 145.5% !important;
+}
+
+.tilesheet-create-update-hint {
+	font-size: x-small;
+	padding: .2em .5em;
+	color: #666;
+	display: inline !important;
+}
+
+.oo-ui-checkboxInputWidget {
+	display: inline-block;
+}
