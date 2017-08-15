@@ -35,6 +35,7 @@ class SheetList extends SpecialPage {
 	public function execute($par) {
 		global $wgQueryPageDefaultLimit;
 		$out = $this->getOutput();
+		$out->enableOOUI();
 
 		$this->setHeaders();
 		$this->outputHeader();
@@ -139,6 +140,15 @@ class SheetList extends SpecialPage {
 		$out->addWikiText($table);
 	}
 
+	const SIZES = [
+		['data' => 20],
+		['data' => 50],
+		['data' => 100],
+		['data' => 250],
+		['data' => 500],
+		['data' => 5000]
+	];
+
 	/**
 	 * Build filter form
 	 *
@@ -147,26 +157,39 @@ class SheetList extends SpecialPage {
 	 */
 	private function buildForm(FormOptions $opts) {
 		global $wgScript;
-		$optionTags = "";
-		foreach ([20,50,100,250,500,5000] as $lim) {
-			if ($opts->getValue('limit') == $lim) {
-				$optionTags .= "<option selected=\"\" value=\"$lim\">$lim</option>";
-			} else {
-				$optionTags .= "<option value=\"$lim\">$lim</option>";
-			}
-		}
-
-		$form = "<table>";
-		$form .= '<tr><td style="text-align:right"><label for="limit">'.$this->msg('tilesheet-sheet-list-limit').'</td><td><select name="limit">'.$optionTags.'</select></td></tr>';
-		$form .= TilesheetsForm::createSubmitButton('sheet-list');
-		$form .= "</table>";
-
-		$out = Xml::openElement('form', array('method' => 'get', 'action' => $wgScript, 'id' => 'ext-tilesheet-sheet-list-filter', 'class' => 'prefsection')) .
-			Xml::fieldset($this->msg('tilesheet-sheet-list-legend')->text()) .
-			Html::hidden('title', $this->getPageTitle()->getPrefixedText()) .
-			$form .
-			Xml::closeElement( 'fieldset' ) . Xml::closeElement( 'form' ) . "\n";
-
-		return $out;
+		$fieldset = new OOUI\FieldsetLayout([
+			'label' => $this->msg('tilesheet-sheet-list-legend')->text(),
+			'items' => [
+				new OOUI\FieldLayout(
+					new OOUI\DropdownInputWidget([
+						'options' => self::SIZES,
+						'value' => $opts->getValue('limit'),
+						'name' => 'limit'
+					]),
+					['label' => $this->msg('tilesheet-sheet-list-limit')->text()]
+				),
+				new OOUI\ButtonInputWidget([
+					'type' => 'submit',
+					'label' => $this->msg('tilesheet-sheet-list-submit')->text(),
+					'flags' => ['primary', 'progressive']
+				])
+			]
+		]);
+		$form = new OOUI\FormLayout([
+			'method' => 'GET',
+			'action' => $wgScript,
+			'id' => 'ext-tilesheet-sheet-list-filter'
+		]);
+		$form->appendContent(
+			$fieldset,
+			new OOUI\HtmlSnippet(Html::hidden('title', $this->getTitle()->getPrefixedText()))
+		);
+		return new OOUI\PanelLayout([
+			'classes' => ['tilesheet-sheet-list-filter-wrapper'],
+			'framed' => true,
+			'expanded' => false,
+			'padded' => true,
+			'content' => $form
+		]);
 	}
 }
