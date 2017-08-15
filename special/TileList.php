@@ -35,6 +35,7 @@ class TileList extends SpecialPage {
 	public function execute($par) {
 		global $wgQueryPageDefaultLimit;
 		$out = $this->getOutput();
+		$out->enableOOUI();
 
 		$this->setHeaders();
 		$this->outputHeader();
@@ -225,6 +226,15 @@ class TileList extends SpecialPage {
 		$out->addWikiText($table);
 	}
 
+	const SIZES = [
+		['data' => 20],
+		['data' => 50],
+		['data' => 100],
+		['data' => 250],
+		['data' => 500],
+		['data' => 5000]
+	];
+
 	/**
 	 * Build filter form
 	 *
@@ -233,31 +243,82 @@ class TileList extends SpecialPage {
 	 */
 	private function buildForm(FormOptions $opts) {
 		global $wgScript;
-		$optionTags = "";
-		foreach ([20,50,100,250,500,5000] as $lim) {
-			if ($opts->getValue('limit') == $lim) {
-				$optionTags .= "<option selected=\"\" value=\"$lim\">$lim</option>";
-			} else {
-				$optionTags .= "<option value=\"$lim\">$lim</option>";
-			}
-		}
-
-		$form = "<table>";
-		$form .= TilesheetsForm::createFormRow('tile-list', 'from', $opts->getValue('from'), 'number', "min=\"1\"");
-		$form .= TilesheetsForm::createFormRow('tile-list', 'regex', $opts->getValue('regex'));
-		$form .= TilesheetsForm::createFormRow('tile-list', 'mod', $opts->getValue('mod'));
-		$form .= TilesheetsForm::createFormRow('tile-list', 'langs', $opts->getValue('langs'));
-		$form .= TilesheetsForm::createCheckboxRow('tile-list', 'invertlang', 1, $opts->getValue('invertlang') == 1 ? 'checked' : '');
-		$form .= '<tr><td style="text-align:right"><label for="limit">'.$this->msg('tilesheet-tile-list-limit').'</td><td><select name="limit">'.$optionTags.'</select></td></tr>';
-		$form .= TilesheetsForm::createSubmitButton('tile-list');
-		$form .= "</table>";
-
-		$out = Xml::openElement('form', array('method' => 'get', 'action' => $wgScript, 'id' => 'ext-tilesheet-tile-list-filter')) .
-			Xml::fieldset($this->msg('tilesheet-tile-list-legend')->text()) .
-			Html::hidden('title', $this->getPageTitle()->getPrefixedText()) .
-			$form .
-			Xml::closeElement('fieldset') . Xml::closeElement('form') . "\n";
-
-		return $out;
+		$fieldset = new OOUI\FieldsetLayout([
+			'label' => $this->msg('tilesheet-tile-list-legend')->text(),
+			'items' => [
+				new OOUI\FieldLayout(
+					new OOUI\TextInputWidget([
+						'type' => 'number',
+						'name' => 'from',
+						'value' => $opts->getValue('from'),
+						'min' => '1',
+						'id' => 'from'
+					]),
+					['label' => $this->msg('tilesheet-tile-list-from')->text()]
+				),
+				new OOUI\FieldLayout(
+					new OOUI\TextInputWidget([
+						'name' => 'regex',
+						'value' => $opts->getValue('regex'),
+						'id' => 'regex'
+					]),
+					['label' => $this->msg('tilesheet-tile-list-regex')->text()]
+				),
+				new OOUI\FieldLayout(
+					new OOUI\TextInputWidget([
+						'name' => 'mod',
+						'value' => $opts->getValue('mod'),
+						'id' => 'mod'
+					]),
+					['label' => $this->msg('tilesheet-tile-list-mod')->text()]
+				),
+				new OOUI\FieldLayout(
+					new OOUI\TextInputWidget([
+						'name' => 'langs',
+						'value' => $opts->getValue('langs'),
+						'id' => 'langs'
+					]),
+					['label' => $this->msg('tilesheet-tile-list-langs')->text()]
+				),
+				new OOUI\FieldLayout(
+					new OOUI\CheckboxInputWidget([
+						'name' => 'invertlang',
+						'value' => 1,
+						'id' => 'invertlang',
+						'selected' => $opts->getValue('invertlang') == 1
+					]),
+					['label' => $this->msg('tilesheet-tile-list-invertlang')->text()]
+				),
+				new OOUI\FieldLayout(
+					new OOUI\DropdownInputWidget([
+						'options' => self::SIZES,
+						'value' => $opts->getValue('limit'),
+						'name' => 'limit'
+					]),
+					['label' => $this->msg('tilesheet-tile-list-limit')->text()]
+				),
+				new OOUI\ButtonInputWidget([
+					'type' => 'submit',
+					'label' => $this->msg('tilesheet-tile-list-submit')->text(),
+					'flags' => ['primary', 'progressive']
+				])
+			]
+		]);
+		$form = new OOUI\FormLayout([
+			'method' => 'GET',
+			'action' => $wgScript,
+			'id' => 'ext-tilesheet-tile-list-filter'
+		]);
+		$form->appendContent(
+			$fieldset,
+			new OOUI\HtmlSnippet(Html::hidden('title', $this->getPageTitle()->getPrefixedText()))
+		);
+		return new OOUI\PanelLayout([
+			'classes' => ['tilesheet-tile-list-filter-wrapper'],
+			'framed' => true,
+			'expanded' => false,
+			'padded' => true,
+			'content' => $form
+		]);
 	}
 }
