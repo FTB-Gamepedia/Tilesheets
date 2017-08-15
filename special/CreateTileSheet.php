@@ -147,8 +147,7 @@ class CreateTileSheet extends SpecialPage {
 						new OOUI\CheckboxInputWidget([
 							'value' => '1',
 							'name' => 'update_table',
-							'inputId' => 'update_table',
-							'label' => $this->msg('tilesheet-create-update')->text()
+							'inputId' => 'update_table'
 						]),
 						new OOUI\LabelWidget([
 							'label' => $this->msg('tilesheet-create-update')->text()
