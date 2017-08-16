@@ -21,3 +21,7 @@
 .oo-ui-checkboxInputWidget {
 	display: inline-block;
 }
+
+.tile-manager-wrapper, .tile-manager-filter-wrapper {
+	width: 50%;
+}
