@@ -25,3 +25,7 @@
 .tile-manager-wrapper, .tile-manager-filter-wrapper {
 	width: 50%;
 }
+
+.sheet-manager-wrapper, .sheet-manager-filter-wrapper {
+	width: 75%;
+}

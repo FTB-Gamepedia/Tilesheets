@@ -37,6 +37,7 @@ class SheetManager extends SpecialPage {
 		$this->checkPermissions();
 
 		$out = $this->getOutput();
+		$out->enableOOUI();
 		$out->addModuleStyles('ext.tilesheets.special');
 
 		$this->setHeaders();
@@ -168,18 +169,40 @@ class SheetManager extends SpecialPage {
 	 */
 	private function buildSearchForm() {
 		global $wgScript;
-		$form = "<table>";
-		$form .= TilesheetsForm::createFormRow('sheet-manager-filter', 'mod', '', 'text', 'id="form-entry-mod"');
-		$form .= TilesheetsForm::createSubmitButton('sheet-manager-filter');
-		$form .= "</table>";
-
-		$out = Xml::openElement('form', array('method' => 'get', 'action' => $wgScript, 'id' => 'ext-tilesheet-sheet-manager-filter')) .
-			Xml::fieldset($this->msg('tilesheet-sheet-manager-filter-legend')->text()) .
-			Html::hidden('title', $this->getPageTitle()->getPrefixedText()) .
-			$form .
-			Xml::closeElement( 'fieldset' ) . Xml::closeElement( 'form' ) . "\n";
-
-		return $out;
+		$fieldset = new OOUI\FieldsetLayout([
+			'label' => $this->msg('tilesheet-sheet-manager-filter-legend')->text(),
+			'items' => [
+				new OOUI\FieldLayout(
+					new OOUI\TextInputWidget([
+						'name' => 'mod',
+						'value' => '',
+						'id' => 'form-entry-mod',
+						'icon' => 'search'
+					]),
+					['label' => $this->msg('tilesheet-sheet-manager-filter-mod')->text()]
+				),
+				new OOUI\ButtonInputWidget([
+					'label' => $this->msg('tilesheet-sheet-manager-filter-submit')->text(),
+					'type' => 'submit'
+				])
+			]
+		]);
+		$form = new OOUI\FormLayout([
+			'method' => 'GET',
+			'action' => $wgScript,
+			'id' => 'ext-tilesheet-sheet-manager-filter'
+		]);
+		$form->appendContent(
+			$fieldset,
+			new OOUI\HtmlSnippet(Html::hidden('title', $this->getPageTitle()->getPrefixedText()))
+		);
+		return new OOUI\PanelLayout([
+			'classes' => ['sheet-manager-filter-wrapper'],
+			'framed' => true,
+			'expanded' => false,
+			'padded' => true,
+			'content' => $form
+		]);
 	}
 
 	/**
@@ -199,26 +222,71 @@ class SheetManager extends SpecialPage {
 		}
 
 		global $wgScript;
-		$form = "<table>";
-		$form .= TilesheetsForm::createFormRow('sheet-manager', 'mod', $mod, "text", 'readonly="readonly"');
-		$form .= TilesheetsForm::createInputHint('sheet-manager', 'mod');
-		$form .= TilesheetsForm::createFormRow('sheet-manager', 'sizes', $sizes);
-		$form .= TilesheetsForm::createInputHint('sheet-manager', 'sizes');
-		// Create delete/truncate options if sysop
-		$disable = in_array('sysop', $this->getUser()->getGroups()) ? "" : "disabled=\"disabled\"";
-		$form .= TilesheetsForm::createDeleteCheckboxRow('sheet-manager', 'delete', 1, '', $disable);
-		$form .= TilesheetsForm::createDeleteCheckboxRow('sheet-manager', 'truncate', 1, '', $disable);
-		$form .= TilesheetsForm::createSubmitButton('sheet-manager');
-		$form .= "</table>";
-
-		$out = Xml::openElement('form', array('method' => 'get', 'action' => $wgScript, 'id' => 'ext-tilesheet-sheet-manager-form', 'class' => 'prefsection')) .
-			Xml::fieldset($this->msg('tilesheet-sheet-manager-legend')->text()) .
-			Html::hidden('title', $this->getPageTitle()->getPrefixedText()) .
-			Html::hidden('token', $this->getUser()->getEditToken()) .
-			Html::hidden('update', 1) .
-			$form .
-			Xml::closeElement( 'fieldset' ) . Xml::closeElement( 'form' ) . "\n";
-
-		return $out;
+		$fieldset = new OOUI\FieldsetLayout([
+			'label' => $this->msg('tilesheet-sheet-manager-legend')->text(),
+			'items' => [
+				new OOUI\FieldLayout(
+					new OOUI\TextInputWidget([
+						'name' => 'mod',
+						'value' => $mod,
+						'readOnly' => true
+					]),
+					['label' => $this->msg('tilesheet-sheet-manager-mod')->text()]
+				),
+				new OOUI\LabelWidget(['label' => $this->msg('tilesheet-sheet-manager-mod-hint')->text()]),
+				new OOUI\FieldLayout(
+					new OOUI\TextInputWidget([
+						'name' => 'sizes',
+						'value' => $sizes
+					]),
+					['label' => $this->msg('tilesheet-sheet-manager-sizes')->text()]
+				),
+				new OOUI\LabelWidget(['label' => new OOUI\HtmlSnippet($this->msg('tilesheet-sheet-manager-sizes-hint')->parse())]),
+				new OOUI\HorizontalLayout([
+					'items' => [
+						new OOUI\ButtonInputWidget([
+							'type' => 'submit',
+							'label' => $this->msg('tilesheet-sheet-manager-submit')->text(),
+							'flags' => ['primary', 'progressive'],
+							'name' => 'update',
+							'value' => 1
+						]),
+						new OOUI\ButtonInputWidget([
+							'type' => 'submit',
+							'label' => $this->msg('tilesheet-sheet-manager-delete')->text(),
+							'flags' => ['destructive'],
+							'name' => 'delete',
+							'value' => 1,
+						]),
+						new OOUI\ButtonInputWidget([
+							'type' => 'submit',
+							'label' => $this->msg('tilesheet-sheet-manager-truncate')->text(),
+							'flags' => ['destructive'],
+							'name' => 'truncate',
+							'value' => 1,
+						])
+					]
+				])
+			]
+		]);
+		$form = new OOUI\FormLayout([
+			'method' => 'GET',
+			'action' => $wgScript,
+			'id' => 'ext-tilesheet-sheet-manager-form'
+		]);
+		$form->appendContent(
+			$fieldset,
+			new OOUI\HtmlSnippet(
+				Html::hidden('title', $this->getPageTitle()->getPrefixedText()) .
+				Html::hidden('token', $this->getUser()->getEditToken())
+			)
+		);
+		return new OOUI\PanelLayout([
+			'classes' => ['sheet-manager-wrapper'],
+			'framed' => true,
+			'expanded' => false,
+			'padded' => true,
+			'content' => $form
+		]);
 	}
 }
