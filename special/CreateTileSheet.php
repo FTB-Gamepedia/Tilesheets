@@ -69,9 +69,9 @@ class CreateTileSheet extends SpecialPage {
 			// If update mode
 			if ($opts->getValue('update_table') == 1) {
 				// Delete sheet
-				$out->addHtml($this->returnMessage(SheetManager::deleteEntry($mod, "Updating tilesheet through import tool."), "Removing existing tilesheet..."));
+				$out->addHtml($this->returnMessage(SheetManager::deleteEntry($mod, $this->getUser(), "Updating tilesheet through import tool."), "Removing existing tilesheet..."));
 				// Truncate table
-				$out->addHtml($this->returnMessage(SheetManager::truncateTable($mod, "Updating tilesheet through import tool."), "Removing existing tilesheet entries..."));
+				$out->addHtml($this->returnMessage(SheetManager::truncateTable($mod, $this->getUser(), "Updating tilesheet through import tool."), "Removing existing tilesheet entries..."));
 			}
 
 			// Create sheet
