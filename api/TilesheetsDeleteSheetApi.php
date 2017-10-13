@@ -34,18 +34,6 @@ class TilesheetsDeleteSheetApi extends ApiBase {
         return true;
     }
 
-    public function getParamDescription() {
-        return array(
-            'token' => 'The edit token',
-            'summary' => 'An optional edit summary',
-            'mods' => 'The mod abbreviations to delete',
-        );
-    }
-
-    public function getDescription() {
-        return 'Deletes tilesheets by the mod abbreviations specified';
-    }
-
     public function getExamples() {
         return array(
             'api.php?action=deletesheet&tsmods=A|B|C&tssummary=Because I don\'t know my ABCs.',

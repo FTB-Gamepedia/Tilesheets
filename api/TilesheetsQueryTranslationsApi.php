@@ -19,17 +19,6 @@ class TilesheetsQueryTranslationsApi extends ApiQueryBase {
         );
     }
 
-    public function getParamDescription() {
-        return array(
-            'id' => 'The entry ID to get translations for',
-            'lang' => 'The language to get translations for',
-        );
-    }
-
-    public function getDescription() {
-        return 'Get all of the translations for the given entry ID and/or language.';
-    }
-
     public function getExamples() {
         return array(
             'api.php?action=query&list=tiletranslations&tsid=6',

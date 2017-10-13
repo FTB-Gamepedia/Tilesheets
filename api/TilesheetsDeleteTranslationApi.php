@@ -36,18 +36,6 @@ class TilesheetsDeleteTranslationApi extends ApiBase {
         return true;
     }
 
-    public function getParamDescription() {
-        return array(
-            'token' => 'The edit token',
-            'id' => 'The entry ID to delete',
-            'lang' => 'The language of the entry to delete'
-        );
-    }
-
-    public function getDescription() {
-        return 'Deletes a translation for an entry ID.';
-    }
-
     public function getExamples() {
         return array(
             'api.php?action=deletetranslation&tsid=6&tslang=es',

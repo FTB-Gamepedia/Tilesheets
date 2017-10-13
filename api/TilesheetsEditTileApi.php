@@ -44,22 +44,6 @@ class TilesheetsEditTileApi extends ApiBase {
         return true;
     }
 
-    public function getParamDescription() {
-        return array(
-            'token' => 'The edit token',
-            'summary' => 'An optional edit summary',
-            'id' => 'The entry ID for the tile',
-            'tomod' => 'The new mod abbreviation',
-            'toname' => 'The new item name',
-            'tox' => 'The new X coordinate',
-            'toy' => 'The new Y coordinate',
-        );
-    }
-
-    public function getDescription() {
-        return 'Edits a tile entry\'s data';
-    }
-
     public function getExamples() {
         return array(
             'api.php?action=edittile&id=1&tomod=V&toname=Log&tox=1&toy=1',

@@ -34,18 +34,6 @@ class TilesheetsDeleteTilesApi extends ApiBase {
         return true;
     }
 
-    public function getParamDescription() {
-        return array(
-            'token' => 'The edit token',
-            'summary' => 'An optional edit summary',
-            'ids' => 'A list of entry IDs to delete',
-        );
-    }
-
-    public function getDescription() {
-        return 'Deletes individual tile entries from the database';
-    }
-
     public function getExamples() {
         return array(
             'api.php?action=deletetiles&tsids=1|2|3',

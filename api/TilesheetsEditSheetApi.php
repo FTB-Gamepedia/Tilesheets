@@ -39,20 +39,6 @@ class TilesheetsEditSheetApi extends ApiBase {
         return true;
     }
 
-    public function getParamDescription() {
-        return array(
-            'token' => 'The edit token',
-            'summary' => 'An optional edit summary',
-            'mod' => 'The current mod abbreviation',
-            'tomod' => 'The new mod abbreviation',
-            'tosizes' => 'A pipe separated list of new sizes',
-        );
-    }
-
-    public function getDescription() {
-        return 'Edits a sheet\'s data';
-    }
-
     public function getExamples() {
         return array(
             'api.php?action=editsheet&mod=A&tomod=B&tosizes=32|64',

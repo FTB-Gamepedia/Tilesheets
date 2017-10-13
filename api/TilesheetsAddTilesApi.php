@@ -38,19 +38,6 @@ class TilesheetsAddTilesApi extends ApiBase {
         return true;
     }
 
-    public function getParamDescription() {
-        return array(
-            'token' => 'The edit token',
-            'summary' => 'An optional edit summary',
-            'mod' => 'The mod abbreviation',
-            'import' => 'A pipe separated list of entries. Format each entry as `X Y Item Name`.',
-        );
-    }
-
-    public function getDescription() {
-        return 'Adds a single tile to a given tilesheet';
-    }
-
     public function getExamples() {
         return array(
             'api.php?action=addtiles&tssummary=Adding many tiles&tsmod=V&tsimport=0 0 Item|0 1 Other Item'

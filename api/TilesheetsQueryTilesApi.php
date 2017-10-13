@@ -25,18 +25,6 @@ class TilesheetsQueryTilesApi extends ApiQueryBase {
         );
     }
 
-    public function getParamDescription() {
-        return array(
-            'limit' => 'The maximum number of tiles to list',
-            'from' => 'The tile ID to start listing at',
-            'mod' => 'The mod to filter by',
-        );
-    }
-
-    public function getDescription() {
-        return 'Get all of the tiles filtered by mod.';
-    }
-
     public function getExamples() {
         return array(
             'api.php?action=query&list=tiles&tslimit=50&tsmod=W',

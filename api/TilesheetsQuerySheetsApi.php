@@ -21,17 +21,6 @@ class TilesheetsQuerySheetsApi extends ApiQueryBase {
         );
     }
 
-    public function getParamDescription() {
-        return array(
-            'limit' => 'The maximum number of sheets to list',
-            'from' => 'The abbreviation to start listing at'
-        );
-    }
-
-    public function getDescription() {
-        return 'Get all of the sheets.';
-    }
-
     public function getExamples() {
         return array(
             'api.php?action=query&list=tilesheets&tslimit=50',

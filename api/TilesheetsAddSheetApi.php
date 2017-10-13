@@ -37,19 +37,6 @@ class TilesheetsAddSheetApi extends ApiBase {
         return true;
     }
 
-    public function getParamDescription() {
-        return array(
-            'token' => 'The edit token',
-            'summary' => 'An optional edit summary',
-            'mod' => 'The mod abbreviation',
-            'sizes' => 'Pipe separated list of tile sizes',
-        );
-    }
-
-    public function getDescription() {
-        return 'Creates a new tilesheet with the given mod abbreviation and sizes';
-    }
-
     public function getExamples() {
         return array(
             'api.php?action=createsheet&tssummary=This mod rocks&tsmod=MOD&tssizes=16|32|64',

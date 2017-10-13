@@ -42,20 +42,6 @@ class TilesheetsTranslateTileApi extends ApiBase {
         return true;
     }
 
-    public function getParamDescription() {
-        return array(
-            'token' => 'The edit token',
-            'id' => 'The tile entry ID',
-            'lang' => 'The language code to translate to',
-            'name' => 'The localized name',
-            'description' => 'The localized description',
-        );
-    }
-
-    public function getDescription() {
-        return 'Translates the given tile data, either updating or creating a new entry.';
-    }
-
     public function getExamples() {
         return array(
             'api.php?action=translatetile&tsid=6&tslang=es-ni&tsname=Esmeralda',
