@@ -31,7 +31,7 @@ class Tilesheets {
 		if (isset($options['size'])) $size = $options['size'];
 		if (isset($options['mod'])) $mod = $options['mod'];
 
-		TilesheetsError::log("Preparing item: {$size}px $item ($mod)");
+		TilesheetsError::log(wfMessage('tilesheets-log-prepare')->params($size, $item, $mod)->text());
 
 		$dbr = wfGetDB(DB_SLAVE);
 
@@ -65,19 +65,19 @@ class Tilesheets {
 		if (isset($this->mOptions['size'])) $size = $this->mOptions['size'];
 		if (isset($this->mOptions['mod'])) $mod = $this->mOptions['mod'];
 
-		TilesheetsError::log("Outputting item: {$size}px $item ($mod)");
+		TilesheetsError::log(wfMessage('tilesheets-log-output')->params($size, $item, $mod)->text());
 
 		if (self::$mQueriedItems[$item] == null) {
 			$parser->addTrackingCategory('tilesheet-missing-item-category');
 			if ($mod == "undefined") {
 				$parser->addTrackingCategory('tilesheet-no-mod-provided-category');
 			}
-			TilesheetsError::error("Entry missing for $item!");
+			TilesheetsError::error(wfMessage('tilesheets-error-missingitem')->params($item)->text());
 			return $this->errorTile($size);
 		}
 		if ($mod != "undefined") {
 			if (!isset(self::$mQueriedItems[$item][$mod])) {
-				TilesheetsError::error("Entry missing for $item ($mod)!");
+				TilesheetsError::error(wfMessage('tilesheets-error-missingitemmod')->params($item, $mod)->text());
 				return $this->errorTile($size);
 			} else {
 				$x = self::$mQueriedItems[$item][$mod]->x;
@@ -90,11 +90,11 @@ class Tilesheets {
 				$y = current(self::$mQueriedItems[$item])->y;
 				$mod = current(self::$mQueriedItems[$item])->mod_name;
 				$parser->addTrackingCategory('tilesheet-no-mod-provided-easy-category');
-				TilesheetsError::warn("Mod parameter is not defined for $item but is able to decide which entry to use! Selecting entry from $mod!");
+				TilesheetsError::warn(wfMessage('tilesheets-warning-nomodparam')->params($item, $mod)->text());
 				return $this->generateTile($parser, $mod, $size, $x, $y);
 			} else {
 				$parser->addTrackingCategory('tilesheet-no-mod-provided-category');
-				TilesheetsError::error("Multiple entries exist for $item and the mod parameter is not defined, cannot decide which entry to use!");
+				TilesheetsError::error(wfMessage('tilesheets-error-multiple')->params($item)->text());
 				return $this->errorTile($size);
 			}
 		}
@@ -114,13 +114,13 @@ class Tilesheets {
 		Tilesheets::getModTileSizes($mod);
 		if (self::$mQueriedSizes[$mod] == null) {
 			$parser->addTrackingCategory('tilesheet-invalid-sheet-category');
-			TilesheetsError::error("Tilesheet for $mod is not defined!");
+			TilesheetsError::error(wfMessage('tilesheets-error-undefmod')->params($mod)->text());
 
 			return $this->errorTile($size);
 		} else {
 			if (!in_array($size, self::$mQueriedSizes[$mod])) {
 				$parser->addTrackingCategory('tilesheet-invalid-size-category');
-				TilesheetsError::warn("No {$size}px tilesheet for $mod is defined! Selecting smallest size!");
+				TilesheetsError::warn(wfMessage('tilesheets-warning-nosize')->params($size, $mod)->text());
 				$size = min(self::$mQueriedSizes[$mod]);
 			}
 		}
@@ -128,7 +128,7 @@ class Tilesheets {
 		$file = wfFindFile("Tilesheet $mod $size.png");
 		if ($file === false) {
 			$parser->addTrackingCategory('tilesheet-missing-image-category');
-			TilesheetsError::warn("Tilesheet $mod $size.png does not exist!");
+			TilesheetsError::warn(wfMessage('tilesheets-warning-noimage')->params($mod, $size)->text());
 			return $this->errorTile($size);
 		}
 		$url = $file->getUrl();
@@ -240,36 +240,36 @@ class TilesheetsError{
 		if (!isset(self::$mDebug)) return "";
 
 		$colors = array(
-			"Log" => "#CEFFFD",
-			"Warning" => "#FFFFB5",
-			"Deprecated" => "#CCF",
-			"Query" => "#D1FFB3",
-			"Error" => "#FFCECE",
-			"Notice" => "blue"
+			"log" => "#CEFFFD",
+			"warning" => "#FFFFB5",
+			"deprecated" => "#CCF",
+			"query" => "#D1FFB3",
+			"error" => "#FFCECE",
+			"notice" => "blue"
 		);
 
 		$textColors = array(
-			"Log" => "black",
-			"Warning" => "black",
-			"Deprecated" => "black",
-			"Query" => "black",
-			"Error" => "black",
-			"Notice" => "white"
+			"log" => "black",
+			"warning" => "black",
+			"deprecated" => "black",
+			"query" => "black",
+			"error" => "black",
+			"notice" => "white"
 		);
 
 		$html = "<table class=\"wikitable\" style=\"width:100%;\">";
-		$html .= "<caption>Tilesheet extension warnings</caption>";
-		$html .= "<tr><th style=\"width:10%;\">Type</th><th>Message</th><tr>";
+		$html .= "<caption>" . wfMessage('tilesheets-warnings-header')->text() . "</caption>";
+		$html .= "<tr><th style=\"width:10%;\">" .  wfMessage('tilesheets-warnings-header-type')->text() . "</th><th>" . wfMessage('tilesheets-warnings-header-msg')->text() . "</th><tr>";
 		$flag = true;
 		foreach (self::$mDebug as $message) {
-			if (!$this->mDebugMode && $message[0] != "Warning" && $message[0] != "Error" && $message[0] != "Notice") {
+			if (!$this->mDebugMode && $message[0] != "warning" && $message[0] != "error" && $message[0] != "notice") {
 				continue;
 			}
-			$html .= "<tr><td style=\"text-align:center; background-color:{$colors[$message[0]]}; color:{$textColors[$message[0]]}; font-weight:bold;\">{$message[0]}</td><td>{$message[1]}</td></tr>";
-			if ($message[0] == "Warnings" || $message[0] == "Error") $flag = false;
+			$html .= "<tr><td style=\"text-align:center; background-color:{$colors[$message[0]]}; color:{$textColors[$message[0]]}; font-weight:bold;\">" . wfMessage("tilesheets-warnings-type-{$message[0]}")->text() . "</td><td>{$message[1]}</td></tr>";
+			if ($message[0] == "warnings" || $message[0] == "error") $flag = false;
 		}
 		if ($flag) {
-			$html .= "<tr><td style=\"text-align:center; background-color:blue; color:white; font-weight:bold;\">Notice</td><td>No warnings.</td></tr>";
+			$html .= "<tr><td style=\"text-align:center; background-color:blue; color:white; font-weight:bold;\">" . wfMessage('tilesheets-warnings-type-notice') . "</td><td>" . wfMessage('tilesheets-warnings-none')->text() . "</td></tr>";
 		}
 		$html .= "</table>";
 
@@ -280,7 +280,7 @@ class TilesheetsError{
 	 * @param $message
 	 * @param string $type
 	 */
-	public static function debug($message, $type = "Log") {
+	public static function debug($message, $type = "log") {
 		self::$mDebug[] = array($type, $message);
 	}
 
@@ -289,7 +289,7 @@ class TilesheetsError{
 	 */
 	public static function deprecated($message) {
 		MWDebug::deprecated("(Tilesheets) ".$message);
-		self::debug($message, "Deprecated");
+		self::debug($message, "deprecated");
 	}
 
 	/**
@@ -300,7 +300,7 @@ class TilesheetsError{
 
 		// Hide queries if debug option is not set in LocalSettings.php
 		if($wgShowSQLErrors)
-			self::debug($query, "Query");
+			self::debug($query, "query");
 	}
 
 	/**
@@ -316,7 +316,7 @@ class TilesheetsError{
 	 */
 	public static function warn($message) {
 		MWDebug::warning("(Tilesheets) ".$message);
-		self::debug($message, "Warning");
+		self::debug($message, "warning");
 	}
 
 	/**
@@ -324,7 +324,7 @@ class TilesheetsError{
 	 */
 	public static function error($message) {
 		MWDebug::warning("(Tilesheets) "."Error: ".$message);
-		self::debug($message, "Error");
+		self::debug($message, "error");
 	}
 
 	/**
@@ -332,6 +332,6 @@ class TilesheetsError{
 	 */
 	public static function notice($message) {
 		MWDebug::warning("(Tilesheets) "."Notice: ".$message);
-		self::debug($message, "Notice");
+		self::debug($message, "notice");
 	}
 }

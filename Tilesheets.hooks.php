@@ -162,7 +162,7 @@ class TilesheetsHooks {
 	 */
 	public static function OreDictOutput(&$out, $items, $params) {
 		if (!self::$mOreDictMainErrorOutputted) {
-			TilesheetsError::notice("Outputting ore dictionary items, errors returned from this point <i>may</i> be caused by parameters passed from the ore dictionary template, or by the configuration of the ore dictionary entry or tilesheet entry. If you are sure that errors returned here is caused by a incorrect configuration entry, please contact the wiki staff.");
+			TilesheetsError::notice(wfMessage('tilesheets-notice-oredict')->text());
 			self::$mOreDictMainErrorOutputted = true;
 		}
 		foreach ($items as $item) {
@@ -175,7 +175,7 @@ class TilesheetsHooks {
 		}
 		if (isset($itemNames)) {
 			$itemNames = implode(",", $itemNames);
-			TilesheetsError::notice("OreDict returned the following items: $itemNames.");
+			TilesheetsError::notice(wfMessage('tilesheets-notice-return')->params($itemNames)->text());
 		}
 
 		return true;
