@@ -59,6 +59,7 @@
 		"TilesheetsQuerySheetsApi": "api/TilesheetsQuerySheetsApi.php",
 		"TilesheetsQueryTilesApi": "api/TilesheetsQueryTilesApi.php",
 		"TilesheetsQueryTranslationsApi": "api/TilesheetsQueryTranslationsApi.php",
+		"TilesheetsQueryTileUsagesApi": "api/TilesheetsQueryTileUsagesApi.php",
 		"TilesheetsAddTilesApi": "api/TilesheetsAddTilesApi.php",
 		"TilesheetsDeleteSheetApi": "api/TilesheetsDeleteSheetApi.php",
 		"TilesheetsAddSheetApi": "api/TilesheetsAddSheetApi.php",
@@ -81,7 +82,8 @@
 	"APIListModules": {
 		"tilesheets": "TilesheetsQuerySheetsApi",
 		"tiles": "TilesheetsQueryTilesApi",
-		"tiletranslations": "TilesheetsQueryTranslationsApi"
+		"tiletranslations": "TilesheetsQueryTranslationsApi",
+		"tileusages": "TilesheetsQueryTileUsagesApi"
 	},
 	"ResourceModules": {
 		"ext.tilesheets": {
