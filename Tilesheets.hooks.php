@@ -18,12 +18,13 @@ class TilesheetsHooks {
 	 * @param	DatabaseUpdater
 	 * @return	boolean	true
 	 */
-	public static function SchemaUpdate($updater) {
+	public static function SchemaUpdate(DatabaseUpdater $updater) {
 		$extDir = __DIR__;
 
 		$updater->addExtensionUpdate(['addTable', 'ext_tilesheet_items', "{$extDir}/install/sql/ext_tilesheet_items.sql", true]);
 		$updater->addExtensionUpdate(['addTable', 'ext_tilesheet_images', "{$extDir}/install/sql/ext_tilesheet_images.sql", true]);
 		$updater->addExtensionUpdate(['addTable', 'ext_tilesheet_languages', "{$extDir}/install/sql/ext_tilesheet_languages.sql", true]);
+		$updater->addExtensionUpdate(['addTable', 'ext_tilesheet_tilelinks', "{$extDir}/install/sql/ext_tilesheet_tilelinks.sql", true]);
 
 		$updater->addExtensionUpdate(['modifyField', 'ext_tilesheet_languages', 'description', "{$extDir}/upgrade/sql/ext_tilesheet_languages/change_description_to_text.sql", true]);
 		$updater->addExtensionUpdate(['modifyField', 'ext_tilesheet_languages', 'entry_id', "{$extDir}/upgrade/sql/ext_tilesheet_languages/add_primary_key.sql", true]);
@@ -74,7 +75,7 @@ class TilesheetsHooks {
 		$options = self::ExtractOptions($opts);
 
 		// Run main class and output
-		$tile = new Tilesheets($options);
+		$tile = new Tilesheets($options, $parser);
 		return $tile->output($parser);
 	}
 
@@ -179,5 +180,83 @@ class TilesheetsHooks {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Called when the ArticleDeleteComplete hook is sent. Removes this page's entries from the tilelinks database table.
+	 * @param WikiPage $article
+	 */
+	public static function onArticleDelete(WikiPage &$article) {
+		$title = $article->getTitle();
+		self::clearTileLinksForPage($title->getArticleID(), $title->getNamespace());
+	}
+
+	/**
+	 * Called when the TitleMoveComplete hook is sent. Updates the page's entries in the tilelinks database table.
+	 * @param Title $oldTitle
+	 * @param Title $newTitle
+	 */
+	public static function onArticleMove(Title &$oldTitle, Title &$newTitle) {
+		// It's worth noting that the ID doesn't change when pages are moved, according to Manual:Page table
+		// However, you can move pages across namespaces, so we still need to update the table.
+		$dbw = wfGetDB(DB_MASTER);
+		$dbw->update('ext_tilesheet_tilelinks',
+			array(
+				'tl_from_namespace' => $newTitle->getNamespace()
+			),
+			array(
+				'tl_from' => $newTitle->getArticleID(),
+				'tl_from_namespace' => $oldTitle->getNamespace()
+			),
+			__METHOD__
+		);
+	}
+
+	/**
+	 * Called by the PageContentSaveComplete hook.
+	 * @param WikiPage $article
+	 * @return boolean true
+	 */
+	public static function addCacheToTileLinks(WikiPage &$article) {
+		$title = $article->getTitle();
+		$namespace = $title->getNamespace();
+		$pageName = $title->getText();
+		$page = $title->getArticleID();
+		self::clearTileLinksForPage($page, $namespace);
+		array_unique(Tilesheets::$tileLinks[$namespace][$pageName]);
+		foreach (Tilesheets::$tileLinks[$namespace][$pageName] as $entryID) {
+			self::addToTileLinks($page, $namespace, $entryID);
+		}
+		Tilesheets::$tileLinks[$namespace][$pageName] = array();
+
+		return true;
+	}
+
+	public static function clearTileLinksForPage($pageID, $namespaceID) {
+		$dbw = wfGetDB(DB_MASTER);
+		$dbw->delete('ext_tilesheet_tilelinks', array(
+			'`tl_from`' => $pageID,
+			'`tl_from_namespace`' => $namespaceID
+		));
+	}
+
+	public static function addToTileLinks($pageID, $namespaceID, $tileID) {
+		$dbw = wfgetDB(DB_MASTER);
+
+		$result = $dbw->select('ext_tilesheet_tilelinks', 'COUNT(`tl_to`) AS count', array(
+			'`tl_from`' => $pageID,
+			'`tl_from_namespace`' => $namespaceID,
+			'`tl_to`' => $tileID
+		));
+
+		if ($result->current()->count == 0) {
+			$dbw->insert('ext_tilesheet_tilelinks', array(
+				'`tl_from`' => $pageID,
+				'`tl_from_namespace`' => $namespaceID,
+				'`tl_to`' => $tileID
+			),
+				__METHOD__
+			);
+		}
 	}
 }
