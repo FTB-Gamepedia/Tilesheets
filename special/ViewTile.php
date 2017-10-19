@@ -14,6 +14,7 @@ class ViewTile extends SpecialPage {
 		$this->setHeaders();
 		$this->outputHeader();
 		$out->addModuleStyles('ext.tilesheets.special');
+		$out->addModuleScripts('ext.tilesheets.viewtile');
 
 		$dbr = wfGetDB(DB_SLAVE);
 		$result = $dbr->select('ext_tilesheet_items', '*', array('entry_id' => $subPage));

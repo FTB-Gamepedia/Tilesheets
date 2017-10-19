@@ -25,7 +25,8 @@
 		"TileManager": "TileManager",
 		"SheetManager": "SheetManager",
 		"TileTranslator": "TileTranslator",
-		"ViewTile": "ViewTile"
+		"ViewTile": "ViewTile",
+		"WhatUsesThisTile": "WhatUsesThisTile"
 	},
 	"LogTypes": [
 		"tilesheet"
@@ -54,9 +55,11 @@
 		"SheetManager": "special/SheetManager.php",
 		"TileTranslator": "special/TileTranslator.php",
 		"ViewTile": "special/ViewTile.php",
+		"WhatUsesThisTile": "special/WhatUsesThisTile.php",
 		"TilesheetsQuerySheetsApi": "api/TilesheetsQuerySheetsApi.php",
 		"TilesheetsQueryTilesApi": "api/TilesheetsQueryTilesApi.php",
 		"TilesheetsQueryTranslationsApi": "api/TilesheetsQueryTranslationsApi.php",
+		"TilesheetsQueryTileUsagesApi": "api/TilesheetsQueryTileUsagesApi.php",
 		"TilesheetsAddTilesApi": "api/TilesheetsAddTilesApi.php",
 		"TilesheetsDeleteSheetApi": "api/TilesheetsDeleteSheetApi.php",
 		"TilesheetsAddSheetApi": "api/TilesheetsAddSheetApi.php",
@@ -79,7 +82,8 @@
 	"APIListModules": {
 		"tilesheets": "TilesheetsQuerySheetsApi",
 		"tiles": "TilesheetsQueryTilesApi",
-		"tiletranslations": "TilesheetsQueryTranslationsApi"
+		"tiletranslations": "TilesheetsQueryTranslationsApi",
+		"tileusages": "TilesheetsQueryTileUsagesApi"
 	},
 	"ResourceModules": {
 		"ext.tilesheets": {
@@ -89,6 +93,9 @@
 		"ext.tilesheets.special": {
 			"styles": "css/tilesheets.special.css",
 			"position": "top"
+		},
+		"ext.tilesheets.viewtile": {
+			"scripts": "js/tilesheets.viewtile.js"
 		}
 	},
 	"ResourceFileModulePaths": {
@@ -110,6 +117,15 @@
 		],
 		"LoadExtensionSchemaUpdates": [
 			"TilesheetsHooks::SchemaUpdate"
+		],
+		"ArticleDeleteComplete": [
+			"TilesheetsHooks::onArticleDelete"
+		],
+		"PageContentSaveComplete": [
+			"TilesheetsHooks::addCacheToTileLinks"
+		],
+		"TitleMoveComplete": [
+			"TilesheetsHooks::onArticleMove"
 		]
 	},
 	"config": {

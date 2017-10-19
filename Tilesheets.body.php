@@ -11,6 +11,7 @@
 class Tilesheets {
 	static private $mQueriedItems;
 	static private $mQueriedSizes;
+	static $tileLinks;
 	private $mOptions;
 
 	/**
@@ -18,7 +19,7 @@ class Tilesheets {
 	 *
 	 * @param $options
 	 */
-	public function __construct($options) {
+	public function __construct($options, Parser &$parser) {
 		$this->mOptions = $options;
 
 		// Set default values
@@ -82,7 +83,7 @@ class Tilesheets {
 			} else {
 				$x = self::$mQueriedItems[$item][$mod]->x;
 				$y = self::$mQueriedItems[$item][$mod]->y;
-				return $this->generateTile($parser, $mod, $size, $x, $y);
+				return $this->generateTile($parser, $mod, $size, $x, $y, self::$mQueriedItems[$item][$mod]->entry_id);
 			}
 		} else {
 			if (count(self::$mQueriedItems[$item]) == 1) {
@@ -91,7 +92,7 @@ class Tilesheets {
 				$mod = current(self::$mQueriedItems[$item])->mod_name;
 				$parser->addTrackingCategory('tilesheet-no-mod-provided-easy-category');
 				TilesheetsError::warn(wfMessage('tilesheets-warning-nomodparam')->params($item, $mod)->text());
-				return $this->generateTile($parser, $mod, $size, $x, $y);
+				return $this->generateTile($parser, $mod, $size, $x, $y, current(self::$mQueriedItems[$item]->entry_id));
 			} else {
 				$parser->addTrackingCategory('tilesheet-no-mod-provided-category');
 				TilesheetsError::error(wfMessage('tilesheets-error-multiple')->params($item)->text());
@@ -107,9 +108,10 @@ class Tilesheets {
 	 * @param $size
 	 * @param $x
 	 * @param $y
+	 * @param $entryID
 	 * @return array
 	 */
-	private function generateTile(Parser &$parser, $mod, $size, $x, $y) {
+	private function generateTile(Parser &$parser, $mod, $size, $x, $y, $entryID) {
 		// Validate tilesheet size
 		Tilesheets::getModTileSizes($mod);
 		if (self::$mQueriedSizes[$mod] == null) {
@@ -125,6 +127,11 @@ class Tilesheets {
 			}
 		}
 
+		$title = $parser->getTitle();
+		// New pages do not have an article ID, so we have to store it in the title and then get the ID when updating the db
+		$page = $title->getText();
+		$namespace = $title->getNamespace();
+		self::$tileLinks[$namespace][$page][] = $entryID;
 		$file = wfFindFile("Tilesheet $mod $size.png");
 		if ($file === false) {
 			$parser->addTrackingCategory('tilesheet-missing-image-category');
