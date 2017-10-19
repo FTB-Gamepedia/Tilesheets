@@ -53,7 +53,7 @@ class TilesheetsQueryTileUsagesApi extends ApiQueryBase {
 		if (!empty($namespaces)) {
 			$namespaceConditions = [];
 			foreach ($namespaces as $ns) {
-				$namespaceConditions[] = "tl_from_namespace = $ns";
+				$namespaceConditions[] = "tl_from_namespace = " . intval($ns);
 			}
 			$conditions[] = $dbr->makeList($namespaceConditions, LIST_OR);
 		}
