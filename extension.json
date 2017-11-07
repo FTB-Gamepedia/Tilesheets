@@ -12,7 +12,7 @@
 	],
 	"url": "http://help.gamepedia.com/Extension:Tilesheets",
 	"descriptionmsg": "tilesheets-desc",
-	"type": "parserhooks",
+	"type": "parserhook",
 	"AvailableRights": [
 		"edittilesheets",
 		"importtilesheets",
