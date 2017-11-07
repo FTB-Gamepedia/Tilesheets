@@ -2,8 +2,25 @@
 This changelog only shows recent version history, because of the lack of documentation from the former maintainers. The very first changelog (1.1.2) is likely incomplete.
 
 ## Version 4
+### 4.2.0
+* Internationalization improvements (#52, #47)
+  * "Query returned empty set" message now internationalized
+  * SheetList, TileList, CreateTileSheet now completely internationalized
+  * API help messages now internationalized
+  * Warnings/errors/notices/log messages (in the edit window) now internationalized
+* SheetList edit column now hidden when not accessible, rather than just empty (#73)
+* TileList edit column and translate column now hidden when accessible, rather than just empty (#70)
+* Fix `TypeError` when trying to use the "overwrite existing" option in CreateTileSheet (#74)
+* New tile backlinks functionality (#66, #78)
+  * New table, `ext_tilesheet_tilelinks`, that is updated when pages are modified. It contains page and tile ID information, like the `backlinks` table native to MediaWiki.
+  * New special page, WhatUsesThisTile, which uses subpage syntax like ViewTile. It is basically WhatLinksHere without the filtering options. It links back to the ViewTile page.
+  * ViewTile (hackily) displays a WhatUsesThisTile link in the sidebar tools section.
+  * New list query API for getting tile backlinks.
+* Fix type in Version special page so that it is correctly put into the parser hooks section (#77)
+* Update outdated reference to "wiki staff" (#68)
+
 ### 4.1.0
-*  New Item Viewer special page Special:ViewTile/ID ($62, #67)
+* New Item Viewer special page Special:ViewTile/ID ($62, #67)
   * Displays a table of the item for each size that it is registered for.
 * Missing special page alias file. (#65) (Alexia E. Smith)
 
