@@ -97,7 +97,7 @@ class SheetList extends SpecialPage {
 			$lSizes = $result->sizes;
 
 			if ($canEdit) {
-				$editLink = " style=\"width:23px; padding-left:5px; padding-right:5px; text-align:center; font-weight:bold;\" | [[Special:SheetManager/$lMod|Edit]] ||";
+				$editLink = " style=\"width:23px; padding-left:5px; padding-right:5px; text-align:center; font-weight:bold;\" | [[Special:SheetManager/$lMod|" . $this->msg('tilesheet-edit')->text() . "]] ||";
 			} else {
 				$editLink = "";
 			}
@@ -114,21 +114,21 @@ class SheetList extends SpecialPage {
 		$nPage = $page+1;
 		$lPage = floor($maxRows / $limit);
 		if ($page == 0) {
-			$prevPage = "'''First Page'''";
+			$prevPage = "'''" . $this->msg('tilesheet-pagination-first')->text() . "'''";
 		} else {
 			if ($page == 1) {
-				$prevPage = "[{{fullurl:{{FULLPAGENAME}}|limit=".$opts->getValue('limit')."}} &laquo; First Page]";
+				$prevPage = "[{{fullurl:{{FULLPAGENAME}}|limit=".$opts->getValue('limit')."}} " . $this->msg('tilesheet-pagination-first-arrow')->text() . "]";
 			} else {
-				$prevPage = "[{{fullurl:{{FULLPAGENAME}}|limit=".$opts->getValue('limit')."}} &laquo; First Page] [{{fullurl:{{FULLPAGENAME}}|page={$pPage}&limit=".$opts->getValue('limit')."}} &lsaquo; Previous Page]";
+				$prevPage = "[{{fullurl:{{FULLPAGENAME}}|limit=".$opts->getValue('limit')."}} " . $this->msg('tilesheet-pagination-first-arrow')->text() . "] [{{fullurl:{{FULLPAGENAME}}|page={$pPage}&limit=".$opts->getValue('limit')."}} " . $this->msg('tilesheet-pagination-prev')->text() ."]";
 			}
 		}
 		if ($lPage == $page) {
-			$nextPage = "'''Last Page'''";
+			$nextPage = "'''" . $this->msg('tilesheet-pagination-last')->text() . "'''";
 		} else {
 			if ($lPage == $page + 1) {
-				$nextPage = "[{{fullurl:{{FULLPAGENAME}}|page={$nPage}&limit=".$opts->getValue('limit')."}} Last Page &raquo;]";
+				$nextPage = "[{{fullurl:{{FULLPAGENAME}}|page={$nPage}&limit=".$opts->getValue('limit')."}} " . $this->msg('tilesheet-pagination-last-arrow')->text() . "]";
 			} else {
-				$nextPage = "[{{fullurl:{{FULLPAGENAME}}|page={$nPage}&limit=".$opts->getValue('limit')."}} Next Page &rsaquo;] [{{fullurl:{{FULLPAGENAME}}|page={$lPage}&limit=".$opts->getValue('limit')."}} Last Page &raquo;]";
+				$nextPage = "[{{fullurl:{{FULLPAGENAME}}|page={$nPage}&limit=".$opts->getValue('limit')."}} " . $this->msg('tilesheet-pagination-next')->text() . "] [{{fullurl:{{FULLPAGENAME}}|page={$lPage}&limit=".$opts->getValue('limit')."}} " . $this->msg('tilesheet-pagination-last-arrow')->text() . "]";
 			}
 		}
 		$pageSelection = "<div style=\"text-align:center;\" class=\"plainlinks\">$prevPage | $nextPage</div>";
