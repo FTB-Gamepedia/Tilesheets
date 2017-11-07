@@ -69,13 +69,13 @@ class CreateTileSheet extends SpecialPage {
 			// If update mode
 			if ($opts->getValue('update_table') == 1) {
 				// Delete sheet
-				$out->addHtml($this->returnMessage(SheetManager::deleteEntry($mod, $this->getUser(), "Updating tilesheet through import tool."), "Removing existing tilesheet..."));
+				$out->addHtml($this->returnMessage(SheetManager::deleteEntry($mod, $this->getUser(), $this->msg('tilesheet-create-summary-deletesheet')->text()), $this->msg('tilesheet-create-response-msg-deletesheet')->text()));
 				// Truncate table
-				$out->addHtml($this->returnMessage(SheetManager::truncateTable($mod, $this->getUser(), "Updating tilesheet through import tool."), "Removing existing tilesheet entries..."));
+				$out->addHtml($this->returnMessage(SheetManager::truncateTable($mod, $this->getUser(), $this->msg('tilesheet-create-summary-deletesheet')->text()), $this->msg('tilesheet-create-response-msg-truncate')->text()));
 			}
 
 			// Create sheet
-			$out->addHtml($this->returnMessage(SheetManager::createSheet($mod, $sizes, $this->getUser()), "Adding new tilesheet..."));
+			$out->addHtml($this->returnMessage(SheetManager::createSheet($mod, $sizes, $this->getUser()), $this->msg('tilesheet-create-response-msg-newsheet')->text()));
 
 			$input = explode("\n", trim($opts->getValue('input')));
 			foreach ($input as $line) {
@@ -84,7 +84,7 @@ class CreateTileSheet extends SpecialPage {
 				$item = trim($item);
 
 				// Create tile
-				$out->addHtml($this->returnMessage(TileManager::createTile($mod, $item, $x, $y, $this->getUser(), "Importing tilesheet."), "Adding $item from $mod on [Tilesheet $mod %.png] ($x,$y) to entry list..."));
+				$out->addHtml($this->returnMessage(TileManager::createTile($mod, $item, $x, $y, $this->getUser(), $this->msg('tilesheet-create-summary-newtile')->text()), $this->msg('tilesheet-create-response-msg-newtile')->params($item, $mod, $x, $y)->text()));
 			}
 		$out->addHtml('</tt>');
 		} else {
@@ -130,9 +130,9 @@ class CreateTileSheet extends SpecialPage {
 	 */
 	private function returnMessage($state, $message) {
 		if ($state) {
-			$out = '<span style="background-color:green; font-weight:bold; color:white;">SUCCESS</span> '.$message."<br>";
+			$out = '<span style="background-color:green; font-weight:bold; color:white;">' . $this->msg('tilesheet-create-response-success')->text() . '</span> '.$message."<br>";
 		} else {
-			$out = '<span style="background-color:red; font-weight:bold; color:white;">FAIL</span> '.$message."<br>";
+			$out = '<span style="background-color:red; font-weight:bold; color:white;">' . $this->msg('tilesheet-create-response-fail')->text() . '</span> '.$message."<br>";
 		}
 		return $out;
 	}
