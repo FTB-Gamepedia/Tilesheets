@@ -16,6 +16,7 @@
 	"sheetmanager": "Sheet Manager",
 	"createtilesheet": "Sheet Importer",
 	"viewtile": "Item Viewer",
+	"whatusesthistile": "What Uses This Tile?",
 	"tilesheets-desc": "Adds a parser function that looks up a table for an item and returns the requested image.",
 	"specialpages-group-tilesheet": "Tilesheets Configuration & Tools",
 	"tilesheet-sheet-list-legend": "Filter",
