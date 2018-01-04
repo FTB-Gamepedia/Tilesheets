@@ -2,6 +2,13 @@
 This changelog only shows recent version history, because of the lack of documentation from the former maintainers. The very first changelog (1.1.2) is likely incomplete.
 
 ## Version 4
+### 4.2.1
+* Improve grammatical and formatting stuff on WhatUsesThisTile. Proper quotations, periods, colons, and bolding to match WhatLinksHere.
+* Add pagination stuff to the bottom of WhatUsesThisTile.
+* Fix WhatUsesThisTile list missing actual `ul` element (and thus looking very weird)
+* Add missing localization for whatusesthistile on Special:Specialpages
+* Fix `current() expects parameter 1 to be array, null given` error (#83).
+
 ### 4.2.0
 * Internationalization improvements (#52, #47)
   * "Query returned empty set" message now internationalized
