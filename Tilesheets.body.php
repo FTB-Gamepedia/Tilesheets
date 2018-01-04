@@ -92,7 +92,7 @@ class Tilesheets {
 				$mod = current(self::$mQueriedItems[$item])->mod_name;
 				$parser->addTrackingCategory('tilesheet-no-mod-provided-easy-category');
 				TilesheetsError::warn(wfMessage('tilesheets-warning-nomodparam')->params($item, $mod)->text());
-				return $this->generateTile($parser, $mod, $size, $x, $y, current(self::$mQueriedItems[$item]->entry_id));
+				return $this->generateTile($parser, $mod, $size, $x, $y, current(self::$mQueriedItems[$item])->entry_id);
 			} else {
 				$parser->addTrackingCategory('tilesheet-no-mod-provided-category');
 				TilesheetsError::error(wfMessage('tilesheets-error-multiple')->params($item)->text());
