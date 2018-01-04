@@ -87,6 +87,7 @@ class WhatUsesThisTile extends SpecialPage {
 
 				$out->addHTML($this->getPrevNext($from, $next, $opts));
 
+				$out->addHtml(Xml::openElement('ul'));
 				foreach ($rows as $row) {
 					$pageName = $dbr->select(
 						'page',
@@ -100,6 +101,7 @@ class WhatUsesThisTile extends SpecialPage {
 					$title = Title::newFromText($pageName, $row->tl_from_namespace);
 					$out->addHtml(Xml::openElement('li') . $this->getLinkRenderer()->makeKnownLink($title) . Xml::closeElement('li'));
 				}
+				$out->addHtml(Xml::closeElement('ul'));
 			}
 		}
 	}
