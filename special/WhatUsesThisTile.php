@@ -85,7 +85,8 @@ class WhatUsesThisTile extends SpecialPage {
 					$next = false;
 				}
 
-				$out->addHTML($this->getPrevNext($from, $next, $opts));
+				$prevNext = $this->getPrevNext($from, $next, $opts);
+				$out->addHtml($prevNext);
 
 				$out->addHtml(Xml::openElement('ul'));
 				foreach ($rows as $row) {
@@ -102,6 +103,8 @@ class WhatUsesThisTile extends SpecialPage {
 					$out->addHtml(Xml::openElement('li') . $this->getLinkRenderer()->makeKnownLink($title) . Xml::closeElement('li'));
 				}
 				$out->addHtml(Xml::closeElement('ul'));
+
+				$out->addHtml($prevNext);
 			}
 		}
 	}
