@@ -223,6 +223,9 @@ class TilesheetsHooks {
 		$pageName = $title->getText();
 		$page = $title->getArticleID();
 		self::clearTileLinksForPage($page, $namespace);
+		if (!isset(Tilesheets::$tileLinks[$namespace][$pageName])) {
+			return true;
+		}
 		array_unique(Tilesheets::$tileLinks[$namespace][$pageName]);
 		foreach (Tilesheets::$tileLinks[$namespace][$pageName] as $entryID) {
 			self::addToTileLinks($page, $namespace, $entryID);
