@@ -44,7 +44,7 @@ class TilesheetsDeleteTranslationApi extends ApiBase {
 
     public function execute() {
         if (!in_array('edittilesheets', $this->getUser()->getRights())) {
-            $this->dieUsage('You do not have permission to delete tile translations', 'permissiondenied');
+            $this->dieWithError('You do not have permission to delete tile translations', 'permissiondenied');
         }
 
         $id = $this->getParameter('id');
@@ -54,7 +54,7 @@ class TilesheetsDeleteTranslationApi extends ApiBase {
         if ($response == true) {
             $this->getResult()->addValue('edit', 'deletetranslation', array('id' => $id, 'language' => $lang));
         } else {
-            $this->dieUsage('That entry does not exist', 'entrynotexist');
+            $this->dieWithError('That entry does not exist', 'entrynotexist');
         }
     }
 }
