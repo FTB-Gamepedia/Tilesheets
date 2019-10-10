@@ -47,7 +47,7 @@ class TilesheetsEditSheetApi extends ApiBase {
 
     public function execute() {
         if (!in_array('edittilesheets', $this->getUser()->getRights())) {
-            $this->dieUsage('You do not have permission to edit sheets', 'permissiondenied');
+            $this->dieWithError('You do not have permission to edit sheets', 'permissiondenied');
         }
 
         $curMod = $this->getParameter('mod');
@@ -56,14 +56,14 @@ class TilesheetsEditSheetApi extends ApiBase {
         $summary = $this->getParameter('summary');
 
         if (empty($toMod) && empty($toSizes)) {
-            $this->dieUsage('You have to specify one of tomod or tosizes', 'nochangeparams');
+            $this->dieWithError('You have to specify one of tomod or tosizes', 'nochangeparams');
         }
 
         $dbr = wfGetDB(DB_SLAVE);
         $entry = $dbr->select('ext_tilesheet_images', '*', array('`mod`' => $curMod));
 
         if ($entry->numRows() == 0) {
-            $this->dieUsage('That entry does not exist', 'noentry');
+            $this->dieWithError('That entry does not exist', 'noentry');
         }
 
         $row = $entry->current();
@@ -72,14 +72,14 @@ class TilesheetsEditSheetApi extends ApiBase {
         $toSizes = empty($toSizes) ? $row->sizes : $toSizes;
 
         if ($toMod == $row->mod && $toSizes == $row->sizes) {
-            $this->dieUsage('There was no change', 'nochange');
+            $this->dieWithError('There was no change', 'nochange');
         }
 
         $result = Tilesheets::updateSheetRow($curMod, $toMod, $toSizes, $this->getUser(), $summary);
         if ($result) {
             $this->getResult()->addValue('edit', 'editsheet', array($curMod => $toMod, $row->sizes => $toSizes));
         } else {
-            $this->dieUsage('The update errored. This does not necessarily mean that it failed, please see your logs.', 'updateerror');
+            $this->dieWithError('The update errored. This does not necessarily mean that it failed, please see your logs.', 'updateerror');
         }
     }
 }

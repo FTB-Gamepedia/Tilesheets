@@ -52,7 +52,7 @@ class TilesheetsEditTileApi extends ApiBase {
 
     public function execute() {
         if (!in_array('edittilesheets', $this->getUser()->getRights())) {
-            $this->dieUsage('You do not have permission to edit tiles', 'permissiondenied');
+            $this->dieWithError('You do not have permission to edit tiles', 'permissiondenied');
         }
 
         $toMod = $this->getParameter('tomod');
@@ -63,14 +63,14 @@ class TilesheetsEditTileApi extends ApiBase {
         $summary = $this->getParameter('summary');
 
         if (empty($toMod) && empty($toName) && empty($toX) && empty($toY)) {
-            $this->dieUsage('You have to specify one of tomod, toname, tox, or toy', 'nochangeparams');
+            $this->dieWithError('You have to specify one of tomod, toname, tox, or toy', 'nochangeparams');
         }
 
         $dbr = wfGetDB(DB_SLAVE);
         $entry = $dbr->select('ext_tilesheet_items', '*', array('entry_id' => $id));
 
         if ($entry->numRows() == 0) {
-            $this->dieUsage('That entry does not exist', 'noentry');
+            $this->dieWithError('That entry does not exist', 'noentry');
         }
 
         $row = $entry->current();
@@ -83,7 +83,7 @@ class TilesheetsEditTileApi extends ApiBase {
         $result = TileManager::updateTable($id, $toName, $toMod, $toX, $toY, $this->getUser(), $summary);
         if ($result != 0) {
             $error = $result == 1 ? 'That entry does not exist' : 'There was no change';
-            $this->dieUsage($error, 'updatefail');
+            $this->dieWithError($error, 'updatefail');
         } else {
             $this->getResult()->addValue('edit', 'edittile', array($id => true));
         }

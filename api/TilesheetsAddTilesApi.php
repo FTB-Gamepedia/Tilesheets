@@ -46,7 +46,7 @@ class TilesheetsAddTilesApi extends ApiBase {
 
     public function execute() {
         if (!in_array('edittilesheets', $this->getUser()->getRights())) {
-            $this->dieUsage('You do not have permission to add tiles', 'permissiondenied');
+            $this->dieWithError('You do not have permission to add tiles', 'permissiondenied');
         }
 
         $mod = $this->getParameter('mod');
@@ -62,7 +62,7 @@ class TilesheetsAddTilesApi extends ApiBase {
         );
 
         if ($result->numRows() == 0) {
-            $this->dieUsage("No sheet found for mod $mod", 'nosheetfound');
+            $this->dieWithError("No sheet found for mod $mod", 'nosheetfound');
         }
 
         $return = [];

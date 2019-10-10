@@ -50,7 +50,7 @@ class TilesheetsTranslateTileApi extends ApiBase {
 
     public function execute() {
         if (!in_array('translatetiles', $this->getUser()->getRights())) {
-            $this->dieUsage('You do not have permission to add tiles', 'permissiondenied');
+            $this->dieWithError('You do not have permission to add tiles', 'permissiondenied');
         }
 
         $id = $this->getParameter('id');
@@ -59,7 +59,7 @@ class TilesheetsTranslateTileApi extends ApiBase {
         $desc = $this->getParameter('description');
 
         if (empty($name) && empty($desc)) {
-            $this->dieUsage('You have to specify one of name or description', 'nochangeparam');
+            $this->dieWithError('You have to specify one of name or description', 'nochangeparam');
         }
 
         $dbr = wfGetDB(DB_SLAVE);

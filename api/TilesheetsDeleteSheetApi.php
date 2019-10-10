@@ -42,7 +42,7 @@ class TilesheetsDeleteSheetApi extends ApiBase {
 
     public function execute() {
         if (!in_array('edittilesheets', $this->getUser()->getRights())) {
-            $this->dieUsage('You do not have permission to edit tilesheets', 'permissiondenied');
+            $this->dieWithError('You do not have permission to edit tilesheets', 'permissiondenied');
         }
 
         $mods = $this->getParameter('mods');
