@@ -23,7 +23,7 @@ function addWLHToToolbox() {
     node.appendChild(liNode);
 }
 
-$.when(mw.loader.using(['mediawiki.api.messages', 'mediawiki.jqueryMsg']), $.ready)
+$.when(mw.loader.using(['mediawiki.jqueryMsg']), $.ready)
     .then(function() {
         return new mw.Api().loadMessagesIfMissing(['tilesheet-tile-viewer-wlh']);
     })
