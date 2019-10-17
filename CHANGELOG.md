@@ -2,6 +2,15 @@
 This changelog only shows recent version history, because of the lack of documentation from the former maintainers. The very first changelog (1.1.2) is likely incomplete.
 
 ## Version 4
+### 4.2.2
+* Fix HTML entities breaking input forms on TileTranslator and TileManager (#91)
+* Update for MediaWiki 1.32/1.33:
+  * Updates for ApiBase::dieUsage (#94, #93) (chaud)
+  * Update Special:ViewTile for MediaWiki 1.32/1.33 (#92)
+* Do not try to array_unique or foreach null. (#88) (Alexia E. Smith)
+* Use addIndex for add_primary_key schema update, fixes failure when running update.php (#87) (Mischanix)
+* Fix GrantPermissions. (#86) (Alexia E. Smith)
+
 ### 4.2.1
 * Improve grammatical and formatting stuff on WhatUsesThisTile. Proper quotations, periods, colons, and bolding to match WhatLinksHere.
 * Add pagination stuff to the bottom of WhatUsesThisTile.
