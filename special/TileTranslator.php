@@ -52,8 +52,8 @@ class TileTranslator extends SpecialPage {
         }
 
         $id = $opts->getValue('id');
-        $description = $opts->getValue('description');
-        $displayName = $opts->getValue('display_name');
+        $description = htmlspecialchars_decode($opts->getValue('description'));
+        $displayName = htmlspecialchars_decode($opts->getValue('display_name'));
         $language = $opts->getValue('language');
         $update = $opts->getValue('update');
         $delete = $opts->getValue('delete');
@@ -192,8 +192,8 @@ class TileTranslator extends SpecialPage {
         global $wgScript;
         $form = "<table>";
         $form .= TilesheetsForm::createFormRow('tile-translator', 'id', $id, "text", 'readonly="readonly"');
-        $form .= TilesheetsForm::createFormRow('tile-translator', 'display_name', $displayName);
-        $form .= TilesheetsForm::createFormRow('tile-translator', 'description', $description);
+        $form .= TilesheetsForm::createFormRow('tile-translator', 'display_name', htmlspecialchars($displayName));
+        $form .= TilesheetsForm::createFormRow('tile-translator', 'description', htmlspecialchars($description));
         $form .= TilesheetsForm::createFormRow('tile-translator', 'language', $language);
         $form .= TilesheetsForm::createInputHint('tile-translator', 'language');
         $form .= TilesheetsForm::createDeleteCheckboxRow('tile-translator');

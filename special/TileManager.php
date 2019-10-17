@@ -61,7 +61,7 @@ class TileManager extends SpecialPage {
 
 		$id = $opts->getValue('id');
 		$mod = $opts->getValue('mod');
-		$item = $opts->getValue('item');
+		$item = htmlspecialchars_decode($opts->getValue('item'));
 		$x = $opts->getValue('x');
 		$y = $opts->getValue('y');
 
@@ -240,7 +240,7 @@ class TileManager extends SpecialPage {
 		global $wgScript;
 		$form = "<table>";
 		$form .= TilesheetsForm::createFormRow('tile-manager', 'id', $id, "text", 'readonly="readonly"');
-		$form .= TilesheetsForm::createFormRow('tile-manager', 'item', $item);
+		$form .= TilesheetsForm::createFormRow('tile-manager', 'item', htmlspecialchars($item));
 		$form .= TilesheetsForm::createFormRow('tile-manager', 'mod', $mod);
 		$form .= TilesheetsForm::createInputHint('tile-manager', 'mod');
 		$form .= TilesheetsForm::createFormRow('tile-manager', 'x', $x);
