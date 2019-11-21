@@ -2,6 +2,9 @@
 This changelog only shows recent version history, because of the lack of documentation from the former maintainers. The very first changelog (1.1.2) is likely incomplete.
 
 ## Version 4
+### 4.2.3
+* Fix API descriptions/summaries (#95).
+
 ### 4.2.2
 * Fix HTML entities breaking input forms on TileTranslator and TileManager (#91)
 * Update for MediaWiki 1.32/1.33:
