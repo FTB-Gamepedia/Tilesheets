@@ -60,7 +60,7 @@ class CreateTileSheet extends SpecialPage {
 		// Process and save POST data
 		if ($_POST) {
 			// XSRF prevention
-			if ( !$this->getUser()->matchEditToken( $this->getRequest()->getVal( 'token' ) ) ) {
+			if ( !$this->getUser()->matchEditToken( $this->getRequest()->getVal( 'wpEditToken' ) ) ) {
 				return;
 			}
 
@@ -89,96 +89,58 @@ class CreateTileSheet extends SpecialPage {
 			}
 		$out->addHtml('</tt>');
 		} else {
-			$out->addHtml($this->buildForm());
+			$this->displayForm();
 		}
 
 	}
 
-	/**
-	 * Build the tilesheet creation form
-	 *
-	 * @return string
-	 */
-	private function buildForm() {
-		global $wgArticlePath;
-		$fieldset = new OOUI\FieldsetLayout([
-			'label' => $this->msg('tilesheet-create-legend')->text(),
-			'items' => [
-				new OOUI\FieldLayout(
-					new OOUI\TextInputWidget([
-						'name' => 'mod',
-						'id' => 'mod'
-					]),
-					['label' => $this->msg('tilesheet-create-mod')->text()]
-				),
-				new OOUI\LabelWidget([
-					'label' => $this->msg('tilesheet-create-mod-hint')->text()
-				]),
-				new OOUI\FieldLayout(
-					new OOUI\TextInputWidget([
-						'name' => 'sizes',
-						'id' => 'sizes'
-					]),
-					['label' => $this->msg('tilesheet-create-sizes')->text()]
-				),
-				new OOUI\LabelWidget([
-					'label' => new OOUI\HtmlSnippet($this->msg('tilesheet-create-sizes-hint')->parse())
-				]),
-				new OOUI\HorizontalLayout([
-					'items' => [
-						new OOUI\LabelWidget([
-							'label' => $this->msg('tilesheet-create-input')->text()
-						])
-					]
-				]),
-				new OOUI\TextInputWidget([
-					'classes' => ['tilesheet-importer-textarea'],
-					'multiline' => true,
-					'rows' => 40,
-					'name' => 'input'
-				]),
-				new OOUI\HorizontalLayout([
-					'items' => [
-						new OOUI\ButtonInputWidget([
-							'type' => 'submit',
-							'label' => $this->msg('tilesheet-create-submit')->text(),
-							'flags' => ['primary', 'progressive']
-						]),
-						new OOUI\CheckboxInputWidget([
-							'value' => '1',
-							'name' => 'update_table',
-							'inputId' => 'update_table'
-						]),
-						new OOUI\LabelWidget([
-							'label' => $this->msg('tilesheet-create-update')->text()
-						]),
-						new OOUI\LabelWidget([
-							'classes' => ['tilesheet-create-update-hint'],
-							'label' => new OOUI\HtmlSnippet($this->msg('tilesheet-create-update-hint')->parse())
-						])
-					]
-				])
-			]
-		]);
-		$form = new OOUI\FormLayout([
-			'method' => 'POST',
-			'action' => str_replace('$1', 'Special:CreateTileSheet', $wgArticlePath),
-			'id' => 'ext-tilesheet-create-form'
-		]);
-		$form->appendContent(
-			$fieldset,
-			new OOUI\HtmlSnippet(
-				Html::hidden('title', $this->getPageTitle()->getPrefixedText()) .
-				Html::hidden('token', $this->getUser()->getEditToken())
-			)
-		);
-		return new OOUI\PanelLayout([
-			'classes' => ['tilesheet-importer-wrapper'],
-			'framed' => true,
-			'expanded' => false,
-			'padded' => true,
-			'content' => $form
-		]);
+	private function displayForm() {
+	    global $wgArticlePath;
+
+        $formDescriptor = [
+            'mod' => [
+                'type' => 'text',
+                'name' => 'mod',
+                'label-message' => 'tilesheet-create-mod',
+                'id' => 'mod',
+                'help-message' => 'tilesheet-create-mod-hint'
+            ],
+            'sizes' => [
+                'type' => 'text',
+                'name' => 'sizes',
+                'label-message' => 'tilesheet-create-sizes',
+                'id' => 'sizes',
+                'help-message' => 'tilesheet-create-sizes-hint'
+            ],
+            'input' => [
+                'type' => 'textarea',
+                'name' => 'input',
+                'rows' => 40,
+                'label-message' => 'tilesheet-create-input',
+                'cssclass' => 'tilesheet-importer-textarea',
+                'help-message' => 'tilesheet-create-input-hint'
+            ],
+            'update' => [
+                'type' => 'check',
+                'name' => 'update_table',
+                'default' => 0,
+                'label-message' => 'tilesheet-create-update',
+                'id' => 'update_table',
+                'help-message' => 'tilesheet-create-update-hint',
+                'csshelpclass' => 'tilesheet-create-update-hint'
+            ]
+        ];
+
+        $htmlForm = HTMLForm::factory('ooui', $formDescriptor, $this->getContext());
+        $htmlForm
+            ->setMethod('post')
+            ->setAction(str_replace('$1', 'Special:CreateTileSheet', $wgArticlePath))
+            ->setWrapperLegendMsg('tilesheet-create-legend')
+            ->setId('ext-tilesheet-create-form')
+            ->setSubmitTextMsg('tilesheet-create-submit')
+            ->setSubmitProgressive()
+            ->prepareForm()
+            ->displayForm(false);
 	}
 
 	/**

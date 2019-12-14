@@ -11,17 +11,6 @@
 	width: 145.5% !important;
 }
 
-.tilesheet-create-update-hint {
-	font-size: x-small;
-	padding: .2em .5em;
-	color: #666;
-	display: inline !important;
-}
-
-.oo-ui-checkboxInputWidget {
-	display: inline-block;
-}
-
 .sheet-manager-wrapper, .sheet-manager-filter-wrapper {
 	width: 75%;
 }
