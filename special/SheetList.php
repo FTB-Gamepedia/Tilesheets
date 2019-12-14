@@ -78,7 +78,7 @@ class SheetList extends SpecialPage {
 		);
 
 		if ($maxRows == 0) {
-			$out->addHTML($this->buildForm($opts));
+			$this->displayFilterForm($opts);
 			$out->addWikiText($this->msg('tilesheet-fail-norows')->text());
 			return;
 		}
@@ -135,61 +135,37 @@ class SheetList extends SpecialPage {
 		$pageSelection = "<div style=\"text-align:center;\" class=\"plainlinks\">$prevPage | $nextPage</div>";
 
 		// Output page
-		$out->addHTML($this->buildForm($opts));
+		$this->displayFilterForm($opts);
 		$out->addWikiText($pageSelection);
 		$out->addWikiText($table);
 	}
 
-	const SIZES = [
-		['data' => 20],
-		['data' => 50],
-		['data' => 100],
-		['data' => 250],
-		['data' => 500],
-		['data' => 5000]
-	];
-
-	/**
-	 * Build filter form
-	 *
-	 * @param FormOptions $opts Input parameters
-	 * @return string
-	 */
-	private function buildForm(FormOptions $opts) {
-		global $wgScript;
-		$fieldset = new OOUI\FieldsetLayout([
-			'label' => $this->msg('tilesheet-sheet-list-legend')->text(),
-			'items' => [
-				new OOUI\FieldLayout(
-					new OOUI\DropdownInputWidget([
-						'options' => self::SIZES,
-						'value' => $opts->getValue('limit'),
-						'name' => 'limit'
-					]),
-					['label' => $this->msg('tilesheet-sheet-list-limit')->text()]
-				),
-				new OOUI\ButtonInputWidget([
-					'type' => 'submit',
-					'label' => $this->msg('tilesheet-sheet-list-submit')->text(),
-					'flags' => ['primary', 'progressive']
-				])
-			]
-		]);
-		$form = new OOUI\FormLayout([
-			'method' => 'GET',
-			'action' => $wgScript,
-			'id' => 'ext-tilesheet-sheet-list-filter'
-		]);
-		$form->appendContent(
-			$fieldset,
-			new OOUI\HtmlSnippet(Html::hidden('title', $this->getPageTitle()->getPrefixedText()))
-		);
-		return new OOUI\PanelLayout([
-			'classes' => ['tilesheet-sheet-list-filter-wrapper'],
-			'framed' => true,
-			'expanded' => false,
-			'padded' => true,
-			'content' => $form
-		]);
+	private function displayFilterForm(FormOptions $opts) {
+	    $lang = $this->getLanguage();
+	    $formDescriptor = [
+            'limit' => [
+                'type' => 'limitselect',
+                'name' => 'limit',
+                'label-message' => 'tilesheet-sheet-list-limit',
+                'options' => [
+                    $lang->formatNum(20) => 20,
+                    $lang->formatNum(50) => 50,
+                    $lang->formatNum(100) => 100,
+                    $lang->formatNum(250) => 250,
+                    $lang->formatNum(500) => 500,
+                    $lang->formatNum(5000) => 5000
+                ],
+                'default' => $opts->getValue('limit')
+            ]
+        ];
+        $htmlForm = HTMLForm::factory('ooui', $formDescriptor, $this->getContext());
+        $htmlForm
+            ->setMethod('get')
+            ->setWrapperLegendMsg('tilesheet-sheet-list-legend')
+            ->setId('ext-tilesheet-sheet-list-filter')
+            ->setSubmitTextMsg('tilesheet-sheet-list-submit')
+            ->setSubmitProgressive()
+            ->prepareForm()
+            ->displayForm(false);
 	}
 }
