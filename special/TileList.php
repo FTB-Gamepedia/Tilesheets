@@ -274,11 +274,6 @@ class TileList extends SpecialPage {
                     $lang->formatNum(5000) => 5000
                 ],
                 'default' => $opts->getValue('limit')
-            ],
-            'hidden' => [
-                'type' => 'hidden',
-                'name' => 'title',
-                'default' => $this->getPageTitle()->getPrefixedText()
             ]
         ];
 
