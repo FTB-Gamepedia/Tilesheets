@@ -79,7 +79,7 @@ class TileManager extends SpecialPage {
 		}
 
 		// Output update form
-		$out->addHTML($this->buildUpdateForm($id));
+		$this->displayUpdateForm($id);
 	}
 
 	public static function createTile($mod, $item, $x, $y, $user, $comment = "") {
@@ -244,14 +244,7 @@ class TileManager extends SpecialPage {
 		]);
 	}
 
-	/**
-	 * Builds the update form, preloaded with the provided entry.
-	 *
-	 * @param $id
-	 * @return string
-	 */
-	private function buildUpdateForm($id) {
-		global $wgScript;
+	private function displayUpdateForm($id) {
 		$dbr = wfGetDB(DB_SLAVE);
 		$result = $dbr->select('ext_tilesheet_items', '*', array('entry_id' => $id));
 		if ($result->numRows() == 0) {
@@ -263,88 +256,55 @@ class TileManager extends SpecialPage {
 			$y = $result->current()->y;
 		}
 
-		$fieldset = new OOUI\FieldsetLayout([
-			'label' => $this->msg('tilesheet-tile-manager-legend')->text(),
-			'items' => [
-				new OOUI\FieldLayout(
-					new OOUI\TextInputWidget([
-						'type' => 'number',
-						'name' => 'id',
-						'value' => $id,
-						'readOnly' => true
-					]),
-					['label' => $this->msg('tilesheet-tile-manager-id')->text()]
-				),
-				new OOUI\FieldLayout(
-					new OOUI\TextInputWidget([
-						'name' => 'item',
-						'value' => htmlspecialchars($item)
-					]),
-					['label' => $this->msg('tilesheet-tile-manager-item')->text()]
-				),
-				new OOUI\FieldLayout(
-					new OOUI\TextInputWidget([
-						'name' => 'mod',
-						'value' => $mod
-					]),
-					['label' => $this->msg('tilesheet-tile-manager-mod')->text()]
-				),
-				new OOUI\FieldLayout(
-					new OOUI\TextInputWidget([
-						'name' => 'x',
-						'value' => $x,
-						'type' => 'number'
-					]),
-					['label' => $this->msg('tilesheet-tile-manager-x')->text()]
-				),
-				new OOUI\FieldLayout(
-					new OOUI\TextInputWidget([
-						'name' => 'y',
-						'value' => $y,
-						'type' => 'number'
-					]),
-					['label' => $this->msg('tilesheet-tile-manager-y')->text()]
-				),
-				new OOUI\HorizontalLayout([
-					'items' => [
-						new OOUI\ButtonInputWidget([
-							'type' => 'submit',
-							'label' => $this->msg('tilesheet-tile-manager-submit')->text(),
-							'flags' => ['primary', 'progressive'],
-							'name' => 'update',
-							'value' => 1
-						]),
-						new OOUI\ButtonInputWidget([
-							'type' => 'submit',
-							'label' => $this->msg('tilesheet-tile-manager-delete')->text(),
-							'flags' => ['destructive'],
-							'icon' => 'remove',
-							'name' => 'delete',
-							'value' => 1
-						])
-					]
-				])
-			]
-		]);
-		$form = new OOUI\FormLayout([
-			'method' => 'GET',
-			'action' => $wgScript,
-			'id' => 'ext-tilesheet-tile-manager-form'
-		]);
-		$form->appendContent(
-			$fieldset,
-			new OOUI\HtmlSnippet(
-				Html::hidden('title', $this->getPageTitle()->getPrefixedText()) .
-				Html::hidden('token', $this->getUser()->getEditToken())
-			)
-		);
+		$formDescriptor = [
+		    'id' => [
+		        'type' => 'int',
+                'name' => 'id',
+                'default' => $id,
+                'readonly' => true,
+                'label-message' => 'tilesheet-tile-manager-id'
+            ],
+            'item' => [
+                'type' => 'text',
+                'name' => 'item',
+                'default' => htmlspecialchars($item),
+                'label-message' => 'tilesheet-tile-manager-item'
+            ],
+            'mod' => [
+                'type' => 'text',
+                'name' => 'mod',
+                'default' => $mod,
+                'label-message' => 'tilesheet-tile-manager-mod'
+            ],
+            'x' => [
+                'type' => 'int',
+                'name' => 'x',
+                'default' => $x,
+                'label-message' => 'tilesheet-tile-manager-x'
+            ],
+            'y' => [
+                'type' => 'int',
+                'name' => 'y',
+                'default' => $y,
+                'label-message' => 'tilesheet-tile-manager-y'
+            ]
+        ];
 
-		return new OOUI\PanelLayout([
-			'classes' => ['tile-manager-wrapper'],
-			'framed' => true,
-			'expanded' => false,
-			'padded' => true,
-			'content' => $form
-		]);
+        $htmlForm = HTMLForm::factory('ooui', $formDescriptor, $this->getContext());
+        $htmlForm
+            ->addButton([
+                'name' => 'delete',
+                'value' => 1,
+                'label-message' => 'tilesheet-tile-manager-delete',
+                'flags' => ['destructive']
+            ])
+            ->setMethod('get')
+            ->addHiddenField('update', 1)
+            ->setWrapperLegendMsg('tilesheet-tile-manager-legend')
+            ->setId('ext-tilesheet-tile-manager-form')
+            ->setSubmitTextMsg('tilesheet-tile-manager-submit')
+            ->setSubmitProgressive()
+            ->prepareForm()
+            ->displayForm(false);
 	}
 }
