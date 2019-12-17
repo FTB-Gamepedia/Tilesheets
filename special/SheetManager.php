@@ -72,7 +72,7 @@ class SheetManager extends SpecialPage {
 		if ($opts->getValue('truncate') == 1 || $opts->getValue('delete') == 1 && in_array('sysop', $this->getUser()->getGroups())) self::truncateTable($mod, $this->getUser());
 
 		// Output update table
-		$out->addHTML($this->buildUpdateForm($mod));
+		$this->displayUpdateForm($mod);
 	}
 
 	/**
@@ -205,13 +205,7 @@ class SheetManager extends SpecialPage {
 		]);
 	}
 
-	/**
-	 * Builds the update form, preloaded with the provided entry.
-	 *
-	 * @param $mod
-	 * @return string
-	 */
-	private function buildUpdateForm($mod) {
+	private function displayUpdateForm($mod) {
 		$dbr = wfGetDB(DB_SLAVE);
 		$result = $dbr->select('ext_tilesheet_images', '*', array('`mod`' => $mod));
 		if ($result->numRows() == 0) {
@@ -221,72 +215,50 @@ class SheetManager extends SpecialPage {
 			$sizes = $result->current()->sizes;
 		}
 
-		global $wgScript;
-		$fieldset = new OOUI\FieldsetLayout([
-			'label' => $this->msg('tilesheet-sheet-manager-legend')->text(),
-			'items' => [
-				new OOUI\FieldLayout(
-					new OOUI\TextInputWidget([
-						'name' => 'mod',
-						'value' => $mod,
-						'readOnly' => true
-					]),
-					['label' => $this->msg('tilesheet-sheet-manager-mod')->text()]
-				),
-				new OOUI\LabelWidget(['label' => $this->msg('tilesheet-sheet-manager-mod-hint')->text()]),
-				new OOUI\FieldLayout(
-					new OOUI\TextInputWidget([
-						'name' => 'sizes',
-						'value' => $sizes
-					]),
-					['label' => $this->msg('tilesheet-sheet-manager-sizes')->text()]
-				),
-				new OOUI\LabelWidget(['label' => new OOUI\HtmlSnippet($this->msg('tilesheet-sheet-manager-sizes-hint')->parse())]),
-				new OOUI\HorizontalLayout([
-					'items' => [
-						new OOUI\ButtonInputWidget([
-							'type' => 'submit',
-							'label' => $this->msg('tilesheet-sheet-manager-submit')->text(),
-							'flags' => ['primary', 'progressive'],
-							'name' => 'update',
-							'value' => 1
-						]),
-						new OOUI\ButtonInputWidget([
-							'type' => 'submit',
-							'label' => $this->msg('tilesheet-sheet-manager-delete')->text(),
-							'flags' => ['destructive'],
-							'name' => 'delete',
-							'value' => 1,
-						]),
-						new OOUI\ButtonInputWidget([
-							'type' => 'submit',
-							'label' => $this->msg('tilesheet-sheet-manager-truncate')->text(),
-							'flags' => ['destructive'],
-							'name' => 'truncate',
-							'value' => 1,
-						])
-					]
-				])
-			]
-		]);
-		$form = new OOUI\FormLayout([
-			'method' => 'GET',
-			'action' => $wgScript,
-			'id' => 'ext-tilesheet-sheet-manager-form'
-		]);
-		$form->appendContent(
-			$fieldset,
-			new OOUI\HtmlSnippet(
-				Html::hidden('title', $this->getPageTitle()->getPrefixedText()) .
-				Html::hidden('token', $this->getUser()->getEditToken())
-			)
-		);
-		return new OOUI\PanelLayout([
-			'classes' => ['sheet-manager-wrapper'],
-			'framed' => true,
-			'expanded' => false,
-			'padded' => true,
-			'content' => $form
-		]);
+		$formDescriptor = [
+		    'mod' => [
+		        'type' => 'text',
+		        'name' => 'mod',
+                'default' => $mod,
+                'readonly' => true,
+                'label-message' => 'tilesheet-sheet-manager-mod',
+                'help-message' => 'tilesheet-sheet-manager-mod-hint'
+            ],
+            'sizes' => [
+                'type' => 'text',
+                'name' => 'sizes',
+                'default' => $sizes,
+                'label-message' => 'tilesheet-sheet-manager-sizes',
+                'help-message' => 'tilesheet-sheet-manager-sizes-hint'
+            ],
+            'update' => [
+                'type' => 'hidden',
+                'name' => 'update',
+                'default' => 1
+            ]
+        ];
+
+        $htmlForm = HTMLForm::factory('ooui', $formDescriptor, $this->getContext());
+        $htmlForm
+            ->addButton([
+                'name' => 'delete',
+                'value' => 1,
+                'label-message' => 'tilesheet-sheet-manager-delete',
+                'id' => 'delete',
+                'flags' => ['destructive']
+            ])
+            ->addButton([
+                'name' => 'truncate',
+                'value' => 1,
+                'label-message' => 'tilesheet-sheet-manager-truncate',
+                'id' => 'truncate',
+                'flags' => ['destructive']
+            ])
+            ->setMethod('get')
+            ->setWrapperLegendMsg('tilesheet-sheet-manager-legend')
+            ->setId('ext-tilesheet-sheet-manager')
+            ->setSubmitTextMsg('tilesheet-sheet-manager-submit')
+            ->prepareForm()
+            ->displayForm(false);
 	}
 }
