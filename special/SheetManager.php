@@ -230,11 +230,6 @@ class SheetManager extends SpecialPage {
                 'default' => $sizes,
                 'label-message' => 'tilesheet-sheet-manager-sizes',
                 'help-message' => 'tilesheet-sheet-manager-sizes-hint'
-            ],
-            'update' => [
-                'type' => 'hidden',
-                'name' => 'update',
-                'default' => 1
             ]
         ];
 
@@ -254,6 +249,7 @@ class SheetManager extends SpecialPage {
                 'id' => 'truncate',
                 'flags' => ['destructive']
             ])
+            ->addHiddenField('update', 1)
             ->setMethod('get')
             ->setWrapperLegendMsg('tilesheet-sheet-manager-legend')
             ->setId('ext-tilesheet-sheet-manager')

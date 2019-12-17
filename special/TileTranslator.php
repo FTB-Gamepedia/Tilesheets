@@ -229,11 +229,6 @@ class TileTranslator extends SpecialPage {
                 'id' => 'update-language',
                 'label-message' => 'tilesheet-tile-translator-language',
                 'help-message' => 'tilesheet-tile-translator-language-hint'
-            ],
-            'update' => [
-                'type' => 'hidden',
-                'name' => 'update',
-                'default' => 1
             ]
         ];
         $htmlForm = HTMLForm::factory('ooui', $formDescriptor, $this->getContext());
@@ -245,6 +240,7 @@ class TileTranslator extends SpecialPage {
                 'id' => 'delete',
                 'flags' => ['destructive']
             ])
+            ->addHiddenField('update', 1)
             ->setMethod('get')
             ->setWrapperLegendMsg('tilesheet-tile-translator-legend')
             ->setId('ext-tilesheet-tile-translator')
