@@ -35,6 +35,7 @@ class TileList extends SpecialPage {
 	public function execute($par) {
 		global $wgQueryPageDefaultLimit;
 		$out = $this->getOutput();
+		$out->enableOOUI();
 
 		$this->setHeaders();
 		$this->outputHeader();
@@ -132,7 +133,7 @@ class TileList extends SpecialPage {
 		);
 
 		if ($maxRows == 0) {
-			$out->addHTML($this->buildForm($opts));
+		    $this->displayFilterForm($opts);
 			$out->addWikiText($this->msg('tilesheet-fail-norows')->text());
 			return;
 		}
@@ -219,45 +220,71 @@ class TileList extends SpecialPage {
 		}
 		$pageSelection = "<div style=\"text-align:center;\" class=\"plainlinks\">$prevPage | $nextPage</div>";
 
-		// Output page
-		$out->addHTML($this->buildForm($opts));
+        // Output page
+        $this->displayFilterForm($opts);
 		$out->addWikiText($pageSelection);
 		$out->addWikiText($table);
 	}
 
-	/**
-	 * Build filter form
-	 *
-	 * @param FormOptions $opts Input parameters
-	 * @return string
-	 */
-	private function buildForm(FormOptions $opts) {
-		global $wgScript;
-		$optionTags = "";
-		foreach ([20,50,100,250,500,5000] as $lim) {
-			if ($opts->getValue('limit') == $lim) {
-				$optionTags .= "<option selected=\"\" value=\"$lim\">$lim</option>";
-			} else {
-				$optionTags .= "<option value=\"$lim\">$lim</option>";
-			}
-		}
+	private function displayFilterForm(FormOptions $opts) {
+        // Build filter form
+        $lang = $this->getLanguage();
+        $formDescriptor = [
+            'from' => [
+                'type' => 'int',
+                'name' => 'from',
+                'default' => $opts->getValue('from'),
+                'label-message' => 'tilesheet-tile-list-from',
+                'min' => 1
+            ],
+            'regex' => [
+                'type' => 'text',
+                'name' => 'regex',
+                'default' => $opts->getValue('regex'),
+                'label-message' => 'tilesheet-tile-list-regex'
+            ],
+            'mod' => [
+                'type' => 'text',
+                'name' => 'mod',
+                'default' => $opts->getValue('mod'),
+                'label-message' => 'tilesheet-tile-list-mod'
+            ],
+            'langs' => [
+                'type' => 'text',
+                'name' => 'langs',
+                'default' => $opts->getValue('langs'),
+                'label-message' => 'tilesheet-tile-list-langs'
+            ],
+            'invertlang' => [
+                'type' => 'check',
+                'name' => 'invertlang',
+                'default' => 0,
+                'label-message' => 'tilesheet-tile-list-invertlang'
+            ],
+            'limit' => [
+                'type' => 'limitselect',
+                'name' => 'limit',
+                'label-message' => 'tilesheet-tile-list-limit',
+                'options' => [
+                    $lang->formatNum(20) => 20,
+                    $lang->formatNum(50) => 50,
+                    $lang->formatNum(100) => 100,
+                    $lang->formatNum(250) => 250,
+                    $lang->formatNum(500) => 500,
+                    $lang->formatNum(5000) => 5000
+                ],
+                'default' => $opts->getValue('limit')
+            ]
+        ];
 
-		$form = "<table>";
-		$form .= TilesheetsForm::createFormRow('tile-list', 'from', $opts->getValue('from'), 'number', "min=\"1\"");
-		$form .= TilesheetsForm::createFormRow('tile-list', 'regex', $opts->getValue('regex'));
-		$form .= TilesheetsForm::createFormRow('tile-list', 'mod', $opts->getValue('mod'));
-		$form .= TilesheetsForm::createFormRow('tile-list', 'langs', $opts->getValue('langs'));
-		$form .= TilesheetsForm::createCheckboxRow('tile-list', 'invertlang', 1, $opts->getValue('invertlang') == 1 ? 'checked' : '');
-		$form .= '<tr><td style="text-align:right"><label for="limit">'.$this->msg('tilesheet-tile-list-limit').'</td><td><select name="limit">'.$optionTags.'</select></td></tr>';
-		$form .= TilesheetsForm::createSubmitButton('tile-list');
-		$form .= "</table>";
-
-		$out = Xml::openElement('form', array('method' => 'get', 'action' => $wgScript, 'id' => 'ext-tilesheet-tile-list-filter')) .
-			Xml::fieldset($this->msg('tilesheet-tile-list-legend')->text()) .
-			Html::hidden('title', $this->getPageTitle()->getPrefixedText()) .
-			$form .
-			Xml::closeElement('fieldset') . Xml::closeElement('form') . "\n";
-
-		return $out;
-	}
+        $htmlForm = HTMLForm::factory('ooui', $formDescriptor, $this->getContext());
+        $htmlForm
+            ->setMethod('get')
+            ->setWrapperLegendMsg('tilesheet-tile-list-legend')
+            ->setId('ext-tilesheet-tile-list-filter')
+            ->setSubmitTextMsg('tilesheet-tile-list-submit')
+            ->setSubmitProgressive()
+            ->prepareForm()
+            ->displayForm(false);
+    }
 }

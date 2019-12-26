@@ -58,7 +58,7 @@ class TileTranslator extends SpecialPage {
         $update = $opts->getValue('update');
         $delete = $opts->getValue('delete');
 
-        $out->addHTML($this->buildSearchForm($id, $language));
+        $this->displaySearchForm($id, $language);
 
         if ($id == 0) {
             return;
@@ -72,7 +72,7 @@ class TileTranslator extends SpecialPage {
         }
 
         // Output update form
-        $out->addHTML($this->buildUpdateForm($id, $language));
+        $this->displayUpdateForm($id, $language);
     }
 
     public static function updateTable($id, $displayName, $description, $language, $user, $comment = '') {
@@ -141,31 +141,43 @@ class TileTranslator extends SpecialPage {
     }
 
     /**
-     * Builds the filter form.
+     * Displays the filter form.
      *
      * @param string $id The default entry ID
      * @param string $language The default language code. Defaults to 'en'.
-     * @return string
+     * @throws MWException
      */
-    private function buildSearchForm($id = '', $language = 'en') {
-        global $wgScript;
-        $form = "<table>";
-        $form .= TilesheetsForm::createFormRow('tile-translator-filter', 'id', $id, 'number', 'min="1" id="form-entry-id"');
-        $form .= TilesheetsForm::createFormRow('tile-translator-filter', 'language', $language);
-        $form .= TilesheetsForm::createSubmitButton('tile-translator-filter');
-        $form .= "</table>";
+    private function displaySearchForm($id = '', $language = 'en') {
+        $formDescriptor = [
+            'id' => [
+                'type' => 'int',
+                'name' => 'id',
+                'default' => intval($id),
+                'min' => 1,
+                'id' => 'form-entry-id',
+                'label-message' => 'tilesheet-tile-translator-filter-id'
+            ],
+            'language' => [
+                'type' => 'language',
+                'name' => 'language',
+                'default' => $language,
+                'id' => 'filter-language',
+                'label-message' => 'tilesheet-tile-translator-filter-language'
+            ]
+        ];
 
-        $out = Xml::openElement('form', array('method' => 'get', 'action' => $wgScript, 'id' => 'ext-tilesheet-tile-translator-filter')) .
-            Xml::fieldset($this->msg('tilesheet-tile-translator-filter-legend')->text()) .
-            Html::hidden('title', $this->getPageTitle()->getPrefixedText()) .
-            $form .
-            Xml::closeElement('fieldset') . Xml::closeElement('form') . "\n";
-
-        return $out;
+        $htmlForm = HTMLForm::factory('ooui', $formDescriptor, $this->getContext());
+        $htmlForm
+            ->setMethod('get')
+            ->setWrapperLegendMsg('tilesheet-tile-translator-filter-legend')
+            ->setId('ext-tilesheet-tile-translator-filter')
+            ->setSubmitTextMsg('tilesheet-tile-translator-filter-submit')
+            ->setTitle($this->getPageTitle())
+            ->prepareForm()
+            ->displayForm(false);
     }
 
-    private function buildUpdateForm($id, $language) {
-        // TODO: Dropdown to list all available languages.
+    private function displayUpdateForm($id, $language) {
         $dbr = wfGetDB(DB_SLAVE);
         $result = $dbr->select('ext_tilesheet_languages', '*', array('entry_id' => $id, 'lang' => $language));
         // If there is no translation, fallback to either the english translation or the default item name.
@@ -189,32 +201,51 @@ class TileTranslator extends SpecialPage {
             $description = $result->current()->description;
         }
 
-        global $wgScript;
-        $form = "<table>";
-        $form .= TilesheetsForm::createFormRow('tile-translator', 'id', $id, "text", 'readonly="readonly"');
-        $form .= TilesheetsForm::createFormRow('tile-translator', 'display_name', htmlspecialchars($displayName));
-        $form .= TilesheetsForm::createFormRow('tile-translator', 'description', htmlspecialchars($description));
-        $form .= TilesheetsForm::createFormRow('tile-translator', 'language', $language);
-        $form .= TilesheetsForm::createInputHint('tile-translator', 'language');
-        $form .= TilesheetsForm::createDeleteCheckboxRow('tile-translator');
-        $form .= TilesheetsForm::createSubmitButton('tile-translator');
-        $form .= "</table>";
-
-        $out = Xml::openElement(
-            'form',
-            array(
-                'method' => 'get',
-                'action' => $wgScript,
-                'id' => 'ext-tilesheet-tile-translator-form',
-                'class' => 'prefsection')
-            ) .
-            Xml::fieldset($this->msg('tilesheet-tile-translator-legend')->text()) .
-            Html::hidden('title', $this->getPageTitle()->getPrefixedText()) .
-            Html::hidden('token', $this->getUser()->getEditToken()) .
-            Html::hidden('update', 1) .
-            $form .
-            Xml::closeElement('fieldset') . Xml::closeElement('form') . "\n";
-
-        return $out;
+        $formDescriptor = [
+            'id' => [
+                'type' => 'int',
+                'name' => 'id',
+                'default' => intval($id),
+                'min' => 1,
+                'label-message' => 'tilesheet-tile-translator-id',
+                'readonly' => true
+            ],
+            'display_name' => [
+                'type' => 'text',
+                'name' => 'display_name',
+                'default' => htmlspecialchars($displayName),
+                'label-message' => 'tilesheet-tile-translator-display_name'
+            ],
+            'description' => [
+                'type' => 'text',
+                'name' => 'description',
+                'default' => htmlspecialchars($description),
+                'label-message' => 'tilesheet-tile-translator-description'
+            ],
+            'language' => [
+                'type' => 'language',
+                'name' => 'language',
+                'default' => $language,
+                'id' => 'update-language',
+                'label-message' => 'tilesheet-tile-translator-language',
+                'help-message' => 'tilesheet-tile-translator-language-hint'
+            ]
+        ];
+        $htmlForm = HTMLForm::factory('ooui', $formDescriptor, $this->getContext());
+        $htmlForm
+            ->addButton([
+                'name' => 'delete',
+                'value' => 1,
+                'label-message' => 'tilesheet-tile-translator-delete',
+                'id' => 'delete',
+                'flags' => ['destructive']
+            ])
+            ->addHiddenField('update', 1)
+            ->setMethod('get')
+            ->setWrapperLegendMsg('tilesheet-tile-translator-legend')
+            ->setId('ext-tilesheet-tile-translator')
+            ->setSubmitTextMsg('tilesheet-tile-translator-submit')
+            ->prepareForm()
+            ->displayForm(false);
     }
 }

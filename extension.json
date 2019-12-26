@@ -54,7 +54,6 @@
 		"Tilesheets": "Tilesheets.body.php",
 		"TilesheetsError": "Tilesheets.body.php",
 		"TilesheetsHooks": "Tilesheets.hooks.php",
-		"TilesheetsForm": "classes/TilesheetsForm.php",
 		"TileList": "special/TileList.php",
 		"SheetList": "special/SheetList.php",
 		"CreateTileSheet": "special/CreateTileSheet.php",
