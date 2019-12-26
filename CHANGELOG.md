@@ -2,6 +2,9 @@
 This changelog only shows recent version history, because of the lack of documentation from the former maintainers. The very first changelog (1.1.2) is likely incomplete.
 
 ## Version 4
+### 4.3.0
+* Update our special pages to use OOUI (#96).
+
 ### 4.2.3
 * Fix API descriptions/summaries (#95).
 
