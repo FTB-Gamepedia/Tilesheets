@@ -40,7 +40,7 @@ class TilesheetsAddTilesApi extends ApiBase {
 
     public function getExamples() {
         return array(
-            'api.php?action=addtiles&tssummary=Adding many tiles&tsmod=V&tsimport=0 0 Item|0 1 Other Item'
+            'api.php?action=addtiles&tssummary=Adding many tiles&tsmod=V&tsimport=0 0 0 Item|0 1 0 Other Item'
         );
     }
 
@@ -67,14 +67,14 @@ class TilesheetsAddTilesApi extends ApiBase {
 
         $return = [];
         foreach ($import as $entry) {
-            list($x, $y, $item) = explode(' ', $entry, 3);
-            $res = TileManager::createTile($mod, $item, $x, $y, $this->getUser(), $summary);
+            list($x, $y, $z, $item) = explode(' ', $entry, 4);
+            $res = TileManager::createTile($mod, $item, $x, $y, $z, $this->getUser(), $summary);
             // Get the new tile's ID.
             if ($res) {
                 $selectResult = $dbr->select(
                     'ext_tilesheet_items',
                     '`entry_id`',
-                    array('item_name' => $item, 'mod_name' => $mod, 'x' => $x, 'y' => $y),
+                    array('item_name' => $item, 'mod_name' => $mod, 'x' => $x, 'y' => $y, 'z' => $z),
                     __METHOD__
                 );
                 $id = $selectResult->current()->entry_id;

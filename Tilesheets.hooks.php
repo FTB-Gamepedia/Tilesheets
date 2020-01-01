@@ -28,6 +28,7 @@ class TilesheetsHooks {
 
 		$updater->addExtensionUpdate(['modifyField', 'ext_tilesheet_languages', 'description', "{$extDir}/upgrade/sql/ext_tilesheet_languages/change_description_to_text.sql", true]);
 		$updater->addExtensionUpdate(['addIndex', 'ext_tilesheet_languages', 'PRIMARY', "{$extDir}/upgrade/sql/ext_tilesheet_languages/add_primary_key.sql", true]);
+		$updater->addExtensionUpdate(['addField', 'ext_tilesheet_items', 'z', "{$extDir}/upgrade/sql/ext_tilesheet_items/add_z_coordinate.sql", true]);
 		return true;
 	}
 

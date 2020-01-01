@@ -83,16 +83,18 @@ class Tilesheets {
 			} else {
 				$x = self::$mQueriedItems[$item][$mod]->x;
 				$y = self::$mQueriedItems[$item][$mod]->y;
-				return $this->generateTile($parser, $mod, $size, $x, $y, self::$mQueriedItems[$item][$mod]->entry_id);
+				$z = self::$mQueriedItems[$item][$mod]->z;
+				return $this->generateTile($parser, $mod, $size, $x, $y, $z, self::$mQueriedItems[$item][$mod]->entry_id);
 			}
 		} else {
 			if (count(self::$mQueriedItems[$item]) == 1) {
 				$x = current(self::$mQueriedItems[$item])->x;
 				$y = current(self::$mQueriedItems[$item])->y;
+				$z = current(self::$mQueriedItems[$item])->z;
 				$mod = current(self::$mQueriedItems[$item])->mod_name;
 				$parser->addTrackingCategory('tilesheet-no-mod-provided-easy-category');
 				TilesheetsError::warn(wfMessage('tilesheets-warning-nomodparam')->params($item, $mod)->text());
-				return $this->generateTile($parser, $mod, $size, $x, $y, current(self::$mQueriedItems[$item])->entry_id);
+				return $this->generateTile($parser, $mod, $size, $x, $y, $z, current(self::$mQueriedItems[$item])->entry_id);
 			} else {
 				$parser->addTrackingCategory('tilesheet-no-mod-provided-category');
 				TilesheetsError::error(wfMessage('tilesheets-error-multiple')->params($item)->text());
@@ -108,10 +110,11 @@ class Tilesheets {
 	 * @param $size
 	 * @param $x
 	 * @param $y
+     * @param $z
 	 * @param $entryID
 	 * @return array
 	 */
-	private function generateTile(Parser &$parser, $mod, $size, $x, $y, $entryID) {
+	private function generateTile(Parser &$parser, $mod, $size, $x, $y, $z, $entryID) {
 		// Validate tilesheet size
 		Tilesheets::getModTileSizes($mod);
 		if (self::$mQueriedSizes[$mod] == null) {
@@ -132,10 +135,10 @@ class Tilesheets {
 		$page = $title->getText();
 		$namespace = $title->getNamespace();
 		self::$tileLinks[$namespace][$page][] = $entryID;
-		$file = wfFindFile("Tilesheet $mod $size.png");
+		$file = wfFindFile("Tilesheet $mod $size $z.png");
 		if ($file === false) {
 			$parser->addTrackingCategory('tilesheet-missing-image-category');
-			TilesheetsError::warn(wfMessage('tilesheets-warning-noimage')->params($mod, $size)->text());
+			TilesheetsError::warn(wfMessage('tilesheets-warning-noimage')->params($mod, $size, $z)->text());
 			return $this->errorTile($size);
 		}
 		$url = $file->getUrl();
