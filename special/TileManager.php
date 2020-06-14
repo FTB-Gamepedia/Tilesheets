@@ -100,7 +100,7 @@ class TileManager extends SpecialPage {
 			'`mod_name`' => $mod,
 			'`x`' => $x,
 			'`y`' => $y,
-            '`z`' => $z));
+			'`z`' => $z));
 
 		if ($result != false) {
 			$target = empty($mod) || $mod == "undefined" ? $item : "$item ($mod)";
@@ -184,9 +184,9 @@ class TileManager extends SpecialPage {
 				$diff['y'][] = $y;
 			}
 			if ($item->z != $z) {
-			    $diff['z'][] = $item->z;
-			    $diff['z'][] = $z;
-            }
+				$diff['z'][] = $item->z;
+				$diff['z'][] = $z;
+			}
 			$diffString = "";
 			foreach ($diff as $field => $change) {
 				$diffString .= "$field [$change[0] -> $change[1]] ";
