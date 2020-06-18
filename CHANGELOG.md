@@ -1,6 +1,18 @@
 # Changelog
 This changelog only shows recent version history, because of the lack of documentation from the former maintainers. The very first changelog (1.1.2) is likely incomplete.
 
+## Version 5
+### 5.0.0
+* Fix license name in Special:Version (#99, #100) (xbony2)
+* Implement Z coordinate for tiles (ext_tilesheet_items table) (#76, #98, somewhat related to #82)
+  * Tilesheet images are now required to be at File:Tilesheet {abbrv} {size} {z}.png (upgrade will require moving all to Z 0).
+  * Z coordinate allows for there to be multiple tilesheet images for a single sheet/mod with overlapping X/Y coordinates. This is needed for very large mods whose tilesheets exceed the image size limit (GregTech and others) or for mods which have multiple tilesheets for different purposes (Thaumcraft and Witchery possibly)
+  * CreateTileSheet, TileList, and TileManager are all updated to account for the new Z coordinate.
+  * addtiles, edittile, and querytiles should all be updated to account for the new Z coordinate (only querytiles was tested, however the code used is the special page code, so I do not see any reason it will not work).
+  * Upgrade requires running a SQL script to add the column with NULL, populate it with 0, and then set NOT NULL. This script is located at upgrade/sql/ext_tilesheet_items/add_z_coordinate.sql
+  * `#icon`/`#iconloc` are entirely unchanged, meaning nothing on the wiki aside from tilesheet images will need to be updated.
+  * Import format is now X Y Z Item Name. This will need to be updated in ftb-rs
+
 ## Version 4
 ### 4.3.0
 * Update our special pages to use OOUI (#96).
