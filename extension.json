@@ -13,6 +13,7 @@
 	"url": "http://help.gamepedia.com/Extension:Tilesheets",
 	"descriptionmsg": "tilesheets-desc",
 	"type": "parserhook",
+	"license-name": "MIT",
 	"AvailableRights": [
 		"edittilesheets",
 		"importtilesheets",
