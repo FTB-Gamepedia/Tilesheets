@@ -50,6 +50,7 @@ class TileManager extends SpecialPage {
 		$opts->add( 'item', '' );
 		$opts->add( 'x', 0 );
 		$opts->add( 'y', 0 );
+		$opts->add( 'z', 0 );
 		$opts->add( 'update', 0 );
 		$opts->add( 'delete', 0 );
 
@@ -65,6 +66,7 @@ class TileManager extends SpecialPage {
 		$item = htmlspecialchars_decode($opts->getValue('item'));
 		$x = $opts->getValue('x');
 		$y = $opts->getValue('y');
+		$z = $opts->getValue('z');
 
 		// Output filter
 		$out->addHTML($this->buildSearchForm());
@@ -75,17 +77,17 @@ class TileManager extends SpecialPage {
 		if ($opts->getValue('delete') == 1) {
 			self::deleteEntry($id, $this->getUser());
 		} else if ($opts->getValue('update') == 1) {
-			self::updateTable($id, $item, $mod, $x, $y, $this->getUser());
+			self::updateTable($id, $item, $mod, $x, $y, $z, $this->getUser());
 		}
 
 		// Output update form
 		$this->displayUpdateForm($id);
 	}
 
-	public static function createTile($mod, $item, $x, $y, $user, $comment = "") {
+	public static function createTile($mod, $item, $x, $y, $z, $user, $comment = "") {
 		$dbw = wfGetDB(DB_MASTER);
 		// Check if position on tilesheet is already occupied
-		$result = $dbw->select('ext_tilesheet_items', 'COUNT(`entry_id`) AS count', array('`mod_name`' => $mod, '`x`' => intval($x), '`y`' => intval($y)));
+		$result = $dbw->select('ext_tilesheet_items', 'COUNT(`entry_id`) AS count', array('`mod_name`' => $mod, '`x`' => intval($x), '`y`' => intval($y), '`z`' => intval($z)));
 		if ($result->current()->count != 0) return false;
 
 		// Check if item is already defined
@@ -97,7 +99,8 @@ class TileManager extends SpecialPage {
 			'`item_name`' => $item,
 			'`mod_name`' => $mod,
 			'`x`' => $x,
-			'`y`' => $y));
+			'`y`' => $y,
+			'`z`' => $z));
 
 		if ($result != false) {
 			$target = empty($mod) || $mod == "undefined" ? $item : "$item ($mod)";
@@ -107,7 +110,7 @@ class TileManager extends SpecialPage {
 			$logEntry->setPerformer($user);
 			$logEntry->setTarget(Title::newFromText("Tile/$target", NS_SPECIAL));
 			$logEntry->setComment($comment);
-			$logEntry->setParameters(array("4::mod" => $mod, "5::item" => $item, "6::x" => $x, "7::y" => $y));
+			$logEntry->setParameters(array("4::mod" => $mod, "5::item" => $item, "6::x" => $x, "7::y" => $y, "8::z" => $z));
 			$logId = $logEntry->insert();
 			$logEntry->publish($logId);
 			// End log
@@ -130,7 +133,7 @@ class TileManager extends SpecialPage {
 			$logEntry = new ManualLogEntry('tilesheet', 'deletetile');
 			$logEntry->setPerformer($user);
 			$logEntry->setTarget(Title::newFromText("Tile/$target", NS_SPECIAL));
-			$logEntry->setParameters(array("4::id" => $item->entry_id, "5::item" => $item->item_name, "6::mod" => $item->mod_name, "7::x" => $item->x, "8::y" => $item->y));
+			$logEntry->setParameters(array("4::id" => $item->entry_id, "5::item" => $item->item_name, "6::mod" => $item->mod_name, "7::x" => $item->x, "8::y" => $item->y, "9::z" => $item->z));
 			$logEntry->setComment($comment);
 			$logId = $logEntry->insert();
 			$logEntry->publish($logId);
@@ -147,14 +150,15 @@ class TileManager extends SpecialPage {
 	 * @param string $mod
 	 * @param string|int $x
 	 * @param string|int $y
+     * @param string|int $z
 	 * @param User $user
 	 * @param string $comment
 	 * @return bool
 	 */
-	public static function updateTable($id, $item, $mod, $x, $y, $user, $comment = "") {
+	public static function updateTable($id, $item, $mod, $x, $y, $z, $user, $comment = "") {
 		$dbw = wfGetDB(DB_MASTER);
 		$stuff = $dbw->select('ext_tilesheet_items', '*', array('entry_id' => $id));
-		$dbw->update('ext_tilesheet_items', array('mod_name' => $mod, 'item_name' => $item, 'x' => $x, 'y' => $y), array('entry_id' => $id));
+		$dbw->update('ext_tilesheet_items', array('mod_name' => $mod, 'item_name' => $item, 'x' => $x, 'y' => $y, 'z' => $z), array('entry_id' => $id));
 
 		if ($stuff->numRows() == 0) return 1;
 
@@ -179,6 +183,10 @@ class TileManager extends SpecialPage {
 				$diff['y'][] = $item->y;
 				$diff['y'][] = $y;
 			}
+			if ($item->z != $z) {
+				$diff['z'][] = $item->z;
+				$diff['z'][] = $z;
+			}
 			$diffString = "";
 			foreach ($diff as $field => $change) {
 				$diffString .= "$field [$change[0] -> $change[1]] ";
@@ -190,7 +198,7 @@ class TileManager extends SpecialPage {
 			$logEntry->setPerformer($user);
 			$logEntry->setTarget(Title::newFromText("Tile/$target", NS_SPECIAL));
 			$logEntry->setComment($comment);
-			$logEntry->setParameters(array("6::id" => $item->entry_id, "7::item" => $item->item_name, "8::mod" => $item->mod_name, "9::x" => $item->x, "10::y" => $item->y, "11::to_item" => $fItem, "12::to_mod" => $mod, "13::to_x" => $x, "14::to_y" => $y, "4::diff" => $diffString, "5::diff_json" => json_encode($diff)));
+			$logEntry->setParameters(array("6::id" => $item->entry_id, "7::item" => $item->item_name, "8::mod" => $item->mod_name, "9::x" => $item->x, "10::y" => $item->y, "15::z" => $item->z, "11::to_item" => $fItem, "12::to_mod" => $mod, "13::to_x" => $x, "14::to_y" => $y, "16::to_z" => $z, "4::diff" => $diffString, "5::diff_json" => json_encode($diff)));
 			$logId = $logEntry->insert();
 			$logEntry->publish($logId);
 			// End log
@@ -254,6 +262,7 @@ class TileManager extends SpecialPage {
 			$mod = $result->current()->mod_name;
 			$x = $result->current()->x;
 			$y = $result->current()->y;
+			$z = $result->current()->z;
 		}
 
 		$formDescriptor = [
@@ -287,6 +296,12 @@ class TileManager extends SpecialPage {
                 'name' => 'y',
                 'default' => $y,
                 'label-message' => 'tilesheet-tile-manager-y'
+            ],
+            'z' => [
+                'type' => 'int',
+                'name' => 'z',
+                'default' => $z,
+                'label-message' => 'tilesheet-tile-manager-z'
             ]
         ];
 

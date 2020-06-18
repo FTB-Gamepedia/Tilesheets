@@ -81,11 +81,11 @@ class CreateTileSheet extends SpecialPage {
 			$input = explode("\n", trim($opts->getValue('input')));
 			foreach ($input as $line) {
 				if (trim($line) == "") continue;
-				list($x, $y, $item) = explode(" ", $line, 3);
+				list($x, $y, $z, $item) = explode(" ", $line, 4);
 				$item = trim($item);
 
 				// Create tile
-				$out->addHtml($this->returnMessage(TileManager::createTile($mod, $item, $x, $y, $this->getUser(), $this->msg('tilesheet-create-summary-newtile')->text()), $this->msg('tilesheet-create-response-msg-newtile')->params($item, $mod, $x, $y)->text()));
+				$out->addHtml($this->returnMessage(TileManager::createTile($mod, $item, $x, $y, $z, $this->getUser(), $this->msg('tilesheet-create-summary-newtile')->text()), $this->msg('tilesheet-create-response-msg-newtile')->params($item, $mod, $x, $y, $z)->text()));
 			}
 		$out->addHtml('</tt>');
 		} else {

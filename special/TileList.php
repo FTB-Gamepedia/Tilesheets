@@ -145,6 +145,7 @@ class TileList extends SpecialPage {
 		$msgSizesName = wfMessage('tilesheet-sizes');
 		$msgXName = wfMessage('tilesheet-x');
 		$msgYName = wfMessage('tilesheet-y');
+		$msgZName = wfMessage('tilesheet-z');
 		$canEdit = in_array("edittilesheets", $this->getUser()->getRights());
 		$canTranslate = in_array('translatetiles', $this->getUser()->getRights());
 		$table .= "!";
@@ -154,7 +155,7 @@ class TileList extends SpecialPage {
 		if ($canTranslate) {
 			$table .= " !!";
 		}
-		$table .= " !! # !!  $msgItemName !! $msgModName !! $msgXName !! $msgYName !! $msgSizesName\n";
+		$table .= " !! # !!  $msgItemName !! $msgModName !! $msgXName !! $msgYName !! $msgZName !! $msgSizesName\n";
 		$linkStyle = "style=\"width:23px; padding-left:5px; padding-right: 5px; text-align:center; font-weight:bold;\"";
 		foreach ($results as $result) {
 			$lId = $result->entry_id;
@@ -162,11 +163,12 @@ class TileList extends SpecialPage {
 			$lMod = $result->mod_name;
 			$lX = $result->x;
 			$lY = $result->y;
+			$lZ = $result->z;
 			$lSizes = Tilesheets::getModTileSizes($lMod);
 			if ($lSizes == null);
 			else {
 				foreach ($lSizes as $key => $size) {
-					$lSizes[$key] = "[[:File:Tilesheet $lMod $size.png|{$size}px]]";
+					$lSizes[$key] = "[[:File:Tilesheet $lMod $size $lZ.png|{$size}px]]";
 				}
 				$lSizes = implode(",", $lSizes);
 			}
@@ -190,7 +192,7 @@ class TileList extends SpecialPage {
 			if ($canTranslate) {
 				$table .= "$linkStyle | $translateLink || ";
 			}
-			$table .= "$linkStyle | $viewLink || $lId ||  $lItem || $sEditLink || $lX || $lY || $lSizes\n";
+			$table .= "$linkStyle | $viewLink || $lId ||  $lItem || $sEditLink || $lX || $lY || $lZ || $lSizes\n";
 		}
 		$table .= "|}\n";
 

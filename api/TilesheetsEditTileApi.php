@@ -25,6 +25,9 @@ class TilesheetsEditTileApi extends ApiBase {
             'toy' => array(
                 ApiBase::PARAM_TYPE => 'integer',
             ),
+            'toz' => array(
+                Apibase::PARAM_TYPE => 'integer',
+            )
         );
     }
 
@@ -59,11 +62,12 @@ class TilesheetsEditTileApi extends ApiBase {
         $toName = $this->getParameter('toname');
         $toX = $this->getParameter('tox');
         $toY = $this->getParameter('toy');
+        $toZ = $this->getParameter('toz');
         $id = $this->getParameter('id');
         $summary = $this->getParameter('summary');
 
-        if (empty($toMod) && empty($toName) && empty($toX) && empty($toY)) {
-            $this->dieWithError('You have to specify one of tomod, toname, tox, or toy', 'nochangeparams');
+        if (empty($toMod) && empty($toName) && empty($toX) && empty($toY) && empty($toZ)) {
+            $this->dieWithError('You have to specify one of tomod, toname, tox, toy, or toz', 'nochangeparams');
         }
 
         $dbr = wfGetDB(DB_SLAVE);
@@ -79,8 +83,9 @@ class TilesheetsEditTileApi extends ApiBase {
         $toName = empty($toName) ? $row->item_name : $toName;
         $toX = empty($toX) ? $row->x : $toX;
         $toY = empty($toY) ? $row->y : $toY;
+        $toZ = empty($toZ) ? $row->z : $toZ;
 
-        $result = TileManager::updateTable($id, $toName, $toMod, $toX, $toY, $this->getUser(), $summary);
+        $result = TileManager::updateTable($id, $toName, $toMod, $toX, $toY, $toZ, $this->getUser(), $summary);
         if ($result != 0) {
             $error = $result == 1 ? 'That entry does not exist' : 'There was no change';
             $this->dieWithError($error, 'updatefail');
