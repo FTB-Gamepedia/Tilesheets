@@ -63,6 +63,7 @@ class TilesheetsQueryTilesApi extends ApiQueryBase {
                 'name' => $res->item_name,
                 'x' => intval($res->x),
                 'y' => intval($res->y),
+                'z' => intval($res->z),
             );
         }
 

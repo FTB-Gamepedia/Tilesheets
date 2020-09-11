@@ -35,6 +35,7 @@ class SheetList extends SpecialPage {
 	public function execute($par) {
 		global $wgQueryPageDefaultLimit;
 		$out = $this->getOutput();
+		$out->enableOOUI();
 
 		$this->setHeaders();
 		$this->outputHeader();
@@ -77,7 +78,7 @@ class SheetList extends SpecialPage {
 		);
 
 		if ($maxRows == 0) {
-			$out->addHTML($this->buildForm($opts));
+			$this->displayFilterForm($opts);
 			$out->addWikiText($this->msg('tilesheet-fail-norows')->text());
 			return;
 		}
@@ -134,39 +135,37 @@ class SheetList extends SpecialPage {
 		$pageSelection = "<div style=\"text-align:center;\" class=\"plainlinks\">$prevPage | $nextPage</div>";
 
 		// Output page
-		$out->addHTML($this->buildForm($opts));
+		$this->displayFilterForm($opts);
 		$out->addWikiText($pageSelection);
 		$out->addWikiText($table);
 	}
 
-	/**
-	 * Build filter form
-	 *
-	 * @param FormOptions $opts Input parameters
-	 * @return string
-	 */
-	private function buildForm(FormOptions $opts) {
-		global $wgScript;
-		$optionTags = "";
-		foreach ([20,50,100,250,500,5000] as $lim) {
-			if ($opts->getValue('limit') == $lim) {
-				$optionTags .= "<option selected=\"\" value=\"$lim\">$lim</option>";
-			} else {
-				$optionTags .= "<option value=\"$lim\">$lim</option>";
-			}
-		}
-
-		$form = "<table>";
-		$form .= '<tr><td style="text-align:right"><label for="limit">'.$this->msg('tilesheet-sheet-list-limit').'</td><td><select name="limit">'.$optionTags.'</select></td></tr>';
-		$form .= TilesheetsForm::createSubmitButton('sheet-list');
-		$form .= "</table>";
-
-		$out = Xml::openElement('form', array('method' => 'get', 'action' => $wgScript, 'id' => 'ext-tilesheet-sheet-list-filter', 'class' => 'prefsection')) .
-			Xml::fieldset($this->msg('tilesheet-sheet-list-legend')->text()) .
-			Html::hidden('title', $this->getPageTitle()->getPrefixedText()) .
-			$form .
-			Xml::closeElement( 'fieldset' ) . Xml::closeElement( 'form' ) . "\n";
-
-		return $out;
+	private function displayFilterForm(FormOptions $opts) {
+	    $lang = $this->getLanguage();
+	    $formDescriptor = [
+            'limit' => [
+                'type' => 'limitselect',
+                'name' => 'limit',
+                'label-message' => 'tilesheet-sheet-list-limit',
+                'options' => [
+                    $lang->formatNum(20) => 20,
+                    $lang->formatNum(50) => 50,
+                    $lang->formatNum(100) => 100,
+                    $lang->formatNum(250) => 250,
+                    $lang->formatNum(500) => 500,
+                    $lang->formatNum(5000) => 5000
+                ],
+                'default' => $opts->getValue('limit')
+            ]
+        ];
+        $htmlForm = HTMLForm::factory('ooui', $formDescriptor, $this->getContext());
+        $htmlForm
+            ->setMethod('get')
+            ->setWrapperLegendMsg('tilesheet-sheet-list-legend')
+            ->setId('ext-tilesheet-sheet-list-filter')
+            ->setSubmitTextMsg('tilesheet-sheet-list-submit')
+            ->setSubmitProgressive()
+            ->prepareForm()
+            ->displayForm(false);
 	}
 }

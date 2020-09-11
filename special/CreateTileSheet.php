@@ -37,6 +37,7 @@ class CreateTileSheet extends SpecialPage {
 		$this->checkPermissions();
 
 		$out = $this->getOutput();
+		$out->enableOOUI();
 		$out->addModuleStyles('ext.tilesheets.special');
 
 		$this->setHeaders();
@@ -59,7 +60,7 @@ class CreateTileSheet extends SpecialPage {
 		// Process and save POST data
 		if ($_POST) {
 			// XSRF prevention
-			if ( !$this->getUser()->matchEditToken( $this->getRequest()->getVal( 'token' ) ) ) {
+			if ( !$this->getUser()->matchEditToken( $this->getRequest()->getVal( 'wpEditToken' ) ) ) {
 				return;
 			}
 
@@ -80,45 +81,66 @@ class CreateTileSheet extends SpecialPage {
 			$input = explode("\n", trim($opts->getValue('input')));
 			foreach ($input as $line) {
 				if (trim($line) == "") continue;
-				list($x, $y, $item) = explode(" ", $line, 3);
+				list($x, $y, $z, $item) = explode(" ", $line, 4);
 				$item = trim($item);
 
 				// Create tile
-				$out->addHtml($this->returnMessage(TileManager::createTile($mod, $item, $x, $y, $this->getUser(), $this->msg('tilesheet-create-summary-newtile')->text()), $this->msg('tilesheet-create-response-msg-newtile')->params($item, $mod, $x, $y)->text()));
+				$out->addHtml($this->returnMessage(TileManager::createTile($mod, $item, $x, $y, $z, $this->getUser(), $this->msg('tilesheet-create-summary-newtile')->text()), $this->msg('tilesheet-create-response-msg-newtile')->params($item, $mod, $x, $y, $z)->text()));
 			}
 		$out->addHtml('</tt>');
 		} else {
-			$out->addHtml($this->buildForm());
+			$this->displayForm();
 		}
 
 	}
 
-	/**
-	 * Build the tilesheet creation form
-	 *
-	 * @return string
-	 */
-	private function buildForm() {
-		global $wgArticlePath;
-		$form = "<table>";
-		$form .= TilesheetsForm::createFormRow('create', 'mod');
-		$form .= TilesheetsForm::createInputHint('create', 'mod');
-		$form .= TilesheetsForm::createFormRow('create', 'sizes');
-		$form .= TilesheetsForm::createInputHint('create', 'sizes');
-		$form .= "<tr><td class='mw-label'>".$this->msg('tilesheet-create-input')->text()."</td><td></td></td>";
-		$form .= TilesheetsForm::createInputHint('create', 'input');
-		$form .= "<tr><td colspan=\"2\"><textarea name=\"input\" style=\"width:100%; height: 600px;\"></textarea></td></td>";
-		$form .= "<tr><td colspan=\"2\"><input type=\"submit\" value=\"".$this->msg("tilesheet-create-submit")->text()."\"><input type=\"checkbox\" value=\"1\" name=\"update_table\" id=\"update_table\"><label for=\"update_table\">".$this->msg("tilesheet-create-update")->text()."</label><span style=\"font-size: x-small;padding: .2em .5em;color: #666;\">".$this->msg("tilesheet-create-update-hint")->parse()."</span></td></tr>";
-		$form .= "</table>";
+	private function displayForm() {
+	    global $wgArticlePath;
 
-		$out = Xml::openElement('form', array('method' => 'post', 'action' => str_replace('$1', 'Special:CreateTileSheet', $wgArticlePath), 'id' => 'ext-tilesheet-create-form', 'class' => 'prefsection')) .
-			Xml::fieldset($this->msg('tilesheet-create-legend')->text()) .
-			Html::hidden('title', $this->getTitle()->getPrefixedText()) .
-			Html::hidden( 'token', $this->getUser()->getEditToken() ) .
-			$form .
-			Xml::closeElement( 'fieldset' ) . Xml::closeElement( 'form' ) . "\n";
+        $formDescriptor = [
+            'mod' => [
+                'type' => 'text',
+                'name' => 'mod',
+                'label-message' => 'tilesheet-create-mod',
+                'id' => 'mod',
+                'help-message' => 'tilesheet-create-mod-hint'
+            ],
+            'sizes' => [
+                'type' => 'text',
+                'name' => 'sizes',
+                'label-message' => 'tilesheet-create-sizes',
+                'id' => 'sizes',
+                'help-message' => 'tilesheet-create-sizes-hint'
+            ],
+            'input' => [
+                'type' => 'textarea',
+                'name' => 'input',
+                'rows' => 40,
+                'label-message' => 'tilesheet-create-input',
+                'cssclass' => 'tilesheet-importer-textarea',
+                'help-message' => 'tilesheet-create-input-hint'
+            ],
+            'update' => [
+                'type' => 'check',
+                'name' => 'update_table',
+                'default' => 0,
+                'label-message' => 'tilesheet-create-update',
+                'id' => 'update_table',
+                'help-message' => 'tilesheet-create-update-hint',
+                'csshelpclass' => 'tilesheet-create-update-hint'
+            ]
+        ];
 
-		return $out;
+        $htmlForm = HTMLForm::factory('ooui', $formDescriptor, $this->getContext());
+        $htmlForm
+            ->setMethod('post')
+            ->setAction(str_replace('$1', 'Special:CreateTileSheet', $wgArticlePath))
+            ->setWrapperLegendMsg('tilesheet-create-legend')
+            ->setId('ext-tilesheet-create-form')
+            ->setSubmitTextMsg('tilesheet-create-submit')
+            ->setSubmitProgressive()
+            ->prepareForm()
+            ->displayForm(false);
 	}
 
 	/**

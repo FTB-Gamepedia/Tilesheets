@@ -1,6 +1,6 @@
 {
 	"name": "Tilesheets",
-	"version": "4.2.1",
+	"version": "5.0.0",
 	"author": [
 		"[http://ftb.gamepedia.com/User:Jinbobo Jinbobo]",
 		"[http://ftb.gamepedia.com/User:Retep998 Peter Atashian]",
@@ -13,6 +13,7 @@
 	"url": "http://help.gamepedia.com/Extension:Tilesheets",
 	"descriptionmsg": "tilesheets-desc",
 	"type": "parserhook",
+	"license-name": "MIT",
 	"AvailableRights": [
 		"edittilesheets",
 		"importtilesheets",
@@ -54,7 +55,6 @@
 		"Tilesheets": "Tilesheets.body.php",
 		"TilesheetsError": "Tilesheets.body.php",
 		"TilesheetsHooks": "Tilesheets.hooks.php",
-		"TilesheetsForm": "classes/TilesheetsForm.php",
 		"TileList": "special/TileList.php",
 		"SheetList": "special/SheetList.php",
 		"CreateTileSheet": "special/CreateTileSheet.php",

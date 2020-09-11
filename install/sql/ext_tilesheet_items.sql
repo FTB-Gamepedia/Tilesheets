@@ -3,7 +3,8 @@ CREATE TABLE IF NOT EXISTS /*_*/ext_tilesheet_items (
   `item_name` varchar(100) NOT NULL,
   `mod_name` varchar(10) NOT NULL,
   `x` int(11) NOT NULL,
-  `y` int(11) NOT NULL
+  `y` int(11) NOT NULL,
+  `z` int(11) NOT NULL
 ) /*$wgDBTableOptions*/ ;
 
 CREATE INDEX /*i*/item_name ON /*_*/ext_tilesheet_items (`item_name`);
