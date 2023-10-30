@@ -54,7 +54,7 @@ class SheetList extends SpecialPage {
 		$page = intval($opts->getValue('page'));
 
 		// Load data
-		$dbr = wfGetDB(DB_SLAVE);
+		$dbr = wfGetDB(DB_REPLICA);
 		$result = $dbr->select(
 			'ext_tilesheet_images',
 			'COUNT(`mod`) AS row_count'

@@ -70,7 +70,7 @@ class TilesheetsEditTileApi extends ApiBase {
             $this->dieWithError('You have to specify one of tomod, toname, tox, toy, or toz', 'nochangeparams');
         }
 
-        $dbr = wfGetDB(DB_SLAVE);
+        $dbr = wfGetDB(DB_REPLICA);
         $entry = $dbr->select('ext_tilesheet_items', '*', array('entry_id' => $id));
 
         if ($entry->numRows() == 0) {

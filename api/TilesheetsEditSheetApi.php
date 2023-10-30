@@ -59,7 +59,7 @@ class TilesheetsEditSheetApi extends ApiBase {
             $this->dieWithError('You have to specify one of tomod or tosizes', 'nochangeparams');
         }
 
-        $dbr = wfGetDB(DB_SLAVE);
+        $dbr = wfGetDB(DB_REPLICA);
         $entry = $dbr->select('ext_tilesheet_images', '*', array('`mod`' => $curMod));
 
         if ($entry->numRows() == 0) {

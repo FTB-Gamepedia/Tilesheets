@@ -31,7 +31,7 @@ class TilesheetsQueryTranslationsApi extends ApiQueryBase {
         $id = $this->getParameter('id');
         $lang = $this->getParameter('lang');
 
-        $dbr = wfGetDB(DB_SLAVE);
+        $dbr = wfGetDB(DB_REPLICA);
 
         $results = $dbr->select(
             'ext_tilesheet_languages',

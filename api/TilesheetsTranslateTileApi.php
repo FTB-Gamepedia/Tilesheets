@@ -62,7 +62,7 @@ class TilesheetsTranslateTileApi extends ApiBase {
             $this->dieWithError('You have to specify one of name or description', 'nochangeparam');
         }
 
-        $dbr = wfGetDB(DB_SLAVE);
+        $dbr = wfGetDB(DB_REPLICA);
         $stuff = $dbr->select('ext_tilesheet_languages', '*', array('entry_id' => $id, 'lang' => $lang));
 
         TileTranslator::updateTable($id, $name, $desc, $lang, $this->getUser());

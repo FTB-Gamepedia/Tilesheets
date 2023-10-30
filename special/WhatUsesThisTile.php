@@ -38,7 +38,7 @@ class WhatUsesThisTile extends SpecialPage {
 		$page = intval($opts->getValue('page'));
 		$from = intval($opts->getValue('from'));
 
-		$dbr = wfGetDB(DB_SLAVE);
+		$dbr = wfGetDB(DB_REPLICA);
 		$tileData = $dbr->select('ext_tilesheet_items', '*', array('entry_id' => $entryID));
 		$out->addBacklinkSubtitle(Title::newFromText("ViewTile/$entryID", NS_SPECIAL));
 		if ($tileData->numRows() == 0) {

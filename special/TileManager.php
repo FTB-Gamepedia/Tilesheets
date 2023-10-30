@@ -85,7 +85,7 @@ class TileManager extends SpecialPage {
 	}
 
 	public static function createTile($mod, $item, $x, $y, $z, $user, $comment = "") {
-		$dbw = wfGetDB(DB_MASTER);
+		$dbw = wfGetDB(DB_PRIMARY);
 		// Check if position on tilesheet is already occupied
 		$result = $dbw->select('ext_tilesheet_items', 'COUNT(`entry_id`) AS count', array('`mod_name`' => $mod, '`x`' => intval($x), '`y`' => intval($y), '`z`' => intval($z)));
 		if ($result->current()->count != 0) return false;
@@ -120,7 +120,7 @@ class TileManager extends SpecialPage {
 	}
 
 	public static function deleteEntry($id, $user, $comment = "") {
-		$dbw = wfGetDB(DB_MASTER);
+		$dbw = wfGetDB(DB_PRIMARY);
 		$stuff = $dbw->select('ext_tilesheet_items', '*', array('entry_id' => $id));
 		$dbw->delete('ext_tilesheet_items', array('entry_id' => $id));
 
@@ -156,7 +156,7 @@ class TileManager extends SpecialPage {
 	 * @return bool
 	 */
 	public static function updateTable($id, $item, $mod, $x, $y, $z, $user, $comment = "") {
-		$dbw = wfGetDB(DB_MASTER);
+		$dbw = wfGetDB(DB_PRIMARY);
 		$stuff = $dbw->select('ext_tilesheet_items', '*', array('entry_id' => $id));
 		$dbw->update('ext_tilesheet_items', array('mod_name' => $mod, 'item_name' => $item, 'x' => $x, 'y' => $y, 'z' => $z), array('entry_id' => $id));
 
@@ -253,7 +253,7 @@ class TileManager extends SpecialPage {
 	}
 
 	private function displayUpdateForm($id) {
-		$dbr = wfGetDB(DB_SLAVE);
+		$dbr = wfGetDB(DB_REPLICA);
 		$result = $dbr->select('ext_tilesheet_items', '*', array('entry_id' => $id));
 		if ($result->numRows() == 0) {
 			return $this->msg('tilesheet-fail-norows')->text();

@@ -64,7 +64,7 @@ class TileList extends SpecialPage {
 		$from = intval($opts->getValue('from'));
 
 		// Load data
-		$dbr = wfGetDB(DB_SLAVE);
+		$dbr = wfGetDB(DB_REPLICA);
 		$formattedEntryIDs = '';
 
 		if (!empty($langs)) {
