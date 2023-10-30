@@ -90,7 +90,7 @@ class TilesheetsHooks {
 	 * @return string The localized content, or the provided item's name as fall back.
 	 */
 	public static function IconLocalization(Parser &$parser, $item, $mod, $type = 'name', $language = 'en') {
-		$dbr = wfGetDB(DB_REPLICA);
+		$dbr = wfGetDB(DB_SLAVE);
 		$items = $dbr->select('ext_tilesheet_items', 'entry_id', array('item_name' => $item, 'mod_name' => $mod));
 
 		if ($items->numRows() == 0) {
@@ -200,7 +200,7 @@ class TilesheetsHooks {
 	public static function onArticleMove(Title &$oldTitle, Title &$newTitle) {
 		// It's worth noting that the ID doesn't change when pages are moved, according to Manual:Page table
 		// However, you can move pages across namespaces, so we still need to update the table.
-		$dbw = wfGetDB(DB_PRIMARY);
+		$dbw = wfGetDB(DB_MASTER);
 		$dbw->update('ext_tilesheet_tilelinks',
 			array(
 				'tl_from_namespace' => $newTitle->getNamespace()
@@ -237,7 +237,7 @@ class TilesheetsHooks {
 	}
 
 	public static function clearTileLinksForPage($pageID, $namespaceID) {
-		$dbw = wfGetDB(DB_PRIMARY);
+		$dbw = wfGetDB(DB_MASTER);
 		$dbw->delete('ext_tilesheet_tilelinks', array(
 			'`tl_from`' => $pageID,
 			'`tl_from_namespace`' => $namespaceID
@@ -245,7 +245,7 @@ class TilesheetsHooks {
 	}
 
 	public static function addToTileLinks($pageID, $namespaceID, $tileID) {
-		$dbw = wfgetDB(DB_PRIMARY);
+		$dbw = wfgetDB(DB_MASTER);
 
 		$result = $dbw->select('ext_tilesheet_tilelinks', 'COUNT(`tl_to`) AS count', array(
 			'`tl_from`' => $pageID,

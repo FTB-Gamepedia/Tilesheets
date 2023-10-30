@@ -53,7 +53,7 @@ class TilesheetsAddTilesApi extends ApiBase {
         $summary = $this->getParameter('summary');
         $import = $this->getParameter('import');
 
-        $dbr = wfGetDB(DB_REPLICA);
+        $dbr = wfGetDB(DB_SLAVE);
         $result = $dbr->select(
             'ext_tilesheet_images',
             '`mod`',

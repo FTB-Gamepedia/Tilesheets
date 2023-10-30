@@ -54,7 +54,7 @@ class SheetList extends SpecialPage {
 		$page = intval($opts->getValue('page'));
 
 		// Load data
-		$dbr = wfGetDB(DB_REPLICA);
+		$dbr = wfGetDB(DB_SLAVE);
 		$result = $dbr->select(
 			'ext_tilesheet_images',
 			'COUNT(`mod`) AS row_count'
@@ -164,6 +164,7 @@ class SheetList extends SpecialPage {
             ->setWrapperLegendMsg('tilesheet-sheet-list-legend')
             ->setId('ext-tilesheet-sheet-list-filter')
             ->setSubmitTextMsg('tilesheet-sheet-list-submit')
+            ->setSubmitProgressive()
             ->prepareForm()
             ->displayForm(false);
 	}

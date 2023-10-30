@@ -31,7 +31,7 @@ class TilesheetsQuerySheetsApi extends ApiQueryBase {
     public function execute() {
         $limit = $this->getParameter('limit');
         $from = $this->getParameter('from');
-        $dbr = wfGetDB(DB_REPLICA);
+        $dbr = wfGetDB(DB_SLAVE);
 
         $results = $dbr->select(
             'ext_tilesheet_images',

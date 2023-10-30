@@ -36,7 +36,7 @@ class TilesheetsQueryTilesApi extends ApiQueryBase {
         $limit = $this->getParameter('limit');
         $from = $this->getParameter('from');
         $mod = $this->getParameter('mod');
-        $dbr = wfGetDB(DB_REPLICA);
+        $dbr = wfGetDB(DB_SLAVE);
 
         $results = $dbr->select(
             'ext_tilesheet_items',

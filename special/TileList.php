@@ -64,7 +64,7 @@ class TileList extends SpecialPage {
 		$from = intval($opts->getValue('from'));
 
 		// Load data
-		$dbr = wfGetDB(DB_REPLICA);
+		$dbr = wfGetDB(DB_SLAVE);
 		$formattedEntryIDs = '';
 
 		if (!empty($langs)) {
@@ -285,6 +285,7 @@ class TileList extends SpecialPage {
             ->setWrapperLegendMsg('tilesheet-tile-list-legend')
             ->setId('ext-tilesheet-tile-list-filter')
             ->setSubmitTextMsg('tilesheet-tile-list-submit')
+            ->setSubmitProgressive()
             ->prepareForm()
             ->displayForm(false);
     }

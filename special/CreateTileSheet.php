@@ -138,6 +138,7 @@ class CreateTileSheet extends SpecialPage {
             ->setWrapperLegendMsg('tilesheet-create-legend')
             ->setId('ext-tilesheet-create-form')
             ->setSubmitTextMsg('tilesheet-create-submit')
+            ->setSubmitProgressive()
             ->prepareForm()
             ->displayForm(false);
 	}

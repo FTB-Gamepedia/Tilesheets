@@ -16,7 +16,7 @@ class ViewTile extends SpecialPage {
 		$out->addModuleStyles('ext.tilesheets.special');
 		$out->addModules('ext.tilesheets.viewtile');
 
-		$dbr = wfGetDB(DB_REPLICA);
+		$dbr = wfGetDB(DB_SLAVE);
 		$result = $dbr->select('ext_tilesheet_items', '*', array('entry_id' => $subPage));
 		if ($result->numRows() == 0) {
 			$out->addWikiText($this->msg('tilesheet-fail-norows')->text());

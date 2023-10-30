@@ -34,7 +34,7 @@ class Tilesheets {
 
 		TilesheetsError::log(wfMessage('tilesheets-log-prepare')->params($size, $item, $mod)->text());
 
-		$dbr = wfGetDB(DB_REPLICA);
+		$dbr = wfGetDB(DB_SLAVE);
 
 		if (!isset(self::$mQueriedItems[$item])) {
 			$results = $dbr->select('ext_tilesheet_items','*',array('item_name' => $item));
@@ -154,7 +154,7 @@ class Tilesheets {
 	 * @return mixed
 	 */
 	public static function getModTileSizes($mod) {
-		$dbr = wfGetDB(DB_REPLICA);
+		$dbr = wfGetDB(DB_SLAVE);
 		if (!isset(self::$mQueriedSizes[$mod])) {
 			$result = $dbr->select('ext_tilesheet_images','sizes',array("`mod`" => $mod));
 			TilesheetsError::query($dbr->lastQuery());
@@ -197,7 +197,7 @@ class Tilesheets {
 	 * @throws MWException		See Database#query.
 	 */
 	public static function updateSheetRow($curMod, $toMod, $toSizes, $user, $comment = '') {
-		$dbw = wfGetDB(DB_PRIMARY);
+		$dbw = wfGetDB(DB_MASTER);
 		$stuff = $dbw->select('ext_tilesheet_images', '*', array('`mod`' => $curMod));
 		$result = $dbw->update('ext_tilesheet_images', array('sizes' => $toSizes, '`mod`' => $toMod), array('`mod`' => $curMod));
 

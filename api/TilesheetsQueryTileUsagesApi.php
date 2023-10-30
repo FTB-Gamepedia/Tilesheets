@@ -43,7 +43,7 @@ class TilesheetsQueryTileUsagesApi extends ApiQueryBase {
 		$from = $this->getParameter('from');
 		$tileID = $this->getParameter('tile');
 		$namespaces = $this->getParameter('namespace');
-		$dbr = wfGetDB(DB_REPLICA);
+		$dbr = wfGetDB(DB_SLAVE);
 
 		$conditions = array(
 			'tl_to = ' . intval($tileID),
