@@ -164,7 +164,6 @@ class SheetList extends SpecialPage {
             ->setWrapperLegendMsg('tilesheet-sheet-list-legend')
             ->setId('ext-tilesheet-sheet-list-filter')
             ->setSubmitTextMsg('tilesheet-sheet-list-submit')
-            ->setSubmitProgressive()
             ->prepareForm()
             ->displayForm(false);
 	}

@@ -285,7 +285,6 @@ class TileList extends SpecialPage {
             ->setWrapperLegendMsg('tilesheet-tile-list-legend')
             ->setId('ext-tilesheet-tile-list-filter')
             ->setSubmitTextMsg('tilesheet-tile-list-submit')
-            ->setSubmitProgressive()
             ->prepareForm()
             ->displayForm(false);
     }
