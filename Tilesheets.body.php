@@ -1,4 +1,6 @@
 <?php
+use Wikimedia\Rdbms\ILoadBalancer;
+
 /**
  * Tilesheets main body file
  *
@@ -192,12 +194,13 @@ class Tilesheets {
 	 * @param string $toMod 	The new mod abbreviation.
 	 * @param string $toSizes 	The new sizes, separated by commas.
 	 * @param User $user 		The user performing the change.
+	 * @param ILoadBalancer $dbLoadBalancer 	The DBLoadBalancer service.
 	 * @param string $comment	The edit summary.
 	 * @return bool				Whether or not the edit was successful.
 	 * @throws MWException		See Database#query.
 	 */
-	public static function updateSheetRow($curMod, $toMod, $toSizes, $user, $comment = '') {
-		$dbw = wfGetDB(DB_MASTER);
+	public static function updateSheetRow($curMod, $toMod, $toSizes, $user, ILoadBalancer $dbLoadBalancer, $comment = '') {
+		$dbw = $dbLoadBalancer->getConnection(DB_PRIMARY);
 		$stuff = $dbw->select('ext_tilesheet_images', '*', array('`mod`' => $curMod));
 		$result = $dbw->update('ext_tilesheet_images', array('sizes' => $toSizes, '`mod`' => $toMod), array('`mod`' => $curMod));
 

@@ -1,22 +1,25 @@
 <?php
 
+use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\ParamValidator\ParamValidator;
+
 class TilesheetsQuerySheetsApi extends ApiQueryBase {
-    public function __construct($query, $moduleName) {
+    public function __construct($query, $moduleName, private ILoadBalancer $dbLoadBalancer) {
         parent::__construct($query, $moduleName, 'ts');
     }
 
     public function getAllowedParams() {
         return array(
             'limit' => array(
-                ApiBase::PARAM_DFLT => 10,
-                ApiBase::PARAM_TYPE => 'limit',
-                ApiBase::PARAM_MIN => 1,
-                ApiBase::PARAM_MAX => ApiBase::LIMIT_BIG1,
-                ApiBase::PARAM_MAX2 => ApiBase::LIMIT_BIG2,
+                ParamValidator::PARAM_DFLT => 10,
+                ParamValidator::PARAM_TYPE => 'limit',
+                ParamValidator::PARAM_MIN => 1,
+                ParamValidator::PARAM_MAX => ApiBase::LIMIT_BIG1,
+                ParamValidator::PARAM_MAX2 => ApiBase::LIMIT_BIG2,
             ),
             'from' => array(
-                ApiBase::PARAM_TYPE => 'string',
-                ApiBase::PARAM_DFLT => '',
+                ParamValidator::PARAM_TYPE => 'string',
+                ParamValidator::PARAM_DFLT => '',
             ),
         );
     }
@@ -31,7 +34,7 @@ class TilesheetsQuerySheetsApi extends ApiQueryBase {
     public function execute() {
         $limit = $this->getParameter('limit');
         $from = $this->getParameter('from');
-        $dbr = wfGetDB(DB_SLAVE);
+        $dbr = $this->dbLoadBalancer->getConnection(DB_REPLICA);
 
         $results = $dbr->select(
             'ext_tilesheet_images',

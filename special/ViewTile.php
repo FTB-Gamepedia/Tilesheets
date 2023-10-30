@@ -1,7 +1,9 @@
 <?php
 
+use Wikimedia\Rdbms\ILoadBalancer;
+
 class ViewTile extends SpecialPage {
-	public function __construct() {
+	public function __construct(private ILoadBalancer $dbLoadBalancer) {
 		parent::__construct('ViewTile');
 	}
 
@@ -16,7 +18,7 @@ class ViewTile extends SpecialPage {
 		$out->addModuleStyles('ext.tilesheets.special');
 		$out->addModules('ext.tilesheets.viewtile');
 
-		$dbr = wfGetDB(DB_SLAVE);
+		$dbr = $this->dbLoadBalancer->getConnection(DB_REPLICA);
 		$result = $dbr->select('ext_tilesheet_items', '*', array('entry_id' => $subPage));
 		if ($result->numRows() == 0) {
 			$out->addWikiText($this->msg('tilesheet-fail-norows')->text());

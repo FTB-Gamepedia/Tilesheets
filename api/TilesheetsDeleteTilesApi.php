@@ -1,7 +1,11 @@
 <?php
 
+use Wikimedia\Rdbms\ILoadBalancer;
+use MediaWiki\Permissions\PermissionManager;
+use Wikimedia\ParamValidator\ParamValidator;
+
 class TilesheetsDeleteTilesApi extends ApiBase {
-    public function __construct($query, $moduleName) {
+	public function __construct($query, $moduleName, private ILoadBalancer $dbLoadBalancer, private PermissionManager $permissionManager) {
         parent::__construct($query, $moduleName, 'ts');
     }
 
@@ -10,10 +14,10 @@ class TilesheetsDeleteTilesApi extends ApiBase {
             'token' => null,
             'summary' => null,
             'ids' => array(
-                ApiBase::PARAM_TYPE => 'integer',
-                ApiBase::PARAM_REQUIRED => true,
-                ApiBase::PARAM_ISMULTI => true,
-                ApiBase::PARAM_MIN => 1,
+                ParamValidator::PARAM_TYPE => 'integer',
+                ParamValidator::PARAM_REQUIRED => true,
+                ParamValidator::PARAM_ISMULTI => true,
+                ParamValidator::PARAM_MIN => 1,
             ),
         );
     }
@@ -41,7 +45,7 @@ class TilesheetsDeleteTilesApi extends ApiBase {
     }
 
     public function execute() {
-        if (!in_array('edittilesheets', $this->getUser()->getRights())) {
+    	if (!$this->permissionManager->userHasRight($this->getUser(), 'edittilesheets')) {
             $this->dieWithError('You do not have permission to delete tiles', 'permissiondenied');
         }
 
@@ -50,7 +54,7 @@ class TilesheetsDeleteTilesApi extends ApiBase {
 
         $ret = array();
         foreach ($ids as $id) {
-            $result = TileManager::deleteEntry($id, $this->getUser(), $summary);
+        	$result = TileManager::deleteEntry($id, $this->getUser(), $this->dbLoadBalancer, $summary);
             $ret[$id] = $result;
         }
 

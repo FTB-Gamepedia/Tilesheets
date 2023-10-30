@@ -1,4 +1,6 @@
 <?php
+use Wikimedia\Rdbms\ILoadBalancer;
+
 /**
  * SheetsList special page file
  *
@@ -13,7 +15,7 @@ class SheetList extends SpecialPage {
 	/**
 	 * Calls parent constructor and sets special page title
 	 */
-	public function __construct() {
+	public function __construct(private ILoadBalancer $dbLoadBalancer) {
 		parent::__construct('SheetList');
 	}
 
@@ -54,7 +56,7 @@ class SheetList extends SpecialPage {
 		$page = intval($opts->getValue('page'));
 
 		// Load data
-		$dbr = wfGetDB(DB_SLAVE);
+		$dbr = $this->dbLoadBalancer->getConnection(DB_REPLICA);
 		$result = $dbr->select(
 			'ext_tilesheet_images',
 			'COUNT(`mod`) AS row_count'

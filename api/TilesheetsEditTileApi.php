@@ -1,7 +1,10 @@
 <?php
 
+use Wikimedia\Rdbms\ILoadBalancer;
+use MediaWiki\Permissions\PermissionManager;
+
 class TilesheetsEditTileApi extends ApiBase {
-    public function __construct($query, $moduleName) {
+	public function __construct($query, $moduleName, private ILoadBalancer $dbLoadBalancer, private PermissionManager $permissionManager) {
         parent::__construct($query, $moduleName, 'ts');
     }
 
@@ -85,7 +88,7 @@ class TilesheetsEditTileApi extends ApiBase {
         $toY = empty($toY) ? $row->y : $toY;
         $toZ = empty($toZ) ? $row->z : $toZ;
 
-        $result = TileManager::updateTable($id, $toName, $toMod, $toX, $toY, $toZ, $this->getUser(), $summary);
+        $result = TileManager::updateTable($id, $toName, $toMod, $toX, $toY, $toZ, $this->getUser(), $this->dbLoadBalancer, $summary);
         if ($result != 0) {
             $error = $result == 1 ? 'That entry does not exist' : 'There was no change';
             $this->dieWithError($error, 'updatefail');

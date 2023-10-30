@@ -1,4 +1,6 @@
 <?php
+use Wikimedia\Rdbms\ILoadBalancer;
+
 /**
  * TileList special page file
  *
@@ -13,7 +15,7 @@ class TileList extends SpecialPage {
 	/**
 	 * Calls parent constructor and sets special page title
 	 */
-	public function __construct() {
+	public function __construct(private ILoadBalancer $dbLoadBalancer) {
 		parent::__construct('TileList');
 	}
 
@@ -64,7 +66,7 @@ class TileList extends SpecialPage {
 		$from = intval($opts->getValue('from'));
 
 		// Load data
-		$dbr = wfGetDB(DB_SLAVE);
+		$dbr = $this->dbLoadBalancer->getConnection(DB_REPLICA);
 		$formattedEntryIDs = '';
 
 		if (!empty($langs)) {

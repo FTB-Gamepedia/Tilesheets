@@ -1,4 +1,6 @@
 <?php
+use Wikimedia\Rdbms\ILoadBalancer;
+
 /**
  * TileManager special page file
  *
@@ -13,7 +15,7 @@ class TileManager extends SpecialPage {
 	/**
 	 * Calls parent constructor and sets special page title
 	 */
-	public function __construct() {
+	public function __construct(private ILoadBalancer $dbLoadBalancer) {
 		parent::__construct('TileManager', 'edittilesheets');
 	}
 
@@ -75,17 +77,17 @@ class TileManager extends SpecialPage {
 
 		// Process and save POST data
 		if ($opts->getValue('delete') == 1) {
-			self::deleteEntry($id, $this->getUser());
+			self::deleteEntry($id, $this->getUser(), $this->dbLoadBalancer);
 		} else if ($opts->getValue('update') == 1) {
-			self::updateTable($id, $item, $mod, $x, $y, $z, $this->getUser());
+			self::updateTable($id, $item, $mod, $x, $y, $z, $this->getUser(), $this->dbLoadBalancer);
 		}
 
 		// Output update form
 		$this->displayUpdateForm($id);
 	}
 
-	public static function createTile($mod, $item, $x, $y, $z, $user, $comment = "") {
-		$dbw = wfGetDB(DB_MASTER);
+	public static function createTile($mod, $item, $x, $y, $z, $user, ILoadBalancer $dbLoadBalancer, $comment = "") {
+		$dbw = $dbLoadBalancer->getConnection(DB_PRIMARY);
 		// Check if position on tilesheet is already occupied
 		$result = $dbw->select('ext_tilesheet_items', 'COUNT(`entry_id`) AS count', array('`mod_name`' => $mod, '`x`' => intval($x), '`y`' => intval($y), '`z`' => intval($z)));
 		if ($result->current()->count != 0) return false;
@@ -119,8 +121,8 @@ class TileManager extends SpecialPage {
 		return true;
 	}
 
-	public static function deleteEntry($id, $user, $comment = "") {
-		$dbw = wfGetDB(DB_MASTER);
+	public static function deleteEntry($id, $user, ILoadBalancer $dbLoadBalancer, $comment = "") {
+		$dbw = $dbLoadBalancer->getConnection(DB_PRIMARY);
 		$stuff = $dbw->select('ext_tilesheet_items', '*', array('entry_id' => $id));
 		$dbw->delete('ext_tilesheet_items', array('entry_id' => $id));
 
@@ -152,11 +154,12 @@ class TileManager extends SpecialPage {
 	 * @param string|int $y
      * @param string|int $z
 	 * @param User $user
+	 * @param ILoadBalancer $dbLoadBalancer
 	 * @param string $comment
 	 * @return bool
 	 */
-	public static function updateTable($id, $item, $mod, $x, $y, $z, $user, $comment = "") {
-		$dbw = wfGetDB(DB_MASTER);
+	public static function updateTable($id, $item, $mod, $x, $y, $z, $user, ILoadBalancer $dbLoadBalancer, $comment = "") {
+		$dbw = $dbLoadBalancer->getConnection(DB_PRIMARY);
 		$stuff = $dbw->select('ext_tilesheet_items', '*', array('entry_id' => $id));
 		$dbw->update('ext_tilesheet_items', array('mod_name' => $mod, 'item_name' => $item, 'x' => $x, 'y' => $y, 'z' => $z), array('entry_id' => $id));
 
