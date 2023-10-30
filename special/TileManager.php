@@ -321,7 +321,6 @@ class TileManager extends SpecialPage {
             ->setWrapperLegendMsg('tilesheet-tile-manager-legend')
             ->setId('ext-tilesheet-tile-manager-form')
             ->setSubmitTextMsg('tilesheet-tile-manager-submit')
-            ->setSubmitProgressive()
             ->prepareForm()
             ->displayForm(false);
 	}
