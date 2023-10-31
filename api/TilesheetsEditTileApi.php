@@ -2,6 +2,7 @@
 
 use Wikimedia\Rdbms\ILoadBalancer;
 use MediaWiki\Permissions\PermissionManager;
+use Wikimedia\ParamValidator\ParamValidator;
 
 class TilesheetsEditTileApi extends ApiBase {
 	public function __construct($query, $moduleName, private ILoadBalancer $dbLoadBalancer, private PermissionManager $permissionManager) {
@@ -13,23 +14,23 @@ class TilesheetsEditTileApi extends ApiBase {
             'token' => null,
             'summary' => null,
             'id' => array(
-                ApiBase::PARAM_TYPE => 'integer',
-                ApiBase::PARAM_REQUIRED => true,
+                ParamValidator::PARAM_TYPE => 'integer',
+                ParamValidator::PARAM_REQUIRED => true,
             ),
             'toname' => array(
-                ApiBase::PARAM_TYPE => 'string',
+                ParamValidator::PARAM_TYPE => 'string',
             ),
             'tomod' => array(
-                ApiBase::PARAM_TYPE => 'string',
+                ParamValidator::PARAM_TYPE => 'string',
             ),
             'tox' => array(
-                ApiBase::PARAM_TYPE => 'integer',
+                ParamValidator::PARAM_TYPE => 'integer',
             ),
             'toy' => array(
-                ApiBase::PARAM_TYPE => 'integer',
+                ParamValidator::PARAM_TYPE => 'integer',
             ),
             'toz' => array(
-                Apibase::PARAM_TYPE => 'integer',
+                ParamValidator::PARAM_TYPE => 'integer',
             )
         );
     }
