@@ -13,7 +13,10 @@ class TilesheetsDeleteTilesApi extends ApiBase {
     public function getAllowedParams() {
         return array(
             'token' => null,
-            'summary' => null,
+            'summary' => array(
+            	ParamValidator::PARAM_TYPE => 'string',
+            	ParamValidator::PARAM_DEFAULT => ''
+            ),
             'ids' => array(
                 ParamValidator::PARAM_TYPE => 'integer',
                 ParamValidator::PARAM_REQUIRED => true,

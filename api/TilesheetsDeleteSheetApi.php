@@ -17,7 +17,10 @@ class TilesheetsDeleteSheetApi extends ApiBase {
                 ParamValidator::PARAM_ALLOW_DUPLICATES => false,
                 ParamValidator::PARAM_ISMULTI => true,
             ),
-            'summary' => null,
+            'summary' => array(
+            	ParamValidator::PARAM_TYPE => 'string',
+            	ParamValidator::PARAM_DEFAULT => ''
+            ),
             'token' => null,
         );
     }

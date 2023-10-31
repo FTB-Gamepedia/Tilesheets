@@ -12,7 +12,10 @@ class TilesheetsAddSheetApi extends ApiBase {
     public function getAllowedParams() {
         return array(
             'token' => null,
-            'summary' => null,
+            'summary' => array(
+            	ParamValidator::PARAM_TYPE => 'string',
+            	ParamValidator::PARAM_DEFAULT => ''
+            ),
             'mod' => array(
                 ParamValidator::PARAM_TYPE => 'string',
                 ParamValidator::PARAM_REQUIRED => true,
