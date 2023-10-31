@@ -11,7 +11,7 @@ class TilesheetsQuerySheetsApi extends ApiQueryBase {
     public function getAllowedParams() {
         return array(
             'limit' => array(
-                ParamValidator::PARAM_DFLT => 10,
+                ParamValidator::PARAM_DEFAULT => 10,
                 ParamValidator::PARAM_TYPE => 'limit',
                 ParamValidator::PARAM_MIN => 1,
                 ParamValidator::PARAM_MAX => ApiBase::LIMIT_BIG1,
@@ -19,7 +19,7 @@ class TilesheetsQuerySheetsApi extends ApiQueryBase {
             ),
             'from' => array(
                 ParamValidator::PARAM_TYPE => 'string',
-                ParamValidator::PARAM_DFLT => '',
+                ParamValidator::PARAM_DEFAULT => '',
             ),
         );
     }

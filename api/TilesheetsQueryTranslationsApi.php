@@ -17,7 +17,7 @@ class TilesheetsQueryTranslationsApi extends ApiQueryBase {
             ),
             'lang' => array(
                 ParamValidator::PARAM_TYPE => 'string',
-                ParamValidator::PARAM_DFLT => '',
+                ParamValidator::PARAM_DEFAULT => '',
             )
         );
     }

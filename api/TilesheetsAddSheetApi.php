@@ -19,7 +19,7 @@ class TilesheetsAddSheetApi extends ApiBase {
             ),
             'sizes' => array(
                 ParamValidator::PARAM_TYPE => 'string',
-                ParamValidator::PARAM_DFLT => '16|32',
+                ParamValidator::PARAM_DEFAULT => '16|32',
                 ParamValidator::PARAM_ISMULTI => true,
             ),
         );
