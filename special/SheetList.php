@@ -81,7 +81,7 @@ class SheetList extends SpecialPage {
 
 		if ($maxRows == 0) {
 			$this->displayFilterForm($opts);
-			$out->addWikiText($this->msg('tilesheet-fail-norows')->text());
+			$out->addWikiTextAsInterface($this->msg('tilesheet-fail-norows')->text());
 			return;
 		}
 
@@ -138,8 +138,8 @@ class SheetList extends SpecialPage {
 
 		// Output page
 		$this->displayFilterForm($opts);
-		$out->addWikiText($pageSelection);
-		$out->addWikiText($table);
+		$out->addWikiTextAsInterface($pageSelection);
+		$out->addWikiTextAsInterface($table);
 	}
 
 	private function displayFilterForm(FormOptions $opts) {

@@ -21,13 +21,13 @@ class ViewTile extends SpecialPage {
 		$dbr = $this->dbLoadBalancer->getConnection(DB_REPLICA);
 		$result = $dbr->select('ext_tilesheet_items', '*', array('entry_id' => $subPage));
 		if ($result->numRows() == 0) {
-			$out->addWikiText($this->msg('tilesheet-fail-norows')->text());
+			$out->addWikiTextAsInterface($this->msg('tilesheet-fail-norows')->text());
 		} else {
 			$item = $result->current()->item_name;
 			$mod = $result->current()->mod_name;
 
 			$itemFromMod = wfMessage('tilesheet-tile-viewer-header', $item, $mod);
-			$out->addWikiText("== $itemFromMod ==\n\n");
+			$out->addWikiTextAsInterface("== $itemFromMod ==\n\n");
 
 			$sizeText = wfMessage('tilesheet-tile-viewer-size');
 			$tileText = wfMessage('tilesheet-tile-viewer-tile');
@@ -42,7 +42,7 @@ class ViewTile extends SpecialPage {
 			}
 			$outText .= "|}";
 
-			$out->addWikiText($outText);
+			$out->addWikiTextAsInterface($outText);
 		}
 	}
 }
