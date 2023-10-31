@@ -75,7 +75,7 @@ class SheetManager extends SpecialPage {
 		// Update stuff
 		if ($opts->getValue('update') == 1) Tilesheets::updateSheetRow($mod, $mod, $sizes, $this->getUser(), $this->dbLoadBalancer);
 		if ($opts->getValue('delete') == 1 && in_array('sysop', $userGroups)) self::deleteEntry($mod, $this->getUser(), $this->dbLoadBalancer);
-		if ($opts->getValue('truncate') == 1 || $opts->getValue('delete') == 1 && in_array('sysop', $userGroups)) self::truncateTable($mod, $this->getUser());
+		if ($opts->getValue('truncate') == 1 || $opts->getValue('delete') == 1 && in_array('sysop', $userGroups)) self::truncateTable($mod, $this->getUser(), $this->dbLoadBalancer);
 
 		// Output update table
 		$this->displayUpdateForm($mod);
@@ -120,8 +120,8 @@ class SheetManager extends SpecialPage {
 	 * @param User $user
 	 * @return bool
 	 */
-	public static function truncateTable($mod, $user, $comment = "") {
-		$dbw = wfGetDB(DB_MASTER);
+	public static function truncateTable($mod, $user, ILoadBalancer $dbLoadBalancer, $comment = "") {
+		$dbw = $dbLoadBalancer->getConnection(DB_PRIMARY);
 		$stuff = $dbw->select('ext_tilesheet_items', '*', array('mod_name' => $mod));
 		$result = $dbw->delete('ext_tilesheet_items', array('mod_name' => $mod));
 
@@ -213,7 +213,7 @@ class SheetManager extends SpecialPage {
 	}
 
 	private function displayUpdateForm($mod) {
-		$dbr = wfGetDB(DB_SLAVE);
+		$dbr = $this->dbLoadBalancer->getConnection(DB_REPLICA);
 		$result = $dbr->select('ext_tilesheet_images', '*', array('`mod`' => $mod));
 		if ($result->numRows() == 0) {
 			return $this->msg('tilesheet-fail-norows')->text();

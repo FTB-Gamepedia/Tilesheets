@@ -1,5 +1,6 @@
 <?php
 use Wikimedia\Rdbms\ILoadBalancer;
+use MediaWiki\Permissions\PermissionManager;
 
 /**
  * TileList special page file
@@ -15,7 +16,7 @@ class TileList extends SpecialPage {
 	/**
 	 * Calls parent constructor and sets special page title
 	 */
-	public function __construct(private ILoadBalancer $dbLoadBalancer) {
+	public function __construct(private ILoadBalancer $dbLoadBalancer, private PermissionManager $permissionManager) {
 		parent::__construct('TileList');
 	}
 
@@ -148,8 +149,8 @@ class TileList extends SpecialPage {
 		$msgXName = wfMessage('tilesheet-x');
 		$msgYName = wfMessage('tilesheet-y');
 		$msgZName = wfMessage('tilesheet-z');
-		$canEdit = in_array("edittilesheets", $this->getUser()->getRights());
-		$canTranslate = in_array('translatetiles', $this->getUser()->getRights());
+		$canEdit = $this->permissionManager->userHasRight($this->getUser(), 'edittilesheets');
+		$canTranslate = $this->permissionManager->userHasRight($this->getUser(), 'translatetiles');
 		$table .= "!";
 		if ($canEdit) {
 			$table .= " !!";

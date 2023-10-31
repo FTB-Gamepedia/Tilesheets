@@ -256,7 +256,7 @@ class TileManager extends SpecialPage {
 	}
 
 	private function displayUpdateForm($id) {
-		$dbr = wfGetDB(DB_SLAVE);
+		$dbr = $this->dbLoadBalancer->getConnection(DB_REPLICA);
 		$result = $dbr->select('ext_tilesheet_items', '*', array('entry_id' => $id));
 		if ($result->numRows() == 0) {
 			return $this->msg('tilesheet-fail-norows')->text();

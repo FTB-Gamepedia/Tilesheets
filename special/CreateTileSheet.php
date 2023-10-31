@@ -74,7 +74,7 @@ class CreateTileSheet extends SpecialPage {
 				// Delete sheet
 				$out->addHtml($this->returnMessage(SheetManager::deleteEntry($mod, $this->getUser(), $this->dbLoadBalancer, $this->msg('tilesheet-create-summary-deletesheet')->text()), $this->msg('tilesheet-create-response-msg-deletesheet')->text()));
 				// Truncate table
-				$out->addHtml($this->returnMessage(SheetManager::truncateTable($mod, $this->getUser(), $this->msg('tilesheet-create-summary-deletesheet')->text()), $this->msg('tilesheet-create-response-msg-truncate')->text()));
+				$out->addHtml($this->returnMessage(SheetManager::truncateTable($mod, $this->getUser(), $this->dbLoadBalancer, $this->msg('tilesheet-create-summary-deletesheet')->text()), $this->msg('tilesheet-create-response-msg-truncate')->text()));
 			}
 
 			// Create sheet

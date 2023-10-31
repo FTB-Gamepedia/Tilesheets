@@ -1,5 +1,6 @@
 <?php
 use Wikimedia\Rdbms\ILoadBalancer;
+use MediaWiki\MediaWikiServices;
 
 /**
  * Tilesheets main body file
@@ -36,7 +37,7 @@ class Tilesheets {
 
 		TilesheetsError::log(wfMessage('tilesheets-log-prepare')->params($size, $item, $mod)->text());
 
-		$dbr = wfGetDB(DB_SLAVE);
+		$dbr = MediaWikiServices::getInstance()->getDBLoadBalancer()->getConnection(DB_REPLICA);
 
 		if (!isset(self::$mQueriedItems[$item])) {
 			$results = $dbr->select('ext_tilesheet_items','*',array('item_name' => $item));
@@ -156,7 +157,7 @@ class Tilesheets {
 	 * @return mixed
 	 */
 	public static function getModTileSizes($mod) {
-		$dbr = wfGetDB(DB_SLAVE);
+		$dbr = MediaWikiServices::getInstance()->getDBLoadBalancer()->getConnection(DB_REPLICA);
 		if (!isset(self::$mQueriedSizes[$mod])) {
 			$result = $dbr->select('ext_tilesheet_images','sizes',array("`mod`" => $mod));
 			TilesheetsError::query($dbr->lastQuery());

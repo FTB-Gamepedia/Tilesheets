@@ -1,5 +1,6 @@
 <?php
 use Wikimedia\Rdbms\ILoadBalancer;
+use MediaWiki\Permissions\PermissionManager;
 
 /**
  * SheetsList special page file
@@ -15,7 +16,7 @@ class SheetList extends SpecialPage {
 	/**
 	 * Calls parent constructor and sets special page title
 	 */
-	public function __construct(private ILoadBalancer $dbLoadBalancer) {
+	public function __construct(private ILoadBalancer $dbLoadBalancer, private PermissionManager $permissionManager) {
 		parent::__construct('SheetList');
 	}
 
@@ -89,7 +90,7 @@ class SheetList extends SpecialPage {
 		$table = "{| class=\"mw-datatable\" style=\"width:100%\"\n";
 		$msgModName = wfMessage('tilesheet-mod-name');
 		$msgSizesName = wfMessage('tilesheet-sizes');
-		$canEdit = in_array("edittilesheets", $this->getUser()->getRights());
+		$canEdit = $this->permissionManager->userHasRight($this->getUser(), 'edittilesheets');
 		$table .= "!";
 		if ($canEdit) {
 			$table .= " !!";

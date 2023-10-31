@@ -30,13 +30,15 @@
 		"TileList": {
 			"class": "TileList",
 			"services": [
-				"DBLoadBalancer"
+				"DBLoadBalancer",
+				"PermissionManager"
 			]
 		},
 		"SheetList": {
 			"class": "SheetList",
 			"services": [
-				"DBLoadBalancer"
+				"DBLoadBalancer",
+				"PermissionManager"
 			]
 		},
 		"CreateTileSheet": {
