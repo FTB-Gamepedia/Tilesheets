@@ -3,6 +3,7 @@
 use Wikimedia\Rdbms\ILoadBalancer;
 use MediaWiki\Permissions\PermissionManager;
 use Wikimedia\ParamValidator\ParamValidator;
+use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
 class TilesheetsTranslateTileApi extends ApiBase {
 	public function __construct($query, $moduleName, private ILoadBalancer $dbLoadBalancer, private PermissionManager $permissionManager) {
@@ -15,7 +16,7 @@ class TilesheetsTranslateTileApi extends ApiBase {
             'id' => array(
                 ParamValidator::PARAM_TYPE => 'integer',
                 ParamValidator::PARAM_REQUIRED => true,
-                ParamValidator::PARAM_MIN => 1,
+                IntegerDef::PARAM_MIN => 1,
             ),
             'lang' => array(
                 ParamValidator::PARAM_TYPE => 'string',

@@ -3,6 +3,7 @@
 
 use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\ParamValidator\ParamValidator;
+use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
 class TilesheetsQueryTileUsagesApi extends ApiQueryBase {
 	public function __construct($query, $moduleName, private ILoadBalancer $dbLoadBalancer) {
@@ -14,9 +15,9 @@ class TilesheetsQueryTileUsagesApi extends ApiQueryBase {
 			'limit' => array(
 				ParamValidator::PARAM_DEFAULT => 10,
 				ParamValidator::PARAM_TYPE => 'limit',
-				ParamValidator::PARAM_MIN => 1,
-				ParamValidator::PARAM_MAX => ApiBase::LIMIT_BIG1,
-				ParamValidator::PARAM_MAX2 => ApiBase::LIMIT_BIG2,
+				IntegerDef::PARAM_MIN => 1,
+				IntegerDef::PARAM_MAX => ApiBase::LIMIT_BIG1,
+				IntegerDef::PARAM_MAX2 => ApiBase::LIMIT_BIG2,
 			),
 			'from' => array(
 				ParamValidator::PARAM_TYPE => 'integer',
@@ -25,7 +26,7 @@ class TilesheetsQueryTileUsagesApi extends ApiQueryBase {
 			'tile' => array(
 				ParamValidator::PARAM_TYPE => 'integer',
 				ParamValidator::PARAM_DEFAULT => 0,
-				ParamValidator::PARAM_MIN => 0
+				IntegerDef::PARAM_MIN => 0
 			),
 			'namespace' => array(
 				ParamValidator::PARAM_TYPE => 'namespace',

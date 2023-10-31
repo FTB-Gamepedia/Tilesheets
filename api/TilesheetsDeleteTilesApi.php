@@ -3,6 +3,7 @@
 use Wikimedia\Rdbms\ILoadBalancer;
 use MediaWiki\Permissions\PermissionManager;
 use Wikimedia\ParamValidator\ParamValidator;
+use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
 class TilesheetsDeleteTilesApi extends ApiBase {
 	public function __construct($query, $moduleName, private ILoadBalancer $dbLoadBalancer, private PermissionManager $permissionManager) {
@@ -17,7 +18,7 @@ class TilesheetsDeleteTilesApi extends ApiBase {
                 ParamValidator::PARAM_TYPE => 'integer',
                 ParamValidator::PARAM_REQUIRED => true,
                 ParamValidator::PARAM_ISMULTI => true,
-                ParamValidator::PARAM_MIN => 1,
+                IntegerDef::PARAM_MIN => 1,
             ),
         );
     }

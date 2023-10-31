@@ -2,6 +2,7 @@
 
 use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\ParamValidator\ParamValidator;
+use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
 class TilesheetsQueryTranslationsApi extends ApiQueryBase {
     public function __construct($query, $moduleName, private ILoadBalancer $dbLoadBalancer) {
@@ -13,7 +14,7 @@ class TilesheetsQueryTranslationsApi extends ApiQueryBase {
             'id' => array(
                 ParamValidator::PARAM_TYPE => 'integer',
                 ParamValidator::PARAM_REQUIRED => true,
-                ParamValidator::PARAM_MIN => 1,
+                IntegerDef::PARAM_MIN => 1,
             ),
             'lang' => array(
                 ParamValidator::PARAM_TYPE => 'string',
