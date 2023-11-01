@@ -138,7 +138,7 @@ class Tilesheets {
 		$page = $title->getText();
 		$namespace = $title->getNamespace();
 		self::$tileLinks[$namespace][$page][] = $entryID;
-		$file = wfFindFile("Tilesheet $mod $size $z.png");
+		$file = MediaWikiServices::getInstance()->getRepoGroup()->findFile("Tilesheet $mod $size $z.png");
 		if ($file === false) {
 			$parser->addTrackingCategory('tilesheet-missing-image-category');
 			TilesheetsError::warn(wfMessage('tilesheets-warning-noimage')->params($mod, $size, $z)->text());
