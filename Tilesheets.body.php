@@ -1,6 +1,7 @@
 <?php
 use Wikimedia\Rdbms\ILoadBalancer;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\PageLookup;
 
 /**
  * Tilesheets main body file
@@ -14,7 +15,7 @@ use MediaWiki\MediaWikiServices;
 class Tilesheets {
 	static private $mQueriedItems;
 	static private $mQueriedSizes;
-	static $tileLinks;
+	static public $tileLinks;
 	private $mOptions;
 
 	/**
@@ -22,7 +23,7 @@ class Tilesheets {
 	 *
 	 * @param $options
 	 */
-	public function __construct($options, Parser &$parser) {
+	public function __construct($options, Parser $parser) {
 		$this->mOptions = $options;
 
 		// Set default values
@@ -58,7 +59,7 @@ class Tilesheets {
 	 *
 	 * @return array|string
 	 */
-	public function output(Parser &$parser) {
+	public function output(Parser $parser) {
 		// Set default values
 		$item = $this->mOptions['item'];
 		$size = 32;
@@ -117,7 +118,7 @@ class Tilesheets {
 	 * @param $entryID
 	 * @return array
 	 */
-	private function generateTile(Parser &$parser, $mod, $size, $x, $y, $z, $entryID) {
+	private function generateTile(Parser $parser, $mod, $size, $x, $y, $z, $entryID) {
 		// Validate tilesheet size
 		Tilesheets::getModTileSizes($mod);
 		if (self::$mQueriedSizes[$mod] == null) {
@@ -132,12 +133,10 @@ class Tilesheets {
 				$size = min(self::$mQueriedSizes[$mod]);
 			}
 		}
-
-		$title = $parser->getTitle();
+		
 		// New pages do not have an article ID, so we have to store it in the title and then get the ID when updating the db
-		$page = $title->getText();
-		$namespace = $title->getNamespace();
-		self::$tileLinks[$namespace][$page][] = $entryID;
+		$pageRef = $parser->getPage();
+		self::$tileLinks[$pageRef->getNamespace()][$pageRef->getText()][] = $entryID;
 		$file = MediaWikiServices::getInstance()->getRepoGroup()->findFile("Tilesheet $mod $size $z.png");
 		if ($file === false) {
 			$parser->addTrackingCategory('tilesheet-missing-image-category');

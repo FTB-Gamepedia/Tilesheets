@@ -1,4 +1,9 @@
 <?php
+use MediaWiki\Hook\BeforePageDisplayHook;
+use MediaWiki\Hook\EditPage__showEditForm_initialHook;
+use MediaWiki\Hook\ParserFirstCallInitHook;
+use MediaWiki\Installer\Hook\LoadExtensionSchemaUpdatesHook;
+
 /**
  * Tilesheets hooks file
  * Entrance points to the tilesheets extension
@@ -10,15 +15,16 @@
  * @license
  */
 
-class TilesheetsHooks {
+class TilesheetsHooks implements LoadExtensionSchemaUpdatesHook, ParserFirstCallInitHook, BeforePageDisplayHook, EditPage__showEditForm_initialHook {
+	
 	/**
 	 * Setups and Modifies Database Information
 	 *
 	 * @access	public
-	 * @param	DatabaseUpdater
+	 * @param	DatabaseUpdater $updater
 	 * @return	boolean	true
 	 */
-	public static function SchemaUpdate(DatabaseUpdater $updater) {
+	public function onLoadExtensionSchemaUpdates($updater) {
 		$extDir = __DIR__;
 
 		$updater->addExtensionUpdate(['addTable', 'ext_tilesheet_items', "{$extDir}/install/sql/ext_tilesheet_items.sql", true]);
@@ -40,7 +46,7 @@ class TilesheetsHooks {
 	 * @param Parser $parser
 	 * @return bool
 	 */
-	public static function SetupParser(Parser &$parser) {
+	public function onParserFirstCallInit($parser) {
 		$parser->setFunctionHook('icon', 'TilesheetsHooks::RenderParser');
 		$parser->setFunctionHook('iconloc', 'TilesheetsHooks::IconLocalization');
 
@@ -52,22 +58,20 @@ class TilesheetsHooks {
 	 * @see http://www.mediawiki.org/wiki/Manual:Hooks/BeforePageDisplay
 	 * @param $out OutputPage object
 	 * @param $skin Skin being used.
-	 * @return bool
+	 * @return void
 	 */
-	public static function BeforePageDisplay($out, $skin) {
+	public function onBeforePageDisplay($out, $skin): void {
 		// Load default styling module
 		$out->addModuleStyles('ext.tilesheets');
-		
-		return true;
 	}
 
 	/**
-	 * Generate parser function output
+	 * Generate parser function output. Called by #icon parser function, see #onParserFirstCallInit
 	 *
 	 * @param Parser $parser
 	 * @return array Raw HTML ready for display, will not be parsed again by parser.
 	 */
-	public static function RenderParser(Parser &$parser) {
+	public static function RenderParser(Parser $parser) {
 		// Extract options
 		$opts = array();
 		for ($i = 1; $i < func_num_args(); $i++) {
@@ -81,7 +85,7 @@ class TilesheetsHooks {
 	}
 
 	/**
-	 * Gets the localized name or description for the given item/mod.
+	 * Gets the localized name or description for the given item/mod. Called by iconloc parser function. See #onParserFirstCallInit
 	 * @param Parser $parser
 	 * @param string $item The item's name.
 	 * @param string $mod The mod abbreviation.
@@ -89,7 +93,7 @@ class TilesheetsHooks {
 	 * @param string $language The language code. Falls back to 'en'.
 	 * @return string The localized content, or the provided item's name as fall back.
 	 */
-	public static function IconLocalization(Parser &$parser, $item, $mod, $type = 'name', $language = 'en') {
+	public static function IconLocalization(Parser $parser, $item, $mod, $type = 'name', $language = 'en') {
 		$dbr = wfGetDB(DB_REPLICA);
 		$items = $dbr->select('ext_tilesheet_items', 'entry_id', array('item_name' => $item, 'mod_name' => $mod));
 
@@ -144,7 +148,7 @@ class TilesheetsHooks {
 	 * @param OutputPage $out
 	 * @return bool
 	 */
-	public static function OutputWarnings(EditPage &$editPage, OutputPage &$out) {
+	public function onEditPage__showEditForm_initial($editPage, $out) {
 		global $wgTileSheetDebug;
 
 		// Output errors
@@ -181,86 +185,5 @@ class TilesheetsHooks {
 		}
 
 		return true;
-	}
-
-	/**
-	 * Called when the ArticleDeleteComplete hook is sent. Removes this page's entries from the tilelinks database table.
-	 * @param WikiPage $article
-	 */
-	public static function onArticleDelete(WikiPage &$article) {
-		$title = $article->getTitle();
-		self::clearTileLinksForPage($title->getArticleID(), $title->getNamespace());
-	}
-
-	/**
-	 * Called when the TitleMoveComplete hook is sent. Updates the page's entries in the tilelinks database table.
-	 * @param Title $oldTitle
-	 * @param Title $newTitle
-	 */
-	public static function onArticleMove(Title &$oldTitle, Title &$newTitle) {
-		// It's worth noting that the ID doesn't change when pages are moved, according to Manual:Page table
-		// However, you can move pages across namespaces, so we still need to update the table.
-		$dbw = wfGetDB(DB_PRIMARY);
-		$dbw->update('ext_tilesheet_tilelinks',
-			array(
-				'tl_from_namespace' => $newTitle->getNamespace()
-			),
-			array(
-				'tl_from' => $newTitle->getArticleID(),
-				'tl_from_namespace' => $oldTitle->getNamespace()
-			),
-			__METHOD__
-		);
-	}
-
-	/**
-	 * Called by the PageContentSaveComplete hook.
-	 * @param WikiPage $article
-	 * @return boolean true
-	 */
-	public static function addCacheToTileLinks(WikiPage &$article) {
-		$title = $article->getTitle();
-		$namespace = $title->getNamespace();
-		$pageName = $title->getText();
-		$page = $title->getArticleID();
-		self::clearTileLinksForPage($page, $namespace);
-		if (!isset(Tilesheets::$tileLinks[$namespace][$pageName])) {
-			return true;
-		}
-		array_unique(Tilesheets::$tileLinks[$namespace][$pageName]);
-		foreach (Tilesheets::$tileLinks[$namespace][$pageName] as $entryID) {
-			self::addToTileLinks($page, $namespace, $entryID);
-		}
-		Tilesheets::$tileLinks[$namespace][$pageName] = array();
-
-		return true;
-	}
-
-	public static function clearTileLinksForPage($pageID, $namespaceID) {
-		$dbw = wfGetDB(DB_PRIMARY);
-		$dbw->delete('ext_tilesheet_tilelinks', array(
-			'`tl_from`' => $pageID,
-			'`tl_from_namespace`' => $namespaceID
-		));
-	}
-
-	public static function addToTileLinks($pageID, $namespaceID, $tileID) {
-		$dbw = wfGetDB(DB_PRIMARY);
-
-		$result = $dbw->select('ext_tilesheet_tilelinks', 'COUNT(`tl_to`) AS count', array(
-			'`tl_from`' => $pageID,
-			'`tl_from_namespace`' => $namespaceID,
-			'`tl_to`' => $tileID
-		));
-
-		if ($result->current()->count == 0) {
-			$dbw->insert('ext_tilesheet_tilelinks', array(
-				'`tl_from`' => $pageID,
-				'`tl_from_namespace`' => $namespaceID,
-				'`tl_to`' => $tileID
-			),
-				__METHOD__
-			);
-		}
 	}
 }

@@ -98,6 +98,7 @@
 		"Tilesheets": "Tilesheets.body.php",
 		"TilesheetsError": "Tilesheets.body.php",
 		"TilesheetsHooks": "Tilesheets.hooks.php",
+		"WhatUsesThisTileHooks": "hooks/WhatUsesThisTileHooks.php",
 		"TileList": "special/TileList.php",
 		"SheetList": "special/SheetList.php",
 		"CreateTileSheet": "special/CreateTileSheet.php",
@@ -220,31 +221,28 @@
 		"localBasePath": "/",
 		"remoteExtPath": "Tilesheets"
 	},
+	"HookHandlers": {
+		"main": {
+			"class": "TilesheetsHooks",
+			"services": [
+				"DBLoadBalancer"
+			]
+		},
+		"WhatUsesThisTileHooks": {
+			"class": "WhatUsesThisTileHooks",
+			"services": [
+				"DBLoadBalancer"
+			]
+		}
+	},
 	"Hooks": {
-		"ParserFirstCallInit": [
-			"TilesheetsHooks::SetupParser"
-		],
-		"BeforePageDisplay": [
-			"TilesheetsHooks::BeforePageDisplay"
-		],
-		"EditPage::showEditForm:initial": [
-			"TilesheetsHooks::OutputWarnings"
-		],
-		"OreDictOutput": [
-			"TilesheetsHooks::OreDictOutput"
-		],
-		"LoadExtensionSchemaUpdates": [
-			"TilesheetsHooks::SchemaUpdate"
-		],
-		"ArticleDeleteComplete": [
-			"TilesheetsHooks::onArticleDelete"
-		],
-		"PageContentSaveComplete": [
-			"TilesheetsHooks::addCacheToTileLinks"
-		],
-		"TitleMoveComplete": [
-			"TilesheetsHooks::onArticleMove"
-		]
+		"BeforePageDisplay": "main",
+		"EditPage::showEditForm:initial": "main",
+		"ParserFirstCallInit": "main",
+		"LoadExtensionSchemaUpdates": "main",
+		"PageDeleteComplete": "WhatUsesThisTileHooks",
+		"PageMoveComplete": "WhatUsesThisTileHooks",
+		"PageSaveComplete": "WhatUsesThisTileHooks"
 	},
 	"config": {
 		"ShowExceptionDetails": true,
