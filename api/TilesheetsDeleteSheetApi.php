@@ -5,7 +5,7 @@ use MediaWiki\Permissions\PermissionManager;
 use Wikimedia\ParamValidator\ParamValidator;
 
 class TilesheetsDeleteSheetApi extends ApiBase {
-	public function __construct($query, $moduleName, private ILoadBalancer $dbLoadBalancer, private PermissionManager $permissionManager) {
+    public function __construct($query, $moduleName, private ILoadBalancer $dbLoadBalancer, private PermissionManager $permissionManager) {
         parent::__construct($query, $moduleName, 'ts');
     }
 
@@ -48,7 +48,7 @@ class TilesheetsDeleteSheetApi extends ApiBase {
     }
 
     public function execute() {
-    	if (!$this->permissionManager->userHasRight($this->getUser(), 'edittilesheets')) {
+        if (!$this->permissionManager->userHasRight($this->getUser(), 'edittilesheets')) {
             $this->dieWithError('You do not have permission to edit tilesheets', 'permissiondenied');
         }
 
@@ -57,7 +57,7 @@ class TilesheetsDeleteSheetApi extends ApiBase {
         $ret = array();
 
         foreach ($mods as $mod) {
-        	$ret[$mod] = SheetManager::deleteEntry($mod, $this->getUser(), $this->dbLoadBalancer, $summary);
+            $ret[$mod] = SheetManager::deleteEntry($mod, $this->getUser(), $this->dbLoadBalancer, $summary);
         }
 
         $this->getResult()->addValue('edit', 'deletesheet', $ret);

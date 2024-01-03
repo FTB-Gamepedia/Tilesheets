@@ -1,7 +1,6 @@
 <?php
 use Wikimedia\Rdbms\ILoadBalancer;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Page\PageLookup;
 
 /**
  * Tilesheets main body file

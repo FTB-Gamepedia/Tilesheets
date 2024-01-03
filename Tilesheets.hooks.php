@@ -1,4 +1,5 @@
 <?php
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Hook\BeforePageDisplayHook;
 use MediaWiki\Hook\EditPage__showEditForm_initialHook;
 use MediaWiki\Hook\ParserFirstCallInitHook;
@@ -94,7 +95,7 @@ class TilesheetsHooks implements LoadExtensionSchemaUpdatesHook, ParserFirstCall
 	 * @return string The localized content, or the provided item's name as fall back.
 	 */
 	public static function IconLocalization(Parser $parser, $item, $mod, $type = 'name', $language = 'en') {
-		$dbr = wfGetDB(DB_REPLICA);
+		$dbr = MediaWikiServices::getInstance()->getDBLoadBalancer()->getConnection(DB_REPLICA);
 		$items = $dbr->select('ext_tilesheet_items', 'entry_id', array('item_name' => $item, 'mod_name' => $mod));
 
 		if ($items->numRows() == 0) {

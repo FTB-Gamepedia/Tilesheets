@@ -6,7 +6,7 @@ use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
 class TilesheetsTranslateTileApi extends ApiBase {
-	public function __construct($query, $moduleName, private ILoadBalancer $dbLoadBalancer, private PermissionManager $permissionManager) {
+    public function __construct($query, $moduleName, private ILoadBalancer $dbLoadBalancer, private PermissionManager $permissionManager) {
         parent::__construct($query, $moduleName, 'ts');
     }
 
@@ -54,7 +54,7 @@ class TilesheetsTranslateTileApi extends ApiBase {
     }
 
     public function execute() {
-    	if (!$this->permissionManager->userHasRight($this->getUser(), 'translatetiles')) {
+        if (!$this->permissionManager->userHasRight($this->getUser(), 'translatetiles')) {
             $this->dieWithError('You do not have permission to add tiles', 'permissiondenied');
         }
 

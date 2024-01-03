@@ -51,7 +51,7 @@ class TilesheetsAddSheetApi extends ApiBase {
     }
 
     public function execute() {
-    	if (!$this->permissionmManager->userHasRight($this->getUser(), 'edittilesheets')) {
+        if (!$this->permissionmManager->userHasRight($this->getUser(), 'edittilesheets')) {
             $this->dieWithError('You do not have permission to create tilesheets', 'permissiondenied');
         }
 
