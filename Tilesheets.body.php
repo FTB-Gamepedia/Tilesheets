@@ -1,4 +1,7 @@
 <?php
+use Wikimedia\Rdbms\ILoadBalancer;
+use MediaWiki\MediaWikiServices;
+
 /**
  * Tilesheets main body file
  *
@@ -11,7 +14,7 @@
 class Tilesheets {
 	static private $mQueriedItems;
 	static private $mQueriedSizes;
-	static $tileLinks;
+	static public $tileLinks;
 	private $mOptions;
 
 	/**
@@ -19,7 +22,7 @@ class Tilesheets {
 	 *
 	 * @param $options
 	 */
-	public function __construct($options, Parser &$parser) {
+	public function __construct($options, Parser $parser) {
 		$this->mOptions = $options;
 
 		// Set default values
@@ -34,7 +37,7 @@ class Tilesheets {
 
 		TilesheetsError::log(wfMessage('tilesheets-log-prepare')->params($size, $item, $mod)->text());
 
-		$dbr = wfGetDB(DB_SLAVE);
+		$dbr = MediaWikiServices::getInstance()->getDBLoadBalancer()->getConnection(DB_REPLICA);
 
 		if (!isset(self::$mQueriedItems[$item])) {
 			$results = $dbr->select('ext_tilesheet_items','*',array('item_name' => $item));
@@ -55,7 +58,7 @@ class Tilesheets {
 	 *
 	 * @return array|string
 	 */
-	public function output(Parser &$parser) {
+	public function output(Parser $parser) {
 		// Set default values
 		$item = $this->mOptions['item'];
 		$size = 32;
@@ -114,7 +117,7 @@ class Tilesheets {
 	 * @param $entryID
 	 * @return array
 	 */
-	private function generateTile(Parser &$parser, $mod, $size, $x, $y, $z, $entryID) {
+	private function generateTile(Parser $parser, $mod, $size, $x, $y, $z, $entryID) {
 		// Validate tilesheet size
 		Tilesheets::getModTileSizes($mod);
 		if (self::$mQueriedSizes[$mod] == null) {
@@ -129,13 +132,11 @@ class Tilesheets {
 				$size = min(self::$mQueriedSizes[$mod]);
 			}
 		}
-
-		$title = $parser->getTitle();
+		
 		// New pages do not have an article ID, so we have to store it in the title and then get the ID when updating the db
-		$page = $title->getText();
-		$namespace = $title->getNamespace();
-		self::$tileLinks[$namespace][$page][] = $entryID;
-		$file = wfFindFile("Tilesheet $mod $size $z.png");
+		$pageRef = $parser->getPage();
+		self::$tileLinks[$pageRef->getNamespace()][$pageRef->getText()][] = $entryID;
+		$file = MediaWikiServices::getInstance()->getRepoGroup()->findFile("Tilesheet $mod $size $z.png");
 		if ($file === false) {
 			$parser->addTrackingCategory('tilesheet-missing-image-category');
 			TilesheetsError::warn(wfMessage('tilesheets-warning-noimage')->params($mod, $size, $z)->text());
@@ -154,7 +155,7 @@ class Tilesheets {
 	 * @return mixed
 	 */
 	public static function getModTileSizes($mod) {
-		$dbr = wfGetDB(DB_SLAVE);
+		$dbr = MediaWikiServices::getInstance()->getDBLoadBalancer()->getConnection(DB_REPLICA);
 		if (!isset(self::$mQueriedSizes[$mod])) {
 			$result = $dbr->select('ext_tilesheet_images','sizes',array("`mod`" => $mod));
 			TilesheetsError::query($dbr->lastQuery());
@@ -192,12 +193,13 @@ class Tilesheets {
 	 * @param string $toMod 	The new mod abbreviation.
 	 * @param string $toSizes 	The new sizes, separated by commas.
 	 * @param User $user 		The user performing the change.
+	 * @param ILoadBalancer $dbLoadBalancer 	The DBLoadBalancer service.
 	 * @param string $comment	The edit summary.
 	 * @return bool				Whether or not the edit was successful.
 	 * @throws MWException		See Database#query.
 	 */
-	public static function updateSheetRow($curMod, $toMod, $toSizes, $user, $comment = '') {
-		$dbw = wfGetDB(DB_MASTER);
+	public static function updateSheetRow($curMod, $toMod, $toSizes, $user, ILoadBalancer $dbLoadBalancer, $comment = '') {
+		$dbw = $dbLoadBalancer->getConnection(DB_PRIMARY);
 		$stuff = $dbw->select('ext_tilesheet_images', '*', array('`mod`' => $curMod));
 		$result = $dbw->update('ext_tilesheet_images', array('sizes' => $toSizes, '`mod`' => $toMod), array('`mod`' => $curMod));
 

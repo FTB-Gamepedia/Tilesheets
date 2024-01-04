@@ -1,4 +1,6 @@
 <?php
+use Wikimedia\Rdbms\ILoadBalancer;
+
 /**
  * CreateTileSheet special page file
  *
@@ -13,7 +15,7 @@ class CreateTileSheet extends SpecialPage {
 	/**
 	 * Calls parent constructor and sets special page title
 	 */
-	public function __construct() {
+	public function __construct(private ILoadBalancer $dbLoadBalancer) {
 		parent::__construct('CreateTileSheet', 'importtilesheets');
 	}
 
@@ -70,13 +72,13 @@ class CreateTileSheet extends SpecialPage {
 			// If update mode
 			if ($opts->getValue('update_table') == 1) {
 				// Delete sheet
-				$out->addHtml($this->returnMessage(SheetManager::deleteEntry($mod, $this->getUser(), $this->msg('tilesheet-create-summary-deletesheet')->text()), $this->msg('tilesheet-create-response-msg-deletesheet')->text()));
+				$out->addHtml($this->returnMessage(SheetManager::deleteEntry($mod, $this->getUser(), $this->dbLoadBalancer, $this->msg('tilesheet-create-summary-deletesheet')->text()), $this->msg('tilesheet-create-response-msg-deletesheet')->text()));
 				// Truncate table
-				$out->addHtml($this->returnMessage(SheetManager::truncateTable($mod, $this->getUser(), $this->msg('tilesheet-create-summary-deletesheet')->text()), $this->msg('tilesheet-create-response-msg-truncate')->text()));
+				$out->addHtml($this->returnMessage(SheetManager::truncateTable($mod, $this->getUser(), $this->dbLoadBalancer, $this->msg('tilesheet-create-summary-deletesheet')->text()), $this->msg('tilesheet-create-response-msg-truncate')->text()));
 			}
 
 			// Create sheet
-			$out->addHtml($this->returnMessage(SheetManager::createSheet($mod, $sizes, $this->getUser()), $this->msg('tilesheet-create-response-msg-newsheet')->text()));
+			$out->addHtml($this->returnMessage(SheetManager::createSheet($mod, $sizes, $this->getUser(), $this->dbLoadBalancer), $this->msg('tilesheet-create-response-msg-newsheet')->text()));
 
 			$input = explode("\n", trim($opts->getValue('input')));
 			foreach ($input as $line) {
@@ -85,7 +87,7 @@ class CreateTileSheet extends SpecialPage {
 				$item = trim($item);
 
 				// Create tile
-				$out->addHtml($this->returnMessage(TileManager::createTile($mod, $item, $x, $y, $z, $this->getUser(), $this->msg('tilesheet-create-summary-newtile')->text()), $this->msg('tilesheet-create-response-msg-newtile')->params($item, $mod, $x, $y, $z)->text()));
+				$out->addHtml($this->returnMessage(TileManager::createTile($mod, $item, $x, $y, $z, $this->getUser(), $this->dbLoadBalancer, $this->msg('tilesheet-create-summary-newtile')->text()), $this->msg('tilesheet-create-response-msg-newtile')->params($item, $mod, $x, $y, $z)->text()));
 			}
 		$out->addHtml('</tt>');
 		} else {
@@ -138,7 +140,6 @@ class CreateTileSheet extends SpecialPage {
             ->setWrapperLegendMsg('tilesheet-create-legend')
             ->setId('ext-tilesheet-create-form')
             ->setSubmitTextMsg('tilesheet-create-submit')
-            ->setSubmitProgressive()
             ->prepareForm()
             ->displayForm(false);
 	}

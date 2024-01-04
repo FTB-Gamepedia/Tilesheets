@@ -1,23 +1,30 @@
 <?php
 
+use Wikimedia\ParamValidator\ParamValidator;
+use Wikimedia\Rdbms\ILoadBalancer;
+use MediaWiki\Permissions\PermissionManager;
+
 class TilesheetsAddTilesApi extends ApiBase {
-    public function __construct($query, $moduleName) {
+    public function __construct($query, $moduleName, private ILoadBalancer $dbLoadBalancer, private PermissionManager $permissionManager) {
         parent::__construct($query, $moduleName, 'ts');
     }
 
     public function getAllowedParams() {
         return array(
             'token' => null,
-            'summary' => null,
+            'summary' => array(
+            	ParamValidator::PARAM_TYPE => 'string',
+            	ParamValidator::PARAM_DEFAULT => ''
+            ),
             'mod' => array(
-                ApiBase::PARAM_TYPE => 'string',
-                ApiBase::PARAM_REQUIRED => true,
+                ParamValidator::PARAM_TYPE => 'string',
+                ParamValidator::PARAM_REQUIRED => true,
             ),
             'import' => array(
-                ApiBase::PARAM_TYPE => 'string',
-                ApiBase::PARAM_REQUIRED => true,
-                ApiBase::PARAM_ISMULTI => true,
-                ApiBase::PARAM_ALLOW_DUPLICATES => false,
+                ParamValidator::PARAM_TYPE => 'string',
+                ParamValidator::PARAM_REQUIRED => true,
+                ParamValidator::PARAM_ISMULTI => true,
+                ParamValidator::PARAM_ALLOW_DUPLICATES => false,
             ),
         );
     }
@@ -45,7 +52,7 @@ class TilesheetsAddTilesApi extends ApiBase {
     }
 
     public function execute() {
-        if (!in_array('edittilesheets', $this->getUser()->getRights())) {
+        if (!$this->permissionManager->userHasRight($this->getUser(), 'edittilesheets')) {
             $this->dieWithError('You do not have permission to add tiles', 'permissiondenied');
         }
 
@@ -53,7 +60,7 @@ class TilesheetsAddTilesApi extends ApiBase {
         $summary = $this->getParameter('summary');
         $import = $this->getParameter('import');
 
-        $dbr = wfGetDB(DB_SLAVE);
+        $dbr = $this->dbLoadBalancer->getConnection(DB_REPLICA);
         $result = $dbr->select(
             'ext_tilesheet_images',
             '`mod`',
@@ -68,7 +75,7 @@ class TilesheetsAddTilesApi extends ApiBase {
         $return = [];
         foreach ($import as $entry) {
             list($x, $y, $z, $item) = explode(' ', $entry, 4);
-            $res = TileManager::createTile($mod, $item, $x, $y, $z, $this->getUser(), $summary);
+            $res = TileManager::createTile($mod, $item, $x, $y, $z, $this->getUser(), $this->dbLoadBalancer, $summary);
             // Get the new tile's ID.
             if ($res) {
                 $selectResult = $dbr->select(

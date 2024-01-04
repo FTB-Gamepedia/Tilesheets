@@ -1,32 +1,36 @@
 <?php
 
 
+use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\ParamValidator\ParamValidator;
+use Wikimedia\ParamValidator\TypeDef\IntegerDef;
+
 class TilesheetsQueryTileUsagesApi extends ApiQueryBase {
-	public function __construct($query, $moduleName) {
+	public function __construct($query, $moduleName, private ILoadBalancer $dbLoadBalancer) {
 		parent::__construct($query, $moduleName, 'ts');
 	}
 
 	public function getAllowedParams() {
 		return array(
 			'limit' => array(
-				ApiBase::PARAM_DFLT => 10,
-				ApiBase::PARAM_TYPE => 'limit',
-				ApiBase::PARAM_MIN => 1,
-				ApiBase::PARAM_MAX => ApiBase::LIMIT_BIG1,
-				ApiBase::PARAM_MAX2 => ApiBase::LIMIT_BIG2,
+				ParamValidator::PARAM_DEFAULT => 10,
+				ParamValidator::PARAM_TYPE => 'limit',
+				IntegerDef::PARAM_MIN => 1,
+				IntegerDef::PARAM_MAX => ApiBase::LIMIT_BIG1,
+				IntegerDef::PARAM_MAX2 => ApiBase::LIMIT_BIG2,
 			),
 			'from' => array(
-				ApiBase::PARAM_TYPE => 'integer',
-				ApiBase::PARAM_DFLT => 0,
+				ParamValidator::PARAM_TYPE => 'integer',
+				ParamValidator::PARAM_DEFAULT => 0,
 			),
 			'tile' => array(
-				ApiBase::PARAM_TYPE => 'integer',
-				ApiBase::PARAM_DFLT => 0,
-				ApiBase::PARAM_MIN => 0
+				ParamValidator::PARAM_TYPE => 'integer',
+				ParamValidator::PARAM_DEFAULT => 0,
+				IntegerDef::PARAM_MIN => 0
 			),
 			'namespace' => array(
-				ApiBase::PARAM_TYPE => 'namespace',
-				ApiBase::PARAM_ISMULTI => true
+				ParamValidator::PARAM_TYPE => 'namespace',
+				ParamValidator::PARAM_ISMULTI => true
 			)
 		);
 	}
@@ -43,7 +47,7 @@ class TilesheetsQueryTileUsagesApi extends ApiQueryBase {
 		$from = $this->getParameter('from');
 		$tileID = $this->getParameter('tile');
 		$namespaces = $this->getParameter('namespace');
-		$dbr = wfGetDB(DB_SLAVE);
+		$dbr = $this->dbLoadBalancer->getConnection(DB_REPLICA);
 
 		$conditions = array(
 			'tl_to = ' . intval($tileID),

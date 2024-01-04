@@ -1,5 +1,7 @@
 <?php
 
+use Wikimedia\Rdbms\ILoadBalancer;
+
 /**
  * TileTranslator special page
  */
@@ -7,7 +9,7 @@ class TileTranslator extends SpecialPage {
     /**
      * Calls parent constructor and sets special page title
      */
-    public function __construct() {
+    public function __construct(private ILoadBalancer $dbLoadBalancer) {
         parent::__construct('TileTranslator', 'translatetiles');
     }
 
@@ -66,17 +68,17 @@ class TileTranslator extends SpecialPage {
 
         // Process and save POST data
         if ($delete == 1) {
-            $this->deleteEntry($id, $language, $this->getUser());
+            $this->deleteEntry($id, $language, $this->getUser(), $this->dbLoadBalancer);
         } else if ($update == 1) {
-            self::updateTable($id, $displayName, $description, $language, $this->getUser());
+            self::updateTable($id, $displayName, $description, $language, $this->getUser(), $this->dbLoadBalancer);
         }
 
         // Output update form
         $this->displayUpdateForm($id, $language);
     }
 
-    public static function updateTable($id, $displayName, $description, $language, $user, $comment = '') {
-        $dbw = wfGetDB(DB_MASTER);
+    public static function updateTable($id, $displayName, $description, $language, $user, ILoadBalancer $dbLoadBalancer, $comment = '') {
+        $dbw = $dbLoadBalancer->getConnection(DB_PRIMARY);
         if (empty($language)) {
             return 1;
         }
@@ -123,8 +125,8 @@ class TileTranslator extends SpecialPage {
         return 0;
     }
 
-    public static function deleteEntry($id, $language, $user, $comment = "") {
-        $dbw = wfGetDB(DB_MASTER);
+    public static function deleteEntry($id, $language, $user, ILoadBalancer $dbLoadBalancer, $comment = "") {
+        $dbw = $dbLoadBalancer->getConnection(DB_PRIMARY);
         $stuff = $dbw->select('ext_tilesheet_languages', '*', array('entry_id' => $id, 'lang' => $language));
         if ($stuff->numRows() == 0) {
             return false;
@@ -178,7 +180,7 @@ class TileTranslator extends SpecialPage {
     }
 
     private function displayUpdateForm($id, $language) {
-        $dbr = wfGetDB(DB_SLAVE);
+        $dbr = $this->dbLoadBalancer->getConnection(DB_REPLICA);
         $result = $dbr->select('ext_tilesheet_languages', '*', array('entry_id' => $id, 'lang' => $language));
         // If there is no translation, fallback to either the english translation or the default item name.
         if ($result->numRows() == 0) {

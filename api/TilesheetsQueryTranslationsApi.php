@@ -1,20 +1,24 @@
 <?php
 
+use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\ParamValidator\ParamValidator;
+use Wikimedia\ParamValidator\TypeDef\IntegerDef;
+
 class TilesheetsQueryTranslationsApi extends ApiQueryBase {
-    public function __construct($query, $moduleName) {
+    public function __construct($query, $moduleName, private ILoadBalancer $dbLoadBalancer) {
         parent::__construct($query, $moduleName, 'ts');
     }
 
     public function getAllowedParams() {
         return array(
             'id' => array(
-                ApiBase::PARAM_TYPE => 'integer',
-                ApiBase::PARAM_REQUIRED => true,
-                ApiBase::PARAM_MIN => 1,
+                ParamValidator::PARAM_TYPE => 'integer',
+                ParamValidator::PARAM_REQUIRED => true,
+                IntegerDef::PARAM_MIN => 1,
             ),
             'lang' => array(
-                ApiBase::PARAM_TYPE => 'string',
-                ApiBase::PARAM_DFLT => '',
+                ParamValidator::PARAM_TYPE => 'string',
+                ParamValidator::PARAM_DEFAULT => '',
             )
         );
     }
@@ -31,7 +35,7 @@ class TilesheetsQueryTranslationsApi extends ApiQueryBase {
         $id = $this->getParameter('id');
         $lang = $this->getParameter('lang');
 
-        $dbr = wfGetDB(DB_SLAVE);
+        $dbr = $this->dbLoadBalancer->getConnection(DB_REPLICA);
 
         $results = $dbr->select(
             'ext_tilesheet_languages',

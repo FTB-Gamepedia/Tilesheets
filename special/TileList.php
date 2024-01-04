@@ -1,4 +1,7 @@
 <?php
+use Wikimedia\Rdbms\ILoadBalancer;
+use MediaWiki\Permissions\PermissionManager;
+
 /**
  * TileList special page file
  *
@@ -13,7 +16,7 @@ class TileList extends SpecialPage {
 	/**
 	 * Calls parent constructor and sets special page title
 	 */
-	public function __construct() {
+	public function __construct(private ILoadBalancer $dbLoadBalancer, private PermissionManager $permissionManager) {
 		parent::__construct('TileList');
 	}
 
@@ -64,7 +67,7 @@ class TileList extends SpecialPage {
 		$from = intval($opts->getValue('from'));
 
 		// Load data
-		$dbr = wfGetDB(DB_SLAVE);
+		$dbr = $this->dbLoadBalancer->getConnection(DB_REPLICA);
 		$formattedEntryIDs = '';
 
 		if (!empty($langs)) {
@@ -134,7 +137,7 @@ class TileList extends SpecialPage {
 
 		if ($maxRows == 0) {
 		    $this->displayFilterForm($opts);
-			$out->addWikiText($this->msg('tilesheet-fail-norows')->text());
+			$out->addWikiTextAsInterface($this->msg('tilesheet-fail-norows')->text());
 			return;
 		}
 
@@ -146,8 +149,8 @@ class TileList extends SpecialPage {
 		$msgXName = wfMessage('tilesheet-x');
 		$msgYName = wfMessage('tilesheet-y');
 		$msgZName = wfMessage('tilesheet-z');
-		$canEdit = in_array("edittilesheets", $this->getUser()->getRights());
-		$canTranslate = in_array('translatetiles', $this->getUser()->getRights());
+		$canEdit = $this->permissionManager->userHasRight($this->getUser(), 'edittilesheets');
+		$canTranslate = $this->permissionManager->userHasRight($this->getUser(), 'translatetiles');
 		$table .= "!";
 		if ($canEdit) {
 			$table .= " !!";
@@ -224,8 +227,8 @@ class TileList extends SpecialPage {
 
         // Output page
         $this->displayFilterForm($opts);
-		$out->addWikiText($pageSelection);
-		$out->addWikiText($table);
+		$out->addWikiTextAsInterface($pageSelection);
+		$out->addWikiTextAsInterface($table);
 	}
 
 	private function displayFilterForm(FormOptions $opts) {
@@ -285,7 +288,6 @@ class TileList extends SpecialPage {
             ->setWrapperLegendMsg('tilesheet-tile-list-legend')
             ->setId('ext-tilesheet-tile-list-filter')
             ->setSubmitTextMsg('tilesheet-tile-list-submit')
-            ->setSubmitProgressive()
             ->prepareForm()
             ->displayForm(false);
     }

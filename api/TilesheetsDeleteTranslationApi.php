@@ -1,7 +1,12 @@
 <?php
 
+use Wikimedia\Rdbms\ILoadBalancer;
+use MediaWiki\Permissions\PermissionManager;
+use Wikimedia\ParamValidator\ParamValidator;
+use Wikimedia\ParamValidator\TypeDef\IntegerDef;
+
 class TilesheetsDeleteTranslationApi extends ApiBase {
-    public function __construct($query, $moduleName) {
+    public function __construct($query, $moduleName, private ILoadBalancer $dbLoadBalancer, private PermissionManager $permissionManager) {
         parent::__construct($query, $moduleName, 'ts');
     }
 
@@ -9,13 +14,13 @@ class TilesheetsDeleteTranslationApi extends ApiBase {
         return array(
             'token' => null,
             'id' => array(
-                ApiBase::PARAM_TYPE => 'integer',
-                ApiBase::PARAM_REQUIRED => true,
-                ApiBase::PARAM_MIN => 1,
+                ParamValidator::PARAM_TYPE => 'integer',
+                ParamValidator::PARAM_REQUIRED => true,
+                IntegerDef::PARAM_MIN => 1,
             ),
             'lang' => array(
-                ApiBase::PARAM_TYPE => 'string',
-                ApiBase::PARAM_REQUIRED => true,
+                ParamValidator::PARAM_TYPE => 'string',
+                ParamValidator::PARAM_REQUIRED => true,
             ),
         );
     }
@@ -43,14 +48,14 @@ class TilesheetsDeleteTranslationApi extends ApiBase {
     }
 
     public function execute() {
-        if (!in_array('edittilesheets', $this->getUser()->getRights())) {
+        if (!$this->permissionManager->userHasRight($this->getUser(), 'edittilesheets')) {
             $this->dieWithError('You do not have permission to delete tile translations', 'permissiondenied');
         }
 
         $id = $this->getParameter('id');
         $lang = $this->getParameter('lang');
 
-        $response = TileTranslator::deleteEntry($id, $lang, $this->getUser());
+        $response = TileTranslator::deleteEntry($id, $lang, $this->getUser(), $this->dbLoadBalancer);
         if ($response == true) {
             $this->getResult()->addValue('edit', 'deletetranslation', array('id' => $id, 'language' => $lang));
         } else {

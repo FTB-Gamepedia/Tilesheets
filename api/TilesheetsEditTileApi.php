@@ -1,32 +1,39 @@
 <?php
 
+use Wikimedia\Rdbms\ILoadBalancer;
+use MediaWiki\Permissions\PermissionManager;
+use Wikimedia\ParamValidator\ParamValidator;
+
 class TilesheetsEditTileApi extends ApiBase {
-    public function __construct($query, $moduleName) {
+    public function __construct($query, $moduleName, private ILoadBalancer $dbLoadBalancer, private PermissionManager $permissionManager) {
         parent::__construct($query, $moduleName, 'ts');
     }
 
     public function getAllowedParams() {
         return array(
             'token' => null,
-            'summary' => null,
+            'summary' => array(
+            	ParamValidator::PARAM_TYPE => 'string',
+            	ParamValidator::PARAM_DEFAULT => ''
+            ),
             'id' => array(
-                ApiBase::PARAM_TYPE => 'integer',
-                ApiBase::PARAM_REQUIRED => true,
+                ParamValidator::PARAM_TYPE => 'integer',
+                ParamValidator::PARAM_REQUIRED => true,
             ),
             'toname' => array(
-                ApiBase::PARAM_TYPE => 'string',
+                ParamValidator::PARAM_TYPE => 'string',
             ),
             'tomod' => array(
-                ApiBase::PARAM_TYPE => 'string',
+                ParamValidator::PARAM_TYPE => 'string',
             ),
             'tox' => array(
-                ApiBase::PARAM_TYPE => 'integer',
+                ParamValidator::PARAM_TYPE => 'integer',
             ),
             'toy' => array(
-                ApiBase::PARAM_TYPE => 'integer',
+                ParamValidator::PARAM_TYPE => 'integer',
             ),
             'toz' => array(
-                Apibase::PARAM_TYPE => 'integer',
+                ParamValidator::PARAM_TYPE => 'integer',
             )
         );
     }
@@ -70,7 +77,7 @@ class TilesheetsEditTileApi extends ApiBase {
             $this->dieWithError('You have to specify one of tomod, toname, tox, toy, or toz', 'nochangeparams');
         }
 
-        $dbr = wfGetDB(DB_SLAVE);
+        $dbr = $this->dbLoadBalancer->getConnection(DB_REPLICA);
         $entry = $dbr->select('ext_tilesheet_items', '*', array('entry_id' => $id));
 
         if ($entry->numRows() == 0) {
@@ -85,7 +92,7 @@ class TilesheetsEditTileApi extends ApiBase {
         $toY = empty($toY) ? $row->y : $toY;
         $toZ = empty($toZ) ? $row->z : $toZ;
 
-        $result = TileManager::updateTable($id, $toName, $toMod, $toX, $toY, $toZ, $this->getUser(), $summary);
+        $result = TileManager::updateTable($id, $toName, $toMod, $toX, $toY, $toZ, $this->getUser(), $this->dbLoadBalancer, $summary);
         if ($result != 0) {
             $error = $result == 1 ? 'That entry does not exist' : 'There was no change';
             $this->dieWithError($error, 'updatefail');

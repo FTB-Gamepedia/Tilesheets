@@ -1,4 +1,8 @@
 <?php
+
+use Wikimedia\Rdbms\ILoadBalancer;
+use MediaWiki\User\UserGroupManager;
+
 /**
  * SheetManager special page file
  *
@@ -13,7 +17,7 @@ class SheetManager extends SpecialPage {
 	/**
 	 * Calls parent constructor and sets special page title
 	 */
-	public function __construct() {
+	public function __construct(private ILoadBalancer $dbLoadBalancer, private UserGroupManager $groupManager) {
 		parent::__construct('SheetManager', 'edittilesheets');
 	}
 
@@ -65,11 +69,13 @@ class SheetManager extends SpecialPage {
 		$out->addHTML($this->buildSearchForm());
 
 		if ($mod == '') return;
+		
+		$userGroups = $this->groupManager->getUserGroups($this->getUser());
 
 		// Update stuff
-		if ($opts->getValue('update') == 1) Tilesheets::updateSheetRow($mod, $mod, $sizes, $this->getUser());
-		if ($opts->getValue('delete') == 1 && in_array('sysop', $this->getUser()->getGroups())) self::deleteEntry($mod, $this->getUser());
-		if ($opts->getValue('truncate') == 1 || $opts->getValue('delete') == 1 && in_array('sysop', $this->getUser()->getGroups())) self::truncateTable($mod, $this->getUser());
+		if ($opts->getValue('update') == 1) Tilesheets::updateSheetRow($mod, $mod, $sizes, $this->getUser(), $this->dbLoadBalancer);
+		if ($opts->getValue('delete') == 1 && in_array('sysop', $userGroups)) self::deleteEntry($mod, $this->getUser(), $this->dbLoadBalancer);
+		if ($opts->getValue('truncate') == 1 || $opts->getValue('delete') == 1 && in_array('sysop', $userGroups)) self::truncateTable($mod, $this->getUser(), $this->dbLoadBalancer);
 
 		// Output update table
 		$this->displayUpdateForm($mod);
@@ -79,12 +85,13 @@ class SheetManager extends SpecialPage {
 	 * Delete the entry provided
 	 *
 	 * @param string $mod
-	 * @param $comment
 	 * @param User $user
+	 * @param ILoadBalancer $dbLoadBalancer
+	 * @param $comment
 	 * @return  bool
 	 */
-	public static function deleteEntry($mod, $user, $comment = "") {
-		$dbw = wfGetDB(DB_MASTER);
+	public static function deleteEntry($mod, $user, ILoadBalancer $dbLoadBalancer, $comment = "") {
+		$dbw = $dbLoadBalancer->getConnection(DB_PRIMARY);
 		$stuff = $dbw->select('ext_tilesheet_images', '*', array('`mod`' => $mod));
 		$result = $dbw->delete('ext_tilesheet_images', array('`mod`' => $mod));
 
@@ -113,8 +120,8 @@ class SheetManager extends SpecialPage {
 	 * @param User $user
 	 * @return bool
 	 */
-	public static function truncateTable($mod, $user, $comment = "") {
-		$dbw = wfGetDB(DB_MASTER);
+	public static function truncateTable($mod, $user, ILoadBalancer $dbLoadBalancer, $comment = "") {
+		$dbw = $dbLoadBalancer->getConnection(DB_PRIMARY);
 		$stuff = $dbw->select('ext_tilesheet_items', '*', array('mod_name' => $mod));
 		$result = $dbw->delete('ext_tilesheet_items', array('mod_name' => $mod));
 
@@ -138,8 +145,8 @@ class SheetManager extends SpecialPage {
 		return true;
 	}
 
-	public static function createSheet($mod, $sizes, $user, $comment = "") {
-		$dbw = wfGetDB(DB_MASTER);
+	public static function createSheet($mod, $sizes, $user, ILoadBalancer $dbLoadBalancer, $comment = "") {
+		$dbw = $dbLoadBalancer->getConnection(DB_PRIMARY);
 		// Check if already exists
 		$result = $dbw->select('ext_tilesheet_images', 'COUNT(`mod`) AS count', array('`mod`' => $mod));
 
@@ -206,7 +213,7 @@ class SheetManager extends SpecialPage {
 	}
 
 	private function displayUpdateForm($mod) {
-		$dbr = wfGetDB(DB_SLAVE);
+		$dbr = $this->dbLoadBalancer->getConnection(DB_REPLICA);
 		$result = $dbr->select('ext_tilesheet_images', '*', array('`mod`' => $mod));
 		if ($result->numRows() == 0) {
 			return $this->msg('tilesheet-fail-norows')->text();

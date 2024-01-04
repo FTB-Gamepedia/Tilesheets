@@ -1,22 +1,29 @@
 <?php
 
+use Wikimedia\ParamValidator\ParamValidator;
+use Wikimedia\Rdbms\ILoadBalancer;
+use MediaWiki\Permissions\PermissionManager;
+
 class TilesheetsAddSheetApi extends ApiBase {
-    public function __construct($query, $moduleName) {
+    public function __construct($query, $moduleName, private ILoadBalancer $dbLoadBalancer, private PermissionManager $permissionmManager) {
         parent::__construct($query, $moduleName, 'ts');
     }
 
     public function getAllowedParams() {
         return array(
             'token' => null,
-            'summary' => null,
+            'summary' => array(
+            	ParamValidator::PARAM_TYPE => 'string',
+            	ParamValidator::PARAM_DEFAULT => ''
+            ),
             'mod' => array(
-                ApiBase::PARAM_TYPE => 'string',
-                ApiBase::PARAM_REQUIRED => true,
+                ParamValidator::PARAM_TYPE => 'string',
+                ParamValidator::PARAM_REQUIRED => true,
             ),
             'sizes' => array(
-                ApiBase::PARAM_TYPE => 'string',
-                ApiBase::PARAM_DFLT => '16|32',
-                ApiBase::PARAM_ISMULTI => true,
+                ParamValidator::PARAM_TYPE => 'string',
+                ParamValidator::PARAM_DEFAULT => '16|32',
+                ParamValidator::PARAM_ISMULTI => true,
             ),
         );
     }
@@ -44,7 +51,7 @@ class TilesheetsAddSheetApi extends ApiBase {
     }
 
     public function execute() {
-        if (!in_array('edittilesheets', $this->getUser()->getRights())) {
+        if (!$this->permissionmManager->userHasRight($this->getUser(), 'edittilesheets')) {
             $this->dieWithError('You do not have permission to create tilesheets', 'permissiondenied');
         }
 
@@ -53,7 +60,7 @@ class TilesheetsAddSheetApi extends ApiBase {
         $sizes = implode(',', $sizes);
         $summary = $this->getParameter('summary');
 
-        $result = SheetManager::createSheet($mod, $sizes, $this->getUser(), $summary);
+        $result = SheetManager::createSheet($mod, $sizes, $this->getUser(), $this->dbLoadBalancer, $summary);
         $this->getResult()->addValue('edit', 'createsheet', array($mod => $result));
     }
 }

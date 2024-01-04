@@ -1,7 +1,12 @@
 <?php
 
+use Wikimedia\Rdbms\ILoadBalancer;
+use MediaWiki\Permissions\PermissionManager;
+use Wikimedia\ParamValidator\ParamValidator;
+use Wikimedia\ParamValidator\TypeDef\IntegerDef;
+
 class TilesheetsTranslateTileApi extends ApiBase {
-    public function __construct($query, $moduleName) {
+    public function __construct($query, $moduleName, private ILoadBalancer $dbLoadBalancer, private PermissionManager $permissionManager) {
         parent::__construct($query, $moduleName, 'ts');
     }
 
@@ -9,19 +14,19 @@ class TilesheetsTranslateTileApi extends ApiBase {
         return array(
             'token' => null,
             'id' => array(
-                ApiBase::PARAM_TYPE => 'integer',
-                ApiBase::PARAM_REQUIRED => true,
-                ApiBase::PARAM_MIN => 1,
+                ParamValidator::PARAM_TYPE => 'integer',
+                ParamValidator::PARAM_REQUIRED => true,
+                IntegerDef::PARAM_MIN => 1,
             ),
             'lang' => array(
-                ApiBase::PARAM_TYPE => 'string',
-                ApiBase::PARAM_REQUIRED => true,
+                ParamValidator::PARAM_TYPE => 'string',
+                ParamValidator::PARAM_REQUIRED => true,
             ),
             'name' => array(
-                ApiBase::PARAM_TYPE => 'string',
+                ParamValidator::PARAM_TYPE => 'string',
             ),
             'description' => array(
-                ApiBase::PARAM_TYPE => 'string',
+                ParamValidator::PARAM_TYPE => 'string',
             ),
         );
     }
@@ -49,7 +54,7 @@ class TilesheetsTranslateTileApi extends ApiBase {
     }
 
     public function execute() {
-        if (!in_array('translatetiles', $this->getUser()->getRights())) {
+        if (!$this->permissionManager->userHasRight($this->getUser(), 'translatetiles')) {
             $this->dieWithError('You do not have permission to add tiles', 'permissiondenied');
         }
 
@@ -62,10 +67,10 @@ class TilesheetsTranslateTileApi extends ApiBase {
             $this->dieWithError('You have to specify one of name or description', 'nochangeparam');
         }
 
-        $dbr = wfGetDB(DB_SLAVE);
+        $dbr = $this->dbLoadBalancer->getConnection(DB_REPLICA);
         $stuff = $dbr->select('ext_tilesheet_languages', '*', array('entry_id' => $id, 'lang' => $lang));
 
-        TileTranslator::updateTable($id, $name, $desc, $lang, $this->getUser());
+        TileTranslator::updateTable($id, $name, $desc, $lang, $this->getUser(), $this->dbLoadBalancer);
         $ret = array(
             'entry_id' => $id,
             'language' => $lang,

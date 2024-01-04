@@ -27,14 +27,57 @@
 		}
 	},
 	"SpecialPages": {
-		"TileList": "TileList",
-		"SheetList": "SheetList",
-		"CreateTileSheet": "CreateTileSheet",
-		"TileManager": "TileManager",
-		"SheetManager": "SheetManager",
-		"TileTranslator": "TileTranslator",
-		"ViewTile": "ViewTile",
-		"WhatUsesThisTile": "WhatUsesThisTile"
+		"TileList": {
+			"class": "TileList",
+			"services": [
+				"DBLoadBalancer",
+				"PermissionManager"
+			]
+		},
+		"SheetList": {
+			"class": "SheetList",
+			"services": [
+				"DBLoadBalancer",
+				"PermissionManager"
+			]
+		},
+		"CreateTileSheet": {
+			"class": "CreateTileSheet",
+			"services": [
+				"DBLoadBalancer"
+			]
+		},
+		"TileManager": {
+			"class": "TileManager",
+			"services": [
+				"DBLoadBalancer"
+			]
+		},
+		"SheetManager": {
+			"class": "SheetManager",
+			"services": [
+				"DBLoadBalancer",
+				"UserGroupManager"
+			]
+		},
+		"TileTranslator": {
+			"class": "TileTranslator",
+			"services": [
+				"DBLoadBalancer"
+			]
+		},
+		"ViewTile": {
+			"class": "ViewTile",
+			"services": [
+				"DBLoadBalancer"
+			]
+		},
+		"WhatUsesThisTile": {
+			"class": "WhatUsesThisTile",
+			"services": [
+				"DBLoadBalancer"
+			]
+		}
 	},
 	"LogTypes": [
 		"tilesheet"
@@ -55,6 +98,7 @@
 		"Tilesheets": "Tilesheets.body.php",
 		"TilesheetsError": "Tilesheets.body.php",
 		"TilesheetsHooks": "Tilesheets.hooks.php",
+		"WhatUsesThisTileHooks": "hooks/WhatUsesThisTileHooks.php",
 		"TileList": "special/TileList.php",
 		"SheetList": "special/SheetList.php",
 		"CreateTileSheet": "special/CreateTileSheet.php",
@@ -77,20 +121,88 @@
 		"TilesheetsTranslateTileApi": "api/TilesheetsTranslateTileApi.php"
 	},
 	"APIModules": {
-		"addtiles": "TilesheetsAddTilesApi",
-		"deletesheet": "TilesheetsDeleteSheetApi",
-		"createsheet": "TilesheetsAddSheetApi",
-		"deletetiles": "TilesheetsDeleteTilesApi",
-		"edittile": "TilesheetsEditTileApi",
-		"editsheet": "TilesheetsEditSheetApi",
-		"deletetranslation": "TilesheetsDeleteTranslationApi",
-		"translatetile": "TilesheetsTranslateTileApi"
+		"addtiles": {
+			"class": "TilesheetsAddTilesApi",
+			"services": [
+				"DBLoadBalancer",
+				"PermissionManager"
+			]
+		},
+		"deletesheet": {
+			"class": "TilesheetsDeleteSheetApi",
+			"services": [
+				"DBLoadBalancer",
+				"PermissionManager"
+			]
+			},
+		"createsheet": {
+			"class": "TilesheetsAddSheetApi",
+			"services": [
+				"DBLoadBalancer",
+				"PermissionManager"
+			]
+		},
+		"deletetiles": {
+			"class": "TilesheetsDeleteTilesApi",
+			"services": [
+				"DBLoadBalancer",
+				"PermissionManager"
+			]
+		},
+		"edittile": {
+			"class": "TilesheetsEditTileApi", 
+			"services": [
+				"DBLoadBalancer",
+				"PermissionManager"
+			]
+		},
+		"editsheet": {
+			"class": "TilesheetsEditSheetApi",
+			"services": [
+				"DBLoadBalancer",
+				"PermissionManager"
+			]
+		},
+		"deletetranslation": {
+			"class": "TilesheetsDeleteTranslationApi",
+			"services": [
+				"DBLoadBalancer",
+				"PermissionManager"
+			]
+		},
+		"translatetile": {
+			"class": "TilesheetsTranslateTileApi", 
+			"services": [
+				"DBLoadBalancer",
+				"PermissionManager"
+			]
+		}
 	},
 	"APIListModules": {
-		"tilesheets": "TilesheetsQuerySheetsApi",
-		"tiles": "TilesheetsQueryTilesApi",
-		"tiletranslations": "TilesheetsQueryTranslationsApi",
-		"tileusages": "TilesheetsQueryTileUsagesApi"
+		"tilesheets": {
+			"class": "TilesheetsQuerySheetsApi",
+			"services": [
+				"DBLoadBalancer"
+			]
+		},
+		"tiles": {
+			"class": "TilesheetsQueryTilesApi",
+			"services": [
+				"DBLoadBalancer"
+			]
+		},
+		"tiletranslations": {
+			"class": "TilesheetsQueryTranslationsApi",
+			"services": [
+				"DBLoadBalancer"
+			]
+		},
+		"tileusages": {
+			"class": "TilesheetsQueryTileUsagesApi",
+			"services": [
+				"DBLoadBalancer"
+			]
+		}
 	},
 	"ResourceModules": {
 		"ext.tilesheets": {
@@ -109,31 +221,28 @@
 		"localBasePath": "/",
 		"remoteExtPath": "Tilesheets"
 	},
+	"HookHandlers": {
+		"main": {
+			"class": "TilesheetsHooks",
+			"services": [
+				"DBLoadBalancer"
+			]
+		},
+		"WhatUsesThisTileHooks": {
+			"class": "WhatUsesThisTileHooks",
+			"services": [
+				"DBLoadBalancer"
+			]
+		}
+	},
 	"Hooks": {
-		"ParserFirstCallInit": [
-			"TilesheetsHooks::SetupParser"
-		],
-		"BeforePageDisplay": [
-			"TilesheetsHooks::BeforePageDisplay"
-		],
-		"EditPage::showEditForm:initial": [
-			"TilesheetsHooks::OutputWarnings"
-		],
-		"OreDictOutput": [
-			"TilesheetsHooks::OreDictOutput"
-		],
-		"LoadExtensionSchemaUpdates": [
-			"TilesheetsHooks::SchemaUpdate"
-		],
-		"ArticleDeleteComplete": [
-			"TilesheetsHooks::onArticleDelete"
-		],
-		"PageContentSaveComplete": [
-			"TilesheetsHooks::addCacheToTileLinks"
-		],
-		"TitleMoveComplete": [
-			"TilesheetsHooks::onArticleMove"
-		]
+		"BeforePageDisplay": "main",
+		"EditPage::showEditForm:initial": "main",
+		"ParserFirstCallInit": "main",
+		"LoadExtensionSchemaUpdates": "main",
+		"PageDeleteComplete": "WhatUsesThisTileHooks",
+		"PageMoveComplete": "WhatUsesThisTileHooks",
+		"PageSaveComplete": "WhatUsesThisTileHooks"
 	},
 	"config": {
 		"ShowExceptionDetails": true,

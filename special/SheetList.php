@@ -1,4 +1,7 @@
 <?php
+use Wikimedia\Rdbms\ILoadBalancer;
+use MediaWiki\Permissions\PermissionManager;
+
 /**
  * SheetsList special page file
  *
@@ -13,7 +16,7 @@ class SheetList extends SpecialPage {
 	/**
 	 * Calls parent constructor and sets special page title
 	 */
-	public function __construct() {
+	public function __construct(private ILoadBalancer $dbLoadBalancer, private PermissionManager $permissionManager) {
 		parent::__construct('SheetList');
 	}
 
@@ -54,7 +57,7 @@ class SheetList extends SpecialPage {
 		$page = intval($opts->getValue('page'));
 
 		// Load data
-		$dbr = wfGetDB(DB_SLAVE);
+		$dbr = $this->dbLoadBalancer->getConnection(DB_REPLICA);
 		$result = $dbr->select(
 			'ext_tilesheet_images',
 			'COUNT(`mod`) AS row_count'
@@ -79,7 +82,7 @@ class SheetList extends SpecialPage {
 
 		if ($maxRows == 0) {
 			$this->displayFilterForm($opts);
-			$out->addWikiText($this->msg('tilesheet-fail-norows')->text());
+			$out->addWikiTextAsInterface($this->msg('tilesheet-fail-norows')->text());
 			return;
 		}
 
@@ -87,7 +90,7 @@ class SheetList extends SpecialPage {
 		$table = "{| class=\"mw-datatable\" style=\"width:100%\"\n";
 		$msgModName = wfMessage('tilesheet-mod-name');
 		$msgSizesName = wfMessage('tilesheet-sizes');
-		$canEdit = in_array("edittilesheets", $this->getUser()->getRights());
+		$canEdit = $this->permissionManager->userHasRight($this->getUser(), 'edittilesheets');
 		$table .= "!";
 		if ($canEdit) {
 			$table .= " !!";
@@ -136,8 +139,8 @@ class SheetList extends SpecialPage {
 
 		// Output page
 		$this->displayFilterForm($opts);
-		$out->addWikiText($pageSelection);
-		$out->addWikiText($table);
+		$out->addWikiTextAsInterface($pageSelection);
+		$out->addWikiTextAsInterface($table);
 	}
 
 	private function displayFilterForm(FormOptions $opts) {
@@ -164,7 +167,6 @@ class SheetList extends SpecialPage {
             ->setWrapperLegendMsg('tilesheet-sheet-list-legend')
             ->setId('ext-tilesheet-sheet-list-filter')
             ->setSubmitTextMsg('tilesheet-sheet-list-submit')
-            ->setSubmitProgressive()
             ->prepareForm()
             ->displayForm(false);
 	}
