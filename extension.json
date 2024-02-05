@@ -240,6 +240,7 @@
 		"EditPage::showEditForm:initial": "main",
 		"ParserFirstCallInit": "main",
 		"LoadExtensionSchemaUpdates": "main",
+		"OreDictOutput": "main",
 		"PageDeleteComplete": "WhatUsesThisTileHooks",
 		"PageMoveComplete": "WhatUsesThisTileHooks",
 		"PageSaveComplete": "WhatUsesThisTileHooks"

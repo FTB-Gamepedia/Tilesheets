@@ -1,5 +1,6 @@
 <?php
 use MediaWiki\MediaWikiServices;
+use OreDict\Hook\OreDictOutputHook;
 use MediaWiki\Hook\BeforePageDisplayHook;
 use MediaWiki\Hook\EditPage__showEditForm_initialHook;
 use MediaWiki\Hook\ParserFirstCallInitHook;
@@ -16,7 +17,7 @@ use MediaWiki\Installer\Hook\LoadExtensionSchemaUpdatesHook;
  * @license
  */
 
-class TilesheetsHooks implements LoadExtensionSchemaUpdatesHook, ParserFirstCallInitHook, BeforePageDisplayHook, EditPage__showEditForm_initialHook {
+class TilesheetsHooks implements LoadExtensionSchemaUpdatesHook, ParserFirstCallInitHook, BeforePageDisplayHook, EditPage__showEditForm_initialHook, OreDictOutputHook {
 	
 	/**
 	 * Setups and Modifies Database Information
@@ -167,7 +168,7 @@ class TilesheetsHooks implements LoadExtensionSchemaUpdatesHook, ParserFirstCall
 	 * @param string $params
 	 * @return bool
 	 */
-	public static function OreDictOutput(&$out, $items, $params) {
+	public function onOreDictOutput(&$out, $items, $params) {
 		if (!self::$mOreDictMainErrorOutputted) {
 			TilesheetsError::notice(wfMessage('tilesheets-notice-oredict')->text());
 			self::$mOreDictMainErrorOutputted = true;
