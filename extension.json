@@ -245,17 +245,21 @@
 		"PageMoveComplete": "WhatUsesThisTileHooks",
 		"PageSaveComplete": "WhatUsesThisTileHooks"
 	},
+	"TrackingCategories": [
+		"tilesheet-invalid-sheet-category",
+		"tilesheet-invalid-size-category",
+		"tilesheet-missing-image-category",
+		"tilesheet-missing-item-category",
+		"tilesheet-no-mod-provided-category",
+		"tilesheet-no-mod-provided-easy-category"
+	],
 	"config": {
-		"ShowExceptionDetails": true,
-		"TilesheetsDebug": false,
-		"TrackingCategories": [
-			"tilesheet-invalid-sheet-category",
-			"tilesheet-invalid-size-category",
-			"tilesheet-missing-image-category",
-			"tilesheet-missing-item-category",
-			"tilesheet-no-mod-provided-category",
-			"tilesheet-no-mod-provided-easy-category"
-		]
+		"ShowExceptionDetails": {
+			"value": true
+		},
+		"TilesheetsDebug": {
+			"value": false
+		}
 	},
-	"manifest_version": 1
+	"manifest_version": 2
 }
