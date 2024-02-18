@@ -28,15 +28,15 @@ class WhatUsesThisTileHooks implements PageDeleteCompleteHook, PageMoveCompleteH
 		// It's worth noting that the ID doesn't change when pages are moved, according to Manual:Page table
 		// However, you can move pages across namespaces, so we still need to update the table.
 		$dbw = $this->dbLoadBalancer->getConnection(DB_PRIMARY);
-		$dbw->update(
-			'ext_tilesheet_tilelinks',
-			array('tl_from_namespace' => $new->getNamespace()),
-			array(
+		$dbw->newUpdateQueryBuilder()
+			->update('ext_tilesheet_tilelinks')
+			->set(array('tl_from_namespace' => $new->getNamespace()))
+			->where(array(
 				'tl_from' => $pageID,
 				'tl_from_namespace' => $old->getNamespace()
-			),
-			__METHOD__
-		);
+			))
+			->caller(__METHOD__)
+			->execute();
 	}
 	
 	public function onPageSaveComplete($wikiPage, $user, $summary, $flags, $revisionRecord, $editResult) {
@@ -58,38 +58,38 @@ class WhatUsesThisTileHooks implements PageDeleteCompleteHook, PageMoveCompleteH
 	
 	private function clearTileLinksForPage(int $pageID, int $namespaceID) {
 		$dbw = $this->dbLoadBalancer->getConnection(DB_PRIMARY);
-		$dbw->delete(
-			'ext_tilesheet_tilelinks', 
-			array(
+		$dbw->newDeleteQueryBuilder()
+			->deleteFrom('ext_tilesheet_tilelinks')
+			->where(array(
 				'tl_from' => $pageID, 
 				'tl_from_namespace' => $namespaceID
-			)
-		);
+			))
+			->execute();
 	}
 	
 	private function addToTileLinks(int $pageID, int $namespaceID, int $tileID) {
 		$dbw = $this->dbLoadBalancer->getConnection(DB_PRIMARY);
 		
-		$result = $dbw->select(
-			'ext_tilesheet_tilelinks', 
-			'COUNT(`tl_to`) AS count', 
-			array(
+		$result = $dbw->newSelectQueryBuilder()
+			->select('COUNT(`tl_to`)')
+			->from('ext_tilesheet_tilelinks')
+			->where(array(
 				'tl_from' => $pageID,
 				'tl_from_namespace' => $namespaceID,
 				'tl_to' => $tileID
-			)
-		);
+			))
+			->fetchField();
 		
-		if ($result->current()->count == 0) {
-			$dbw->insert(
-				'ext_tilesheet_tilelinks', 
-				array(
+		if ($result == 0) {
+			$dbw->newInsertQueryBuilder()
+				->insertInto('ext_tilesheet_tilelinks')
+				->row(array(
 					'tl_from' => $pageID,
 					'tl_from_namespace' => $namespaceID,
 					'tl_to' => $tileID
-				),
-				__METHOD__
-			);
+				))
+				->caller(__METHOD__)
+				->execute();
 		}
 	}
 }
