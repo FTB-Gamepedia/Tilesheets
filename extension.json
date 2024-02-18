@@ -99,6 +99,7 @@
 		"TilesheetsError": "Tilesheets.body.php",
 		"TilesheetsHooks": "Tilesheets.hooks.php",
 		"WhatUsesThisTileHooks": "hooks/WhatUsesThisTileHooks.php",
+		"LoadExtensionSchemaUpdatesHookHandler": "hooks/LoadExtensionSchemaUpdatesHookHandler.php",
 		"TileList": "special/TileList.php",
 		"SheetList": "special/SheetList.php",
 		"CreateTileSheet": "special/CreateTileSheet.php",
@@ -233,13 +234,16 @@
 			"services": [
 				"DBLoadBalancer"
 			]
+		},
+		"LoadExtensionSchemaUpdatesHookHandler": {
+			"class": "LoadExtensionSchemaUpdatesHookHandler"
 		}
 	},
 	"Hooks": {
 		"BeforePageDisplay": "main",
 		"EditPage::showEditForm:initial": "main",
 		"ParserFirstCallInit": "main",
-		"LoadExtensionSchemaUpdates": "main",
+		"LoadExtensionSchemaUpdates": "LoadExtensionSchemaUpdatesHookHandler",
 		"OreDictOutput": "main",
 		"PageDeleteComplete": "WhatUsesThisTileHooks",
 		"PageMoveComplete": "WhatUsesThisTileHooks",

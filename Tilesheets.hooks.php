@@ -4,7 +4,6 @@ use OreDict\Hook\OreDictOutputHook;
 use MediaWiki\Hook\BeforePageDisplayHook;
 use MediaWiki\Hook\EditPage__showEditForm_initialHook;
 use MediaWiki\Hook\ParserFirstCallInitHook;
-use MediaWiki\Installer\Hook\LoadExtensionSchemaUpdatesHook;
 
 /**
  * Tilesheets hooks file
@@ -17,29 +16,7 @@ use MediaWiki\Installer\Hook\LoadExtensionSchemaUpdatesHook;
  * @license
  */
 
-class TilesheetsHooks implements LoadExtensionSchemaUpdatesHook, ParserFirstCallInitHook, BeforePageDisplayHook, EditPage__showEditForm_initialHook, OreDictOutputHook {
-	
-	/**
-	 * Setups and Modifies Database Information
-	 *
-	 * @access	public
-	 * @param	DatabaseUpdater $updater
-	 * @return	boolean	true
-	 */
-	public function onLoadExtensionSchemaUpdates($updater) {
-		$extDir = __DIR__;
-
-		$updater->addExtensionUpdate(['addTable', 'ext_tilesheet_items', "{$extDir}/install/sql/ext_tilesheet_items.sql", true]);
-		$updater->addExtensionUpdate(['addTable', 'ext_tilesheet_images', "{$extDir}/install/sql/ext_tilesheet_images.sql", true]);
-		$updater->addExtensionUpdate(['addTable', 'ext_tilesheet_languages', "{$extDir}/install/sql/ext_tilesheet_languages.sql", true]);
-		$updater->addExtensionUpdate(['addTable', 'ext_tilesheet_tilelinks', "{$extDir}/install/sql/ext_tilesheet_tilelinks.sql", true]);
-
-		$updater->addExtensionUpdate(['modifyField', 'ext_tilesheet_languages', 'description', "{$extDir}/upgrade/sql/ext_tilesheet_languages/change_description_to_text.sql", true]);
-		$updater->addExtensionUpdate(['addIndex', 'ext_tilesheet_languages', 'PRIMARY', "{$extDir}/upgrade/sql/ext_tilesheet_languages/add_primary_key.sql", true]);
-		$updater->addExtensionUpdate(['addField', 'ext_tilesheet_items', 'z', "{$extDir}/upgrade/sql/ext_tilesheet_items/add_z_coordinate.sql", true]);
-		return true;
-	}
-
+class TilesheetsHooks implements ParserFirstCallInitHook, BeforePageDisplayHook, EditPage__showEditForm_initialHook, OreDictOutputHook {
 	static private $mOreDictMainErrorOutputted = false;
 
 	/**
