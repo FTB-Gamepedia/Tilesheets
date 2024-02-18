@@ -108,7 +108,7 @@ This changelog only shows recent version history, because of the lack of documen
 * lang is no longer a required parameter for translation query API.
 
 ### 3.0.2
-* Description row is now `test` instead of `varchar` (#29, PR #32)
+* Description row is now `text` instead of `varchar` (#29, PR #32)
 * Add original item name (from items table) to the translation log (#31).
 * Return empty string when type is not name, and the entry does not exist (#30).
 
