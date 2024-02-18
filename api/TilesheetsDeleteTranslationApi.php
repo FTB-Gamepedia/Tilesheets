@@ -56,7 +56,7 @@ class TilesheetsDeleteTranslationApi extends ApiBase {
         $lang = $this->getParameter('lang');
 
         $response = TileTranslator::deleteEntry($id, $lang, $this->getUser(), $this->dbLoadBalancer);
-        if ($response == true) {
+        if ($response) {
             $this->getResult()->addValue('edit', 'deletetranslation', array('id' => $id, 'language' => $lang));
         } else {
             $this->dieWithError('That entry does not exist', 'entrynotexist');

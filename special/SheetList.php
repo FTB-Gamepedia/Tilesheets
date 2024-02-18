@@ -58,27 +58,19 @@ class SheetList extends SpecialPage {
 
 		// Load data
 		$dbr = $this->dbLoadBalancer->getConnection(DB_REPLICA);
-		$result = $dbr->select(
-			'ext_tilesheet_images',
-			'COUNT(`mod`) AS row_count'
-		);
-		foreach ($result as $row) {
-			$maxRows = $row->row_count;
-		}
-
-		if (!isset($maxRows)) return;
-
-		$results = $dbr->select(
-			'ext_tilesheet_images',
-			'*',
-			array(),
-			__METHOD__,
-			array(
-				'ORDER BY' => '`mod` ASC',
-				'LIMIT' => $limit,
-				'OFFSET' => $page * $limit
-			)
-		);
+		$maxRows = $dbr->newSelectQueryBuilder()
+			->select('COUNT(`mod`)')
+			->from('ext_tilesheet_images')
+			->fetchField();
+		
+		$results = $dbr->newSelectQueryBuilder()
+			->select('*')
+			->from('ext_tilesheet_images')
+			->caller(__METHOD__)
+			->limit($limit)
+			->offset($page * $limit)
+			->orderBy('`mod` ASC')
+			->fetchResultSet();
 
 		if ($maxRows == 0) {
 			$this->displayFilterForm($opts);

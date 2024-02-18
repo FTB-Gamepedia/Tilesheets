@@ -94,7 +94,10 @@ class TilesheetsEditTileApi extends ApiBase {
 
         $result = TileManager::updateTable($id, $toName, $toMod, $toX, $toY, $toZ, $this->getUser(), $this->dbLoadBalancer, $summary);
         if ($result != 0) {
-            $error = $result == 1 ? 'That entry does not exist' : 'There was no change';
+        	if (is_string($result))
+        		$error = $result;
+        	else
+            	$error = $result == 1 ? 'That entry does not exist' : 'There was no change';
             $this->dieWithError($error, 'updatefail');
         } else {
             $this->getResult()->addValue('edit', 'edittile', array($id => true));

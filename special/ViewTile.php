@@ -19,7 +19,11 @@ class ViewTile extends SpecialPage {
 		$out->addModules('ext.tilesheets.viewtile');
 
 		$dbr = $this->dbLoadBalancer->getConnection(DB_REPLICA);
-		$result = $dbr->select('ext_tilesheet_items', '*', array('entry_id' => $subPage));
+		$result = $dbr->newSelectQueryBuilder()
+			->select('*')
+			->from('ext_tilesheet_items')
+			->where(array('entry_id' => $subPage))
+			->fetchResultSet();
 		if ($result->numRows() == 0) {
 			$out->addWikiTextAsInterface($this->msg('tilesheet-fail-norows')->text());
 		} else {

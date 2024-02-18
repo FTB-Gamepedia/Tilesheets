@@ -71,11 +71,11 @@ class TileList extends SpecialPage {
 		$formattedEntryIDs = '';
 
 		if (!empty($langs)) {
-			$langResult = $dbr->select(
-				'ext_tilesheet_languages',
-				'entry_id',
-				array('lang' => $langs)
-			);
+			$langResult = $dbr->newSelectQueryBuilder()
+				->select('entry_id')
+				->from('ext_tilesheet_languages')
+				->where(array('lang' => $langs))
+				->fetchResultSet();
 
 			$filteredEntryIDs = array();
 			foreach ($langResult as $result) {
@@ -99,41 +99,34 @@ class TileList extends SpecialPage {
 			if ($searchNames) {
 				$conditions[] = "item_name REGEXP {$dbr->addQuotes($regex)}";
 			}
-			$result = $dbr->select(
-				'ext_tilesheet_items',
-				'COUNT(entry_id) AS row_count',
-				$conditions
-			);
+			$maxRows = $dbr->newSelectQueryBuilder()
+				->select('COUNT(entry_id)')
+				->from('ext_tilesheet_items')
+				->where($conditions)
+				->fetchField();
 		} catch (Exception $exception) {
 			// Fallback to the following query when the regex is invalid.
 			if ($searchNames) {
 				$conditions = array_replace($conditions, array(count($conditions) - 1 => "item_name = {$dbr->addQuotes($regex)}"));
 			}
-			$result = $dbr->select(
-				'ext_tilesheet_items',
-				'COUNT(entry_id) AS row_count',
-				$conditions
-			);
+			$maxRows = $dbr->newSelectQueryBuilder()
+				->select('COUNT(entry_id)')
+				->from('ext_tilesheet_items')
+				->where($conditions)
+				->fetchField();
 		}
-		foreach ($result as $row) {
-			$maxRows = $row->row_count;
-		}
-
-		if (!isset($maxRows)) return;
 
         // TODO: Specify between: `entry_id ASC`; `item_name ASC`; `entry_id DESC`; `item_name DESC`
 		$order = 'entry_id ASC';
-		$results = $dbr->select(
-			'ext_tilesheet_items',
-			'*',
-			$conditions,
-			__METHOD__,
-			array(
-				'ORDER BY' => $order,
-				'LIMIT' => $limit,
-				'OFFSET' => $page * $limit,
-			)
-		);
+		$results = $dbr->newSelectQueryBuilder()
+			->select('*')
+			->from('ext_tilesheet_items')
+			->where($conditions)
+			->caller(__METHOD__)
+			->orderBy($order)
+			->limit($limit)
+			->offset($page * $limit)
+			->fetchResultSet();
 
 		if ($maxRows == 0) {
 		    $this->displayFilterForm($opts);

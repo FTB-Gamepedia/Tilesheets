@@ -41,32 +41,34 @@ class WhatUsesThisTile extends SpecialPage {
 		$from = intval($opts->getValue('from'));
 
 		$dbr = $this->dbLoadBalancer->getConnection(DB_REPLICA);
-		$tileData = $dbr->select('ext_tilesheet_items', '*', array('entry_id' => $entryID));
+		$tileData = $dbr->newSelectQueryBuilder()
+			->select('*')
+			->from('ext_tilesheet_items')
+			->where(array('entry_id' => $entryID))
+			->fetchRow();
 		$out->addBacklinkSubtitle(Title::newFromText("ViewTile/$entryID", NS_SPECIAL));
-		if ($tileData->numRows() == 0) {
+		if (!$tileData) {
 			$out->setPageTitle($this->msg('tilesheet-whatusesthistile-title', $entryID));
 			$out->addWikiTextAsInterface($this->msg('tilesheet-whatusesthistile-notile', $entryID));
 			return;
 		} else {
-			$name = $tileData->current()->item_name;
-			$out->setPageTitle($this->msg('tilesheet-whatusesthistile-title-full', $name, $tileData->current()->mod_name));
+			$name = $tileData->item_name;
+			$out->setPageTitle($this->msg('tilesheet-whatusesthistile-title-full', $name, $tileData->mod_name));
 
 			$conditions = ['tl_to' => $entryID];
 			if ($from) {
 				$conditions[] = "tl_from >= $from";
 			}
-			$results = $dbr->select(
-				'ext_tilesheet_tilelinks',
-				'*',
-				$conditions,
-				__METHOD__,
-				array(
-					// Get an extra row so we can determine pagination things
-					'LIMIT' => $limit + 1,
-					'OFFSET' => $page * $limit,
-					'ORDER BY' => 'tl_from ASC'
-				)
-			);
+			$results = $dbr->newSelectQueryBuilder()
+				->select('*')
+				->from('ext_tilesheet_tilelinks')
+				->where($conditions)
+				->caller(__METHOD__)
+				// Get an extra row so we can determine pagination things
+				->limit($limit + 1)
+				->offset($page * $limit)
+				->orderBy('tl_from ASC')
+				->fetchResultSet();
 
 			if ($results->numRows() == 0) {
 				$out->addWikiTextAsInterface($this->msg('tilesheet-whatusesthistile-none', $name));
@@ -92,15 +94,15 @@ class WhatUsesThisTile extends SpecialPage {
 
 				$out->addHtml(Xml::openElement('ul'));
 				foreach ($rows as $row) {
-					$pageName = $dbr->select(
-						'page',
-						'page_title',
-						array(
+					$pageName = $dbr->newSelectQueryBuilder()
+						->select('page_title')
+						->from('page')
+						->where(array(
 							'page_id' => $row->tl_from,
 							'page_namespace' => $row->tl_from_namespace
-						),
-						__METHOD__
-					)->current()->page_title;
+						))
+						->caller(__METHOD__)
+						->fetchField();
 					$title = Title::newFromText($pageName, $row->tl_from_namespace);
 					$out->addHtml(Xml::openElement('li') . $this->getLinkRenderer()->makeKnownLink($title) . Xml::closeElement('li'));
 				}

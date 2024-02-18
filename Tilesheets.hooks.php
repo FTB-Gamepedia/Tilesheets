@@ -74,22 +74,34 @@ class TilesheetsHooks implements ParserFirstCallInitHook, BeforePageDisplayHook,
 	 */
 	public static function IconLocalization(Parser $parser, $item, $mod, $type = 'name', $language = 'en') {
 		$dbr = MediaWikiServices::getInstance()->getDBLoadBalancer()->getConnection(DB_REPLICA);
-		$items = $dbr->select('ext_tilesheet_items', 'entry_id', array('item_name' => $item, 'mod_name' => $mod));
-
-		if ($items->numRows() == 0) {
+		$resultItem = $dbr->newSelectQueryBuilder()
+			->select('entry_id')
+			->from('ext_tilesheet_items')
+			->where(array('item_name' => $item, 'mod_name' => $mod))
+			->fetchRow();
+		
+		if (!$resultItem) {
 			return $type == 'name' ? $item : '';
 		}
+		
+		$loc = $dbr->newSelectQueryBuilder()
+			->select('*')
+			->from('ext_tilesheet_languages')
+			->where(array(
+				'entry_id' => $resultItem->entry_id,
+				'lang' => $language
+			))
+			->fetchRow();
 
-		$locs = $dbr->select('ext_tilesheet_languages', '*', array('entry_id' => $items->current()->entry_id, 'lang' => $language));
-		if ($locs->numRows() == 0) {
+		if (!$loc) {
 			return $type == 'name' ? $item : '';
 		}
 
 		if ($type == 'name') {
-			$name = $locs->current()->display_name;
+			$name = $loc->display_name;
 			return empty($name) ? $item : $name;
 		} else if ($type == 'description') {
-			return $locs->current()->description;
+			return $loc->description;
 		} else {
 			return $item;
 		}

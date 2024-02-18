@@ -79,35 +79,50 @@ class TileTranslator extends SpecialPage {
 
     public static function updateTable($id, $displayName, $description, $language, $user, ILoadBalancer $dbLoadBalancer, $comment = '') {
         $dbw = $dbLoadBalancer->getConnection(DB_PRIMARY);
-        if (empty($language)) {
-            return 1;
-        }
-        $stuff = $dbw->select('ext_tilesheet_languages', '*', array('entry_id' => $id, 'lang' => $language));
-        if ($stuff->numRows() == 0) {
-            $dbw->insert(
-                'ext_tilesheet_languages',
-                array(
-                    'entry_id' => $id,
-                    'display_name' => $displayName,
-                    'description' => $description,
-                    'lang' => $language
-                )
-            );
+        if (empty($language)) return false;
+        
+        $numExisting = $dbw->newSelectQueryBuilder()
+        	->select('*')
+        	->from('ext_tilesheet_languages')
+        	->where(array('entry_id' => $id, 'lang' => $language))
+        	->fetchRowCount();
+        if ($numExisting == 0) {
+        	try {
+        		$dbw->newInsertQueryBuilder()
+        			->insertInto('ext_tilesheet_languages')
+        			->row(array(
+        				'entry_id' => $id,
+        				'display_name' => $displayName,
+        				'description' => $description,
+        				'lang' => $language
+        			))
+        			->execute();
+        	} catch (Exception $e) {
+        		return false;
+        	}
         } else {
-            $dbw->update(
-                'ext_tilesheet_languages',
-                array(
-                    "display_name" => $displayName,
-                    "description" => $description,
-                ),
-                array(
-                    'entry_id' => $id,
-                    'lang' => $language,
-                )
-            );
+        	try {
+        		$dbw->newUpdateQueryBuilder()
+        			->update('ext_tilesheet_languages')
+        			->set(array(
+        				'display_name' => $displayName,
+        				'description' => $description
+        			))
+        			->where(array(
+        				'entry_id' => $id,
+        				'lang' => $language
+        			))
+        			->execute();
+        	} catch (Exception $e) {
+        		return false;
+        	}
         }
 
-        $item = $dbw->select('ext_tilesheet_items', 'item_name', array('entry_id' => $id));
+        $item = $dbw->newSelectQueryBuilder()
+        	->select('item_name')
+        	->from('ext_tilesheet_items')
+        	->where(array('entry_id' => $id))
+        	->fetchRow();
 
         $logEntry = new ManualLogEntry('tilesheet', 'translatetile');
         $logEntry->setPerformer($user);
@@ -118,20 +133,30 @@ class TileTranslator extends SpecialPage {
             '5::lang' => $language,
             '6::name' => $displayName,
             '7::desc' => $description,
-            '8::original' => $item->current()->item_name
+            '8::original' => $item->item_name
         ));
         $logID = $logEntry->insert();
         $logEntry->publish($logID);
-        return 0;
+        return true;
     }
 
     public static function deleteEntry($id, $language, $user, ILoadBalancer $dbLoadBalancer, $comment = "") {
         $dbw = $dbLoadBalancer->getConnection(DB_PRIMARY);
-        $stuff = $dbw->select('ext_tilesheet_languages', '*', array('entry_id' => $id, 'lang' => $language));
-        if ($stuff->numRows() == 0) {
-            return false;
+        $numExisting = $dbw->newSelectQueryBuilder()
+        	->select('*')
+        	->from('ext_tilesheet_languages')
+        	->where(array('entry_id' => $id, 'lang' => $language))
+        	->fetchRowCount();
+        if ($numExisting == 0) return false;
+        
+        try {
+        	$dbw->newDeleteQueryBuilder()
+        		->deleteFrom('ext_tilesheet_languages')
+        		->where(array('entry_id' => $id, 'lang' => $language))
+        		->execute();
+        } catch (Exception $e) {
+        	return false;
         }
-        $dbw->delete('ext_tilesheet_languages', array('entry_id' => $id, 'lang' => $language));
         $logEntry = new ManualLogEntry('tilesheet', 'deletetranslation');
         $logEntry->setPerformer($user);
         $logEntry->setComment($comment);

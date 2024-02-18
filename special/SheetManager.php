@@ -92,10 +92,22 @@ class SheetManager extends SpecialPage {
 	 */
 	public static function deleteEntry($mod, $user, ILoadBalancer $dbLoadBalancer, $comment = "") {
 		$dbw = $dbLoadBalancer->getConnection(DB_PRIMARY);
-		$stuff = $dbw->select('ext_tilesheet_images', '*', array('`mod`' => $mod));
-		$result = $dbw->delete('ext_tilesheet_images', array('`mod`' => $mod));
-
-		if ($stuff->numRows() == 0 || $result == false) {
+		$numRows = $dbw->newSelectQueryBuilder()
+			->select('*')
+			->from('ext_tilesheet_images')
+			->where(array('`mod`' => $mod))
+			->fetchRowCount();
+		
+		if ($numRows == 0) {
+			return false;
+		}
+		
+		try {
+			$dbw->newDeleteQueryBuilder()
+				->deleteFrom('ext_tilesheet_images')
+				->where(array('`mod`' => $mod))
+				->execute();
+		} catch (Exception $e) {
 			return false;
 		}
 
@@ -122,11 +134,22 @@ class SheetManager extends SpecialPage {
 	 */
 	public static function truncateTable($mod, $user, ILoadBalancer $dbLoadBalancer, $comment = "") {
 		$dbw = $dbLoadBalancer->getConnection(DB_PRIMARY);
-		$stuff = $dbw->select('ext_tilesheet_items', '*', array('mod_name' => $mod));
-		$result = $dbw->delete('ext_tilesheet_items', array('mod_name' => $mod));
-
+		$stuff = $dbw->newSelectQueryBuilder()
+			->select('*')
+			->from('ext_tilesheet_items')
+			->where(array('`mod_name`' => $mod))
+			->fetchResultSet();
+		
 		if ($stuff->numRows() == 0) return false;
-		if ($result == false) return false;
+		
+		try {
+			$dbw->newDeleteQueryBuilder()
+				->deleteFrom('ext_tilesheet_items')
+				->where(array('`mod_name`' => $mod))
+				->execute();
+		} catch (Exception $e) {
+			return false;
+		}
 
 		foreach ($stuff as $item) {
 			$target = empty($item->mod_name) || $item->mod_name == "undefined" ? $item->item_name : "$item->item_name ($item->mod_name)";
@@ -148,13 +171,25 @@ class SheetManager extends SpecialPage {
 	public static function createSheet($mod, $sizes, $user, ILoadBalancer $dbLoadBalancer, $comment = "") {
 		$dbw = $dbLoadBalancer->getConnection(DB_PRIMARY);
 		// Check if already exists
-		$result = $dbw->select('ext_tilesheet_images', 'COUNT(`mod`) AS count', array('`mod`' => $mod));
+		$result = $dbw->newSelectQueryBuilder()
+			->select('COUNT(`mod`)')
+			->from('ext_tilesheet_images')
+			->where(array('`mod`' => $mod))
+			->fetchField();
 
 		// Insert into tilesheet list
-		if ($result->current()->count == 0)
-			$dbw->insert('ext_tilesheet_images', array('`mod`' => $mod, '`sizes`' => $sizes));
-		else
+		if ($result == 0) {
+			try {
+				$dbw->newInsertQueryBuilder()
+					->insertInto('ext_tilesheet_images')
+					->row(array('`mod`' => $mod, '`sizes`' => $sizes))
+					->execute();
+			} catch (Exception $e) {
+				return false;
+			}
+		} else {
 			return false;
+		}
 
 		// Start log
 		$logEntry = new ManualLogEntry('tilesheet', 'createsheet');
@@ -214,12 +249,16 @@ class SheetManager extends SpecialPage {
 
 	private function displayUpdateForm($mod) {
 		$dbr = $this->dbLoadBalancer->getConnection(DB_REPLICA);
-		$result = $dbr->select('ext_tilesheet_images', '*', array('`mod`' => $mod));
-		if ($result->numRows() == 0) {
+		$result = $dbr->newSelectQueryBuilder()
+			->select('*')
+			->from('ext_tilesheet_images')
+			->where(array('`mod' => $mod))
+			->fetchRow();
+		if (!$result) {
 			return $this->msg('tilesheet-fail-norows')->text();
 		} else {
-			$mod = $result->current()->mod;
-			$sizes = $result->current()->sizes;
+			$mod = $result->mod;
+			$sizes = $result->sizes;
 		}
 
 		$formDescriptor = [

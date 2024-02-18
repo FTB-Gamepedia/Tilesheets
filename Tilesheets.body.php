@@ -40,7 +40,11 @@ class Tilesheets {
 		$dbr = MediaWikiServices::getInstance()->getDBLoadBalancer()->getConnection(DB_REPLICA);
 
 		if (!isset(self::$mQueriedItems[$item])) {
-			$results = $dbr->select('ext_tilesheet_items','*',array('item_name' => $item));
+			$results = $dbr->newSelectQueryBuilder()
+				->select('*')
+				->from('ext_tilesheet_items')
+				->where(array('item_name' => $item))
+				->fetchResultSet();
 			if ($results === false || $results->numRows() == 0) {
 				self::$mQueriedItems[$item] = null;
 			} else {
@@ -141,7 +145,7 @@ class Tilesheets {
 			TilesheetsError::warn(wfMessage('tilesheets-warning-noimage')->params($mod, $size, $z)->text());
 			return $this->errorTile($size);
 		}
-		$url = $file->getUrl();
+		$url = $file->getFullUrl();
 		$x *= $size;
 		$y *= $size;
 		return array("<span class=\"tilesheet\" style=\"background:url($url) -{$x}px -{$y}px;width:{$size}px;height:{$size}px\"><br></span>", 'noparse' => true, 'isHTML' => true);
@@ -156,7 +160,11 @@ class Tilesheets {
 	public static function getModTileSizes($mod) {
 		$dbr = MediaWikiServices::getInstance()->getDBLoadBalancer()->getConnection(DB_REPLICA);
 		if (!isset(self::$mQueriedSizes[$mod])) {
-			$result = $dbr->select('ext_tilesheet_images','sizes',array("`mod`" => $mod));
+			$result = $dbr->newSelectQueryBuilder()
+				->select('sizes')
+				->from('ext_tilesheet_images')
+				->where(array("`mod`" => $mod))
+				->fetchResultSet();
 			if ($result == false) {
 				self::$mQueriedSizes[$mod] = null;
 			} else {
@@ -198,10 +206,22 @@ class Tilesheets {
 	 */
 	public static function updateSheetRow($curMod, $toMod, $toSizes, $user, ILoadBalancer $dbLoadBalancer, $comment = '') {
 		$dbw = $dbLoadBalancer->getConnection(DB_PRIMARY);
-		$stuff = $dbw->select('ext_tilesheet_images', '*', array('`mod`' => $curMod));
-		$result = $dbw->update('ext_tilesheet_images', array('sizes' => $toSizes, '`mod`' => $toMod), array('`mod`' => $curMod));
+		$stuff = $dbw->newSelectQueryBuilder()
+			->select('*')
+			->from('ext_tilesheet_images')
+			->where(array('`mod`' => $curMod))
+			->fetchResultSet();
+		try {
+			$result = $dbw->newUpdateQueryBuilder()
+				->update('ext_tilesheet_images')
+				->set(array('sizes' => $toSizes, '`mod`' => $toMod))
+				->where(array('`mod`' => $curMod))
+				->execute();
+		} catch (Exception $e) {
+			return false;
+		}
 
-		if ($stuff->numRows() == 0 || $result == false) {
+		if ($stuff->numRows() == 0) {
 			return false;
 		}
 

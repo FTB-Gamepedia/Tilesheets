@@ -89,44 +89,68 @@ class TileManager extends SpecialPage {
 	public static function createTile($mod, $item, $x, $y, $z, $user, ILoadBalancer $dbLoadBalancer, $comment = "") {
 		$dbw = $dbLoadBalancer->getConnection(DB_PRIMARY);
 		// Check if position on tilesheet is already occupied
-		$result = $dbw->select('ext_tilesheet_items', 'COUNT(`entry_id`) AS count', array('`mod_name`' => $mod, '`x`' => intval($x), '`y`' => intval($y), '`z`' => intval($z)));
-		if ($result->current()->count != 0) return false;
+		$result = $dbw->newSelectQueryBuilder()
+			->select('COUNT(`entry_id`)')
+			->from('ext_tilesheet_items')
+			->where(array('mod_name' => $mod, 'x' => intval($x), 'y' => intval($y), 'z' => intval($z)))
+			->fetchField();
+		if ($result != 0) return false;
 
 		// Check if item is already defined
-		$result = $dbw->select('ext_tilesheet_items', 'COUNT(`entry_id`) AS count', array('`mod_name`' => $mod, '`item_name`' => $item));
-		if ($result->current()->count != 0) return false;
+		$result = $dbw->newSelectQueryBuilder()
+			->select('COUNT(`entry_id`)')
+			->from('ext_tilesheet_items')
+			->where(array('mod_name' => $mod, 'item_name' => $item))
+			->fetchField();
+		if ($result != 0) return false;
 
 		// Insert to tilesheet list
-		$result = $dbw->insert('ext_tilesheet_items', array(
-			'`item_name`' => $item,
-			'`mod_name`' => $mod,
-			'`x`' => $x,
-			'`y`' => $y,
-			'`z`' => $z));
+		try {
+			$dbw->newInsertQueryBuilder()
+				->insertInto('ext_tilesheet_items')
+				->row(array(
+					'`item_name`' => $item,
+					'`mod_name`' => $mod,
+					'`x`' => $x,
+					'`y`' => $y,
+					'`z`' => $z))
+				->execute();
+		} catch (Exception $e) {
+			return false;
+		}
 
-		if ($result != false) {
-			$target = empty($mod) || $mod == "undefined" ? $item : "$item ($mod)";
+		$target = empty($mod) || $mod == "undefined" ? $item : "$item ($mod)";
 
-			// Start log
-			$logEntry = new ManualLogEntry('tilesheet', 'createtile');
-			$logEntry->setPerformer($user);
-			$logEntry->setTarget(Title::newFromText("Tile/$target", NS_SPECIAL));
-			$logEntry->setComment($comment);
-			$logEntry->setParameters(array("4::mod" => $mod, "5::item" => $item, "6::x" => $x, "7::y" => $y, "8::z" => $z));
-			$logId = $logEntry->insert();
-			$logEntry->publish($logId);
-			// End log
-		} else return false;
+		// Start log
+		$logEntry = new ManualLogEntry('tilesheet', 'createtile');
+		$logEntry->setPerformer($user);
+		$logEntry->setTarget(Title::newFromText("Tile/$target", NS_SPECIAL));
+		$logEntry->setComment($comment);
+		$logEntry->setParameters(array("4::mod" => $mod, "5::item" => $item, "6::x" => $x, "7::y" => $y, "8::z" => $z));
+		$logId = $logEntry->insert();
+		$logEntry->publish($logId);
+		// End log
 
 		return true;
 	}
 
 	public static function deleteEntry($id, $user, ILoadBalancer $dbLoadBalancer, $comment = "") {
 		$dbw = $dbLoadBalancer->getConnection(DB_PRIMARY);
-		$stuff = $dbw->select('ext_tilesheet_items', '*', array('entry_id' => $id));
-		$dbw->delete('ext_tilesheet_items', array('entry_id' => $id));
-
+		$stuff = $dbw->newSelectQueryBuilder()
+			->select('*')
+			->from('ext_tilesheet_items')
+			->where(array('entry_id' => $id))
+			->fetchResultSet();
 		if ($stuff->numRows() == 0) return false;
+		
+		try {
+			$dbw->newDeleteQueryBuilder()
+				->deleteFrom('ext_tilesheet_items')
+				->where(array('entry_id' => $id))
+				->execute();
+		} catch (Exception $e) {
+			return false;
+		}
 
 		foreach ($stuff as $item) {
 			$target = empty($item->mod_name) || $item->mod_name == "undefined" ? $item->item_name : "$item->item_name ($item->mod_name)";
@@ -156,14 +180,32 @@ class TileManager extends SpecialPage {
 	 * @param User $user
 	 * @param ILoadBalancer $dbLoadBalancer
 	 * @param string $comment
-	 * @return bool
+	 * @return int|string 0 if successful, 1 if the entry does not exist, 2 if there was no change, or string of the error message if the UPDATE query failed
 	 */
 	public static function updateTable($id, $item, $mod, $x, $y, $z, $user, ILoadBalancer $dbLoadBalancer, $comment = "") {
 		$dbw = $dbLoadBalancer->getConnection(DB_PRIMARY);
-		$stuff = $dbw->select('ext_tilesheet_items', '*', array('entry_id' => $id));
-		$dbw->update('ext_tilesheet_items', array('mod_name' => $mod, 'item_name' => $item, 'x' => $x, 'y' => $y, 'z' => $z), array('entry_id' => $id));
-
+		$stuff = $dbw->newSelectQueryBuilder()
+			->select('*')
+			->from('ext_tilesheet_items')
+			->where(array('entry_id' => $id))
+			->fetchResultSet();
 		if ($stuff->numRows() == 0) return 1;
+		
+		try {
+			$dbw->newUpdateQueryBuilder()
+				->update('ext_tilesheet_items')
+				->set(array(
+					'mod_name' => $mod,
+					'item_name' => $item,
+					'x' => $x,
+					'y' => $y,
+					'z' => $z
+				))
+				->where(array('entry_id' => $id))
+				->execute();
+		} catch (Exception $e) {
+			return $e->getMessage();
+		}
 
 		$fItem = $item;
 		foreach ($stuff as $item) {
