@@ -41,7 +41,6 @@ class Tilesheets {
 
 		if (!isset(self::$mQueriedItems[$item])) {
 			$results = $dbr->select('ext_tilesheet_items','*',array('item_name' => $item));
-			TilesheetsError::query($dbr->lastQuery());
 			if ($results === false || $results->numRows() == 0) {
 				self::$mQueriedItems[$item] = null;
 			} else {
@@ -158,7 +157,6 @@ class Tilesheets {
 		$dbr = MediaWikiServices::getInstance()->getDBLoadBalancer()->getConnection(DB_REPLICA);
 		if (!isset(self::$mQueriedSizes[$mod])) {
 			$result = $dbr->select('ext_tilesheet_images','sizes',array("`mod`" => $mod));
-			TilesheetsError::query($dbr->lastQuery());
 			if ($result == false) {
 				self::$mQueriedSizes[$mod] = null;
 			} else {
@@ -302,17 +300,6 @@ class TilesheetsError{
 	public static function deprecated($message) {
 		MWDebug::deprecated("(Tilesheets) ".$message);
 		self::debug($message, "deprecated");
-	}
-
-	/**
-	 * @param $query
-	 */
-	public static function query($query) {
-		global $wgShowSQLErrors;
-
-		// Hide queries if debug option is not set in LocalSettings.php
-		if($wgShowSQLErrors)
-			self::debug($query, "query");
 	}
 
 	/**
