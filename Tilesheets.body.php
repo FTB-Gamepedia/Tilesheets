@@ -202,7 +202,6 @@ class Tilesheets {
 	 * @param ILoadBalancer $dbLoadBalancer 	The DBLoadBalancer service.
 	 * @param string $comment	The edit summary.
 	 * @return bool				Whether or not the edit was successful.
-	 * @throws MWException		See Database#query.
 	 */
 	public static function updateSheetRow($curMod, $toMod, $toSizes, $user, ILoadBalancer $dbLoadBalancer, $comment = '') {
 		$dbw = $dbLoadBalancer->getConnection(DB_PRIMARY);
@@ -212,7 +211,7 @@ class Tilesheets {
 			->where(array('`mod`' => $curMod))
 			->fetchResultSet();
 		try {
-			$result = $dbw->newUpdateQueryBuilder()
+			$dbw->newUpdateQueryBuilder()
 				->update('ext_tilesheet_images')
 				->set(array('sizes' => $toSizes, '`mod`' => $toMod))
 				->where(array('`mod`' => $curMod))

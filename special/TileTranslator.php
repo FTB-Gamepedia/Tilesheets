@@ -172,7 +172,6 @@ class TileTranslator extends SpecialPage {
      *
      * @param string $id The default entry ID
      * @param string $language The default language code. Defaults to 'en'.
-     * @throws MWException
      */
     private function displaySearchForm($id = '', $language = 'en') {
         $formDescriptor = [
