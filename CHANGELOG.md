@@ -2,6 +2,12 @@
 This changelog only shows recent version history, because of the lack of documentation from the former maintainers. The very first changelog (1.1.2) is likely incomplete.
 
 ## Version 5
+### 5.0.1
+* Update for MediaWiki 1.41 (#111, #97, PR #113 for 1.39 changes).
+* Add tracking category descriptions for Special:TrackingCategories
+* Archive upgrade/sql files from old updates.
+* Undeleting pages now updates the tilelinks table for Special:WhatUsesThisTile
+
 ### 5.0.0
 * Fix license name in Special:Version (#99, #100) (xbony2)
 * Implement Z coordinate for tiles (ext_tilesheet_items table) (#76, #98, somewhat related to #82)
