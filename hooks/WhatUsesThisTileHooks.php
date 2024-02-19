@@ -3,6 +3,7 @@
 use MediaWiki\Hook\PageMoveCompleteHook;
 use MediaWiki\Page\ProperPageIdentity;
 use MediaWiki\Page\Hook\PageDeleteCompleteHook;
+use MediaWiki\Page\Hook\PageUndeleteCompleteHook;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Revision\RevisionRecord;
 use Wikimedia\Rdbms\ILoadBalancer;
@@ -13,7 +14,7 @@ use MediaWiki\Storage\Hook\PageSaveCompleteHook;
  * 
  * Adds and removes entries to the ext_tilesheet_tilelinks table when pages are deleted, moved, or saved.
  */
-class WhatUsesThisTileHooks implements PageDeleteCompleteHook, PageMoveCompleteHook, PageSaveCompleteHook {
+class WhatUsesThisTileHooks implements PageDeleteCompleteHook, PageMoveCompleteHook, PageSaveCompleteHook, PageUndeleteCompleteHook {
 	/**
 	 * Specified in extension.json
 	 * @param ILoadBalancer $dbLoadBalancer
@@ -24,6 +25,13 @@ class WhatUsesThisTileHooks implements PageDeleteCompleteHook, PageMoveCompleteH
 		$this->clearTileLinksForPage($page->getId(), $page->getNamespace());
 	}
 	
+	public function onPageUndeleteComplete(ProperPageIdentity $page, Authority $restorer, string $reason, RevisionRecord $restoredRev, ManualLogEntry $logEntry, int $restoredRevisionCount, bool $created, array $restoredPageIds): void {
+		$pageID = $page->getId();
+		$namespace = $page->getNamespace();
+		$pageName = $page->getTitle()->getText();
+		$this->addTileLinksForPage($pageID, $namespace, $pageName);
+	}
+
 	public function onPageMoveComplete($old, $new, $userIdentity, $pageID, $redirID, $reason, $revision) {
 		// It's worth noting that the ID doesn't change when pages are moved, according to Manual:Page table
 		// However, you can move pages across namespaces, so we still need to update the table.
@@ -38,22 +46,26 @@ class WhatUsesThisTileHooks implements PageDeleteCompleteHook, PageMoveCompleteH
 			->caller(__METHOD__)
 			->execute();
 	}
-	
+
 	public function onPageSaveComplete($wikiPage, $user, $summary, $flags, $revisionRecord, $editResult) {
 		$pageID = $wikiPage->getId();
 		$namespace = $wikiPage->getNamespace();
 		$pageName = $wikiPage->getTitle()->getText();
 		
 		$this->clearTileLinksForPage($pageID, $namespace);
-		if (Tilesheets::$tileLinks[$namespace][$pageName] != null) {
-			array_unique(Tilesheets::$tileLinks[$namespace][$pageName]);
-			foreach (Tilesheets::$tileLinks[$namespace][$pageName] as $entryID) {
-				$this->addToTileLinks($pageID, $namespace, $entryID);
-			}
-		}
-		Tilesheets::$tileLinks[$namespace][$pageName] = array();
+		$this->addTileLinksForPage($pageID, $namespace, $pageName);
 		
 		return true;
+	}
+
+	private function addTileLinksForPage(int $pageID, int $namespaceID, string $pageName) {
+		if (Tilesheets::$tileLinks[$namespaceID][$pageName] != null) {
+			array_unique(Tilesheets::$tileLinks[$namespaceID][$pageName]);
+			foreach (Tilesheets::$tileLinks[$namespaceID][$pageName] as $entryID) {
+				$this->addToTileLinks($pageID, $namespaceID, $entryID);
+			}
+		}
+		Tilesheets::$tileLinks[$namespaceID][$pageName] = array();
 	}
 	
 	private function clearTileLinksForPage(int $pageID, int $namespaceID) {

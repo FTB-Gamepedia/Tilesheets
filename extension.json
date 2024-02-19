@@ -246,6 +246,7 @@
 		"LoadExtensionSchemaUpdates": "LoadExtensionSchemaUpdatesHookHandler",
 		"OreDictOutput": "main",
 		"PageDeleteComplete": "WhatUsesThisTileHooks",
+		"PageUndeleteComplete": "WhatUsesThisTileHooks",
 		"PageMoveComplete": "WhatUsesThisTileHooks",
 		"PageSaveComplete": "WhatUsesThisTileHooks"
 	},
