@@ -72,13 +72,13 @@ class CreateTileSheet extends SpecialPage {
 			// If update mode
 			if ($opts->getValue('update_table') == 1) {
 				// Delete sheet
-				$out->addHtml($this->returnMessage(SheetManager::deleteEntry($mod, $this->getUser(), $this->dbLoadBalancer, $this->msg('tilesheet-create-summary-deletesheet')->text()), $this->msg('tilesheet-create-response-msg-deletesheet')->text()));
+				$out->addHtml($this->returnMessage(SheetManager::deleteEntry($mod, $this->getUser(), $this->dbLoadBalancer, $this->msg('tilesheet-create-summary-deletesheet')->parse()), $this->msg('tilesheet-create-response-msg-deletesheet')->parse()));
 				// Truncate table
-				$out->addHtml($this->returnMessage(SheetManager::truncateTable($mod, $this->getUser(), $this->dbLoadBalancer, $this->msg('tilesheet-create-summary-deletesheet')->text()), $this->msg('tilesheet-create-response-msg-truncate')->text()));
+				$out->addHtml($this->returnMessage(SheetManager::truncateTable($mod, $this->getUser(), $this->dbLoadBalancer, $this->msg('tilesheet-create-summary-deletesheet')->parse()), $this->msg('tilesheet-create-response-msg-truncate')->parse()));
 			}
 
 			// Create sheet
-			$out->addHtml($this->returnMessage(SheetManager::createSheet($mod, $sizes, $this->getUser(), $this->dbLoadBalancer), $this->msg('tilesheet-create-response-msg-newsheet')->text()));
+			$out->addHtml($this->returnMessage(SheetManager::createSheet($mod, $sizes, $this->getUser(), $this->dbLoadBalancer), $this->msg('tilesheet-create-response-msg-newsheet')->parse()));
 
 			$input = explode("\n", trim($opts->getValue('input')));
 			foreach ($input as $line) {
@@ -87,7 +87,7 @@ class CreateTileSheet extends SpecialPage {
 				$item = trim($item);
 
 				// Create tile
-				$out->addHtml($this->returnMessage(TileManager::createTile($mod, $item, $x, $y, $z, $this->getUser(), $this->dbLoadBalancer, $this->msg('tilesheet-create-summary-newtile')->text()), $this->msg('tilesheet-create-response-msg-newtile')->params($item, $mod, $x, $y, $z)->text()));
+				$out->addHtml($this->returnMessage(TileManager::createTile($mod, $item, $x, $y, $z, $this->getUser(), $this->dbLoadBalancer, $this->msg('tilesheet-create-summary-newtile')->parse()), $this->msg('tilesheet-create-response-msg-newtile')->params($item, $mod, $x, $y, $z)->parse()));
 			}
 		$out->addHtml('</tt>');
 		} else {
@@ -153,9 +153,9 @@ class CreateTileSheet extends SpecialPage {
 	 */
 	private function returnMessage($state, $message) {
 		if ($state) {
-			$out = '<span style="background-color:green; font-weight:bold; color:white;">' . $this->msg('tilesheet-create-response-success')->text() . '</span> '.$message."<br>";
+			$out = '<span style="background-color:green; font-weight:bold; color:white;">' . $this->msg('tilesheet-create-response-success')->parse() . '</span> '.$message."<br>";
 		} else {
-			$out = '<span style="background-color:red; font-weight:bold; color:white;">' . $this->msg('tilesheet-create-response-fail')->text() . '</span> '.$message."<br>";
+			$out = '<span style="background-color:red; font-weight:bold; color:white;">' . $this->msg('tilesheet-create-response-fail')->parse() . '</span> '.$message."<br>";
 		}
 		return $out;
 	}
