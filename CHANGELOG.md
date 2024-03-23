@@ -2,6 +2,9 @@
 This changelog only shows recent version history, because of the lack of documentation from the former maintainers. The very first changelog (1.1.2) is likely incomplete.
 
 ## Version 5
+### 5.0.2
+* Escape tilesheet import return messages, resolves potential security vulnerability. Same as in OreDict#87 / T360557.
+
 ### 5.0.1
 * Update for MediaWiki 1.41 (#111, #97, PR #113 for 1.39 changes).
 * Add tracking category descriptions for Special:TrackingCategories
