@@ -252,7 +252,7 @@ class SheetManager extends SpecialPage {
 		$result = $dbr->newSelectQueryBuilder()
 			->select('*')
 			->from('ext_tilesheet_images')
-			->where(array('`mod' => $mod))
+			->where(array('`mod`' => $mod))
 			->fetchRow();
 		if (!$result) {
 			return $this->msg('tilesheet-fail-norows')->text();
