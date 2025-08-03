@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Html\FormOptions;
+use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\ILoadBalancer;
 
 class WhatUsesThisTile extends SpecialPage {

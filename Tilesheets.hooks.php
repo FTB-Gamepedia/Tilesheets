@@ -1,4 +1,6 @@
 <?php
+
+use MediaWiki\EditPage\EditPage;
 use MediaWiki\MediaWikiServices;
 use OreDict\Hook\OreDictOutputHook;
 use MediaWiki\Hook\BeforePageDisplayHook;
@@ -31,7 +33,7 @@ class TilesheetsHooks implements ParserFirstCallInitHook, BeforePageDisplayHook,
 
 		return true;
 	}
-	
+
 	/**
 	 * Handler for BeforePageDisplay hook.
 	 * @see http://www.mediawiki.org/wiki/Manual:Hooks/BeforePageDisplay
@@ -79,11 +81,11 @@ class TilesheetsHooks implements ParserFirstCallInitHook, BeforePageDisplayHook,
 			->from('ext_tilesheet_items')
 			->where(array('item_name' => $item, 'mod_name' => $mod))
 			->fetchRow();
-		
+
 		if (!$resultItem) {
 			return $type == 'name' ? $item : '';
 		}
-		
+
 		$loc = $dbr->newSelectQueryBuilder()
 			->select('*')
 			->from('ext_tilesheet_languages')

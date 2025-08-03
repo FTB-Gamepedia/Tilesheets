@@ -1,4 +1,8 @@
 <?php
+
+use MediaWiki\Html\FormOptions;
+use MediaWiki\Html\Html;
+use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
@@ -142,7 +146,7 @@ class TileManager extends SpecialPage {
 			->where(array('entry_id' => $id))
 			->fetchResultSet();
 		if ($stuff->numRows() == 0) return false;
-		
+
 		try {
 			$dbw->newDeleteQueryBuilder()
 				->deleteFrom('ext_tilesheet_items')
@@ -190,7 +194,7 @@ class TileManager extends SpecialPage {
 			->where(array('entry_id' => $id))
 			->fetchResultSet();
 		if ($stuff->numRows() == 0) return 1;
-		
+
 		try {
 			$dbw->newUpdateQueryBuilder()
 				->update('ext_tilesheet_items')

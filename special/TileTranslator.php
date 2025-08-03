@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Html\FormOptions;
+use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
@@ -80,7 +82,7 @@ class TileTranslator extends SpecialPage {
     public static function updateTable($id, $displayName, $description, $language, $user, ILoadBalancer $dbLoadBalancer, $comment = '') {
         $dbw = $dbLoadBalancer->getConnection(DB_PRIMARY);
         if (empty($language)) return false;
-        
+
         $numExisting = $dbw->newSelectQueryBuilder()
         	->select('*')
         	->from('ext_tilesheet_languages')
@@ -148,7 +150,7 @@ class TileTranslator extends SpecialPage {
         	->where(array('entry_id' => $id, 'lang' => $language))
         	->fetchRowCount();
         if ($numExisting == 0) return false;
-        
+
         try {
         	$dbw->newDeleteQueryBuilder()
         		->deleteFrom('ext_tilesheet_languages')
