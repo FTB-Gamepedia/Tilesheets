@@ -92,13 +92,13 @@ class SheetManager extends SpecialPage {
 	 */
 	public static function deleteEntry($mod, $user, ILoadBalancer $dbLoadBalancer, $comment = "") {
 		$dbw = $dbLoadBalancer->getConnection(DB_PRIMARY);
-		$numRows = $dbw->newSelectQueryBuilder()
+		$row = $dbw->newSelectQueryBuilder()
 			->select('*')
 			->from('ext_tilesheet_images')
 			->where(array('`mod`' => $mod))
-			->fetchRowCount();
+			->fetchRow();
 		
-		if ($numRows == 0) {
+		if (!$row) {
 			return false;
 		}
 		
@@ -116,7 +116,7 @@ class SheetManager extends SpecialPage {
 		$logEntry->setPerformer($user);
 		$logEntry->setTarget(Title::newFromText("Sheet/$mod", NS_SPECIAL));
 		$logEntry->setComment($comment);
-		$logEntry->setParameters(array("4::mod" => $mod, "5::sizes" => $stuff->current()->sizes));
+		$logEntry->setParameters(array("4::mod" => $mod, "5::sizes" => $row->sizes));
 		$logId = $logEntry->insert();
 		$logEntry->publish($logId);
 		// End log
