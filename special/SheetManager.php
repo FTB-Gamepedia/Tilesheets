@@ -1,5 +1,8 @@
 <?php
 
+use MediaWiki\Html\FormOptions;
+use MediaWiki\Html\Html;
+use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\ILoadBalancer;
 use MediaWiki\User\UserGroupManager;
 
@@ -69,7 +72,7 @@ class SheetManager extends SpecialPage {
 		$out->addHTML($this->buildSearchForm());
 
 		if ($mod == '') return;
-		
+
 		$userGroups = $this->groupManager->getUserGroups($this->getUser());
 
 		// Update stuff
@@ -97,11 +100,11 @@ class SheetManager extends SpecialPage {
 			->from('ext_tilesheet_images')
 			->where(array('`mod`' => $mod))
 			->fetchRow();
-		
+
 		if (!$row) {
 			return false;
 		}
-		
+
 		try {
 			$dbw->newDeleteQueryBuilder()
 				->deleteFrom('ext_tilesheet_images')
@@ -139,9 +142,9 @@ class SheetManager extends SpecialPage {
 			->from('ext_tilesheet_items')
 			->where(array('`mod_name`' => $mod))
 			->fetchResultSet();
-		
+
 		if ($stuff->numRows() == 0) return false;
-		
+
 		try {
 			$dbw->newDeleteQueryBuilder()
 				->deleteFrom('ext_tilesheet_items')

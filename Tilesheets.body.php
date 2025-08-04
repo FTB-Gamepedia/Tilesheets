@@ -1,4 +1,6 @@
 <?php
+
+use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\ILoadBalancer;
 use MediaWiki\MediaWikiServices;
 
@@ -135,7 +137,7 @@ class Tilesheets {
 				$size = min(self::$mQueriedSizes[$mod]);
 			}
 		}
-		
+
 		// New pages do not have an article ID, so we have to store it in the title and then get the ID when updating the db
 		$pageRef = $parser->getPage();
 		self::$tileLinks[$pageRef->getNamespace()][$pageRef->getText()][] = $entryID;
