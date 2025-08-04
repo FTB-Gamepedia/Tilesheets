@@ -59,7 +59,7 @@ class WhatUsesThisTileHooks implements PageDeleteCompleteHook, PageMoveCompleteH
 	}
 
 	private function addTileLinksForPage(int $pageID, int $namespaceID, string $pageName) {
-		if (Tilesheets::$tileLinks[$namespaceID][$pageName] != null) {
+		if (array_key_exists($namespaceID, Tilesheets::$tileLinks) && array_key_exists($pageName, Tilesheets::$tileLinks[$namespaceID])) {
 			array_unique(Tilesheets::$tileLinks[$namespaceID][$pageName]);
 			foreach (Tilesheets::$tileLinks[$namespaceID][$pageName] as $entryID) {
 				$this->addToTileLinks($pageID, $namespaceID, $entryID);

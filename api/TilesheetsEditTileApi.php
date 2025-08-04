@@ -61,7 +61,7 @@ class TilesheetsEditTileApi extends ApiBase {
     }
 
     public function execute() {
-        if (!in_array('edittilesheets', $this->getUser()->getRights())) {
+        if (!$this->permissionManager->userHasRight($this->getUser(), 'edittilesheets')) {
             $this->dieWithError('You do not have permission to edit tiles', 'permissiondenied');
         }
 

@@ -4,6 +4,7 @@
 use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
+use MediaWiki\Title\Title;
 
 class TilesheetsQueryTileUsagesApi extends ApiQueryBase {
 	public function __construct($query, $moduleName, private ILoadBalancer $dbLoadBalancer) {

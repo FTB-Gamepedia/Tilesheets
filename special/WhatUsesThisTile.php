@@ -23,7 +23,7 @@ class WhatUsesThisTile extends SpecialPage {
 
 		// Require subpage syntax. Nobody memorizes entry IDs.
 		if (empty($entryID)) {
-			$out->setPageTitle($this->msg('tilesheet-whatusesthistile-title-noid'));
+			$out->setPageTitleMsg($this->msg('tilesheet-whatusesthistile-title-noid'));
 			$out->addWikiTextAsInterface($this->msg('tilesheet-whatusesthistile-noid'));
 			return;
 		}
@@ -50,12 +50,12 @@ class WhatUsesThisTile extends SpecialPage {
 			->fetchRow();
 		$out->addBacklinkSubtitle(Title::newFromText("ViewTile/$entryID", NS_SPECIAL));
 		if (!$tileData) {
-			$out->setPageTitle($this->msg('tilesheet-whatusesthistile-title', $entryID));
+			$out->setPageTitleMsg($this->msg('tilesheet-whatusesthistile-title', $entryID));
 			$out->addWikiTextAsInterface($this->msg('tilesheet-whatusesthistile-notile', $entryID));
 			return;
 		} else {
 			$name = $tileData->item_name;
-			$out->setPageTitle($this->msg('tilesheet-whatusesthistile-title-full', $name, $tileData->mod_name));
+			$out->setPageTitleMsg($this->msg('tilesheet-whatusesthistile-title-full', $name, $tileData->mod_name));
 
 			$conditions = ['tl_to' => $entryID];
 			if ($from) {
