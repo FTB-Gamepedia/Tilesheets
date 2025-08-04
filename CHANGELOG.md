@@ -4,7 +4,7 @@ This changelog only shows recent version history, because of the lack of documen
 ## Version 5
 ### 5.0.3
 * Fix error when trying to delete a sheet through the SheetManager (#115/miraheze T14091).
-* Fix potential SQL injection vulnerability in the SheetManager (SomeMWDev) (
+* Fix potential SQL injection vulnerability in the SheetManager (SomeMWDev) (vulnerability report GHSA-hqfr-7cm9-4h87)
 
 ### 5.0.2
 * Escape tilesheet import return messages, resolves potential security vulnerability. Same as in OreDict#87 / T360557.
