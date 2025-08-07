@@ -2,6 +2,9 @@
 This changelog only shows recent version history, because of the lack of documentation from the former maintainers. The very first changelog (1.1.2) is likely incomplete.
 
 ## Version 5
+### 5.0.4
+* Update for MediaWiki 1.44 (
+
 ### 5.0.3
 * Fix error when trying to delete a sheet through the SheetManager (#115/miraheze T14091).
 * Fix potential SQL injection vulnerability in the SheetManager (SomeMWDev) (vulnerability report GHSA-hqfr-7cm9-4h87)
