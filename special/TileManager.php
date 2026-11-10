@@ -20,7 +20,11 @@ class TileManager extends SpecialPage {
 	 * Calls parent constructor and sets special page title
 	 */
 	public function __construct(private ILoadBalancer $dbLoadBalancer) {
-		parent::__construct('TileManager', 'edittilesheets');
+		if (version_compare(MW_VERSION, '1.46', '>=')) {
+			parent::__construct('TileManager');
+		} else {
+			parent::__construct('TileManager', 'edittilesheets');
+		}
 	}
 
 	/**
@@ -31,6 +35,11 @@ class TileManager extends SpecialPage {
 	 */
 	protected function getGroupName() {
 		return 'tilesheet';
+	}
+
+	/** @inheritDoc */
+	public function getRestriction(): string {
+		return 'edittilesheets';
 	}
 
 	/**
