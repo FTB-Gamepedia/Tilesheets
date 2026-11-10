@@ -18,11 +18,7 @@ class CreateTileSheet extends SpecialPage {
 	 * Calls parent constructor and sets special page title
 	 */
 	public function __construct(private ILoadBalancer $dbLoadBalancer) {
-		if (version_compare(MW_VERSION, '1.46', '>=')) {
-			parent::__construct('CreateTileSheet');
-		} else {
-			parent::__construct('CreateTileSheet', 'importtilesheets');
-		}
+		parent::__construct('CreateTileSheet');
 	}
 
 	/**

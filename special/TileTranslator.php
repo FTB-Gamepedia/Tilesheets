@@ -12,11 +12,7 @@ class TileTranslator extends SpecialPage {
      * Calls parent constructor and sets special page title
      */
     public function __construct(private ILoadBalancer $dbLoadBalancer) {
-        if (version_compare(MW_VERSION, '1.46', '>=')) {
-            parent::__construct('TileTranslator');
-        } else {
-            parent::__construct('TileTranslator', 'translatetiles');
-        }
+        parent::__construct('TileTranslator');
     }
 
     /**

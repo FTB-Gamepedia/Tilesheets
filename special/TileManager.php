@@ -20,11 +20,7 @@ class TileManager extends SpecialPage {
 	 * Calls parent constructor and sets special page title
 	 */
 	public function __construct(private ILoadBalancer $dbLoadBalancer) {
-		if (version_compare(MW_VERSION, '1.46', '>=')) {
-			parent::__construct('TileManager');
-		} else {
-			parent::__construct('TileManager', 'edittilesheets');
-		}
+		parent::__construct('TileManager');
 	}
 
 	/**

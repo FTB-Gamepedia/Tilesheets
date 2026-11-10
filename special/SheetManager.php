@@ -21,11 +21,7 @@ class SheetManager extends SpecialPage {
 	 * Calls parent constructor and sets special page title
 	 */
 	public function __construct(private ILoadBalancer $dbLoadBalancer, private UserGroupManager $groupManager) {
-		if (version_compare(MW_VERSION, '1.46', '>=')) {
-			parent::__construct('SheetManager');
-		} else {
-			parent::__construct('SheetManager', 'edittilesheets');
-		}
+		parent::__construct('SheetManager');
 	}
 
 	/**
