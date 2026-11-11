@@ -21,7 +21,7 @@ class SheetManager extends SpecialPage {
 	 * Calls parent constructor and sets special page title
 	 */
 	public function __construct(private ILoadBalancer $dbLoadBalancer, private UserGroupManager $groupManager) {
-		parent::__construct('SheetManager', 'edittilesheets');
+		parent::__construct('SheetManager');
 	}
 
 	/**
@@ -32,6 +32,11 @@ class SheetManager extends SpecialPage {
 	 */
 	protected function getGroupName() {
 		return 'tilesheet';
+	}
+
+	/** @inheritDoc */
+	public function getRestriction(): string {
+		return 'edittilesheets';
 	}
 
 	/**

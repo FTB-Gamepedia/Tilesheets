@@ -18,7 +18,7 @@ class CreateTileSheet extends SpecialPage {
 	 * Calls parent constructor and sets special page title
 	 */
 	public function __construct(private ILoadBalancer $dbLoadBalancer) {
-		parent::__construct('CreateTileSheet', 'importtilesheets');
+		parent::__construct('CreateTileSheet');
 	}
 
 	/**
@@ -29,6 +29,11 @@ class CreateTileSheet extends SpecialPage {
 	 */
 	protected function getGroupName() {
 		return 'tilesheet';
+	}
+
+	/** @inheritDoc */
+	public function getRestriction(): string {
+		return 'importtilesheets';
 	}
 
 	/**
